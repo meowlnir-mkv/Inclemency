@@ -1,0 +1,297 @@
+﻿Alpha v2 - IN DEVELOPMENT, ADDITIONS AND CHANGELOG NOT FINALIZED
+
+- Migration to a standalone release
+- Made a ModDB page for Containment Breach: Inclemency (https://www.moddb.com/mods/cb-inclemency)
+- Made a Discord server for Containment Breach: Inclemency and related news (https://discord.gg/AZCEJ8NFt7)
+- Changed version naming scheme from "Indev Update X" to Alpha vX.Y.Z
+- Changed credits to only include studio names/usernames for simplicity
+- Heavily re-organized the SFX folder and its subfolders
+
+Gameplay:
+- Added four new rooms to the Light Containment Zone
+- You can no longer save via quitting on the Keter difficulty
+- Agent Ulgrin no longer hands you SCP-173's document in the intro
+- You no longer recieve SCP-173's document when starting a new game with the intro disabled
+- Added new achievements: Object of Attention, Oh Shit!, Anklebreaker, To Hell..., ...And Back, Sacrifice, Absconded, Iron Resolve, Go-Fer, Freedom In A Flash
+- Removed 'Mods' button from the main menu
+- Buffed SCP-1499
+
+Visuals:
+- Added extra HUD icon states for blinking, standing still (+ crouched variant), and walking
+- Completely removed all custom lightmaps due to various issues
+- Remastered whitewall and officewall to have a higher resolution
+- Changed the textures for smoke and smoke2
+- Changed the textures for metal3, metal, and metal_darker
+- Tweaked viewbob intensity and speed to resemble a more normal walking gait and match the footstep speed
+
+Audio:
+- Added randomized ambience that plays in the main menu
+- Expanded the footstep sound system dramatically with randomized foley and more footstep variation
+- Tweaked footstep speed to resemble a more normal walking gait
+- Added different sound effects for different inventory interactions
+- Added a new inventory sound effect category for cards and badges
+- Added various sounds for different menu interactions
+- Added a large variety of new breathing sound effects (+ gas mask variants)
+- Added a large variety of screams and grunts that play when killed and damaged respectively (+ gas mask variants)
+- Added cloth foley sounds when crouching/uncrouching
+- Larger variety of scare sounds + an ironed out implementation of them
+- Remastered the sound effects for blast doors
+- Added special sounds when getting hit and dying while wearing a hazmat suit
+- Remastered the end dialogue for Ending B2
+- Lowered the volume of the tesla gates' sound effects
+- Brought back the proper PowerUp.ogg sound for tesla gates (previously re-used WindUp.ogg)
+- Different body fall sound effect for the 895 suicide guard event
+
+Miscellaneous:
+- Various changes and tweaks to many text strings
+- Added a new intro video
+- Combined the Undertow Games and Third Subdivision Studios intro videos into one
+- Changed window names to use the Containment Breach: Inclemency name instead of SCP Containment Breach
+
+-------------------------------------------------------------------------------------
+
+
+Alpha v1.4.1
+
+- Updated credits.txt to include attribution to Call of Duty: Modern Warfare and Infinity Ward.
+
+-------------------------------------------------------------------------------------
+
+Alpha v1.4
+
+- Removed subtitles.ini and subtitles_captions.ini (Unused)
+- Updated strings.ini (Changed various achievement names + descriptions)
+- Updated credits (on Workshop page and in Credits.txt) to reflect all new additions/changes
+- Deleted the "Inclemency - Addons" mod
+
+Visuals:
+- Upgraded all Inclemency logos in the menu assets and launcher to look better
+- Darkened smoke.png
+- Upgraded GasmaskOverlay.jpg
+- Remade monitortexture.jpg, SL_monitors.jpg, and SL_monitors_checkpoint.jpg
+- Changed keycards to Inward3D's HD pre-v1.3 keycard textures (with custom transparent inventory icons)
+- Remastered the lightmaps of EVERY SINGLE ROOM IN THE GAME to be higher-resolution and higher-quality
+- Re-added remade SCP labels, brought over from the cancelled Inclemency - Addons
+- Removed custom bumpmaps as they were causing lighting issues
+- Updated signage textures to look better and more akin to vanilla
+- Remastered various map textures (whitewall, white, tilefloor, officewall, metal_darker, metal, glass, dirtymetal, concretefloor) to be grittier
+
+Audio:
+- Remastered all Alarm sound effects
+- Remastered/replaced almost all ambient sound effects throughout the entire game
+- Remastered the sounds played when moving between zones
+- Remastered all blood drip sound effects
+- Remastered all player breathing and coughing sound effects
+- Remastered the heartbeat sound effect
+- Remastered the audio of the guard dying to SCP-096 in the server room
+- Remastered all SCP-106 lure subject audio
+- Remastered the sound of Emily Sharon Ross dying to SCP-106
+- Remastered the sound of the airlock decontamination gas
+- Remastered the sound of doors being pried open
+- Brought over the Dead Man's Switch music sequence for the Gate B nuke from Inclemency - Addons
+- Remastered MenuBreath.ogg (Track: "Cut the Chatter" from TREPANG2)
+- Brought over the elevator music from Inclemency - Addons (Track: "The Waiting Game" from SCP: Secret Laboratory)
+- Touched up the body falling sound used by the SCP-106 victim and SCP-895 suicide guard
+- Changed the sound of a bullet missing the player
+- Changed Gunshot2.ogg to be a copy of Gunshot1.ogg
+- Changed the Safe difficulty saving sound to be the same as that of Euclid
+- Touched up the jumpscare sound used in SCP-079-related events
+- Added custom music tracks: "Concrete", "Catwalks", and "Cubicles" (Light Containment, Heavy Containment, and Entrance Zone ambient themes respectively), all composed by skuffymelon
+- Remastered the following music tracks: On Mount Golgotha (SCP-012 music), SCP-079's chamber theme, SCP-106's chase theme, and SCP-106's pocket dimension trenches ambient theme
+- Replaced the following music tracks: SCP-096's angered/chase themes (Track: "Conceal" from Slender: The Arrival), and the credits theme (Track: "Thermonuclear" from TREPANG2)
+- Touched up the Storage Area 6/Maintenance Tunnels ambient theme
+- Shortened the menu theme (Track: "Slender" from Slender: The Arrival)
+- Removed custom "Inclement Contingency" radio announcement
+- Remastered the sound effect that plays when in proximity of SCP-035's chamber
+- Remastered the whispering sound effects that play inside of SCP-035's chamber
+- Remastered the sound effects of the ELO-IID Electromagnets in SCP-106's chamber
+- Remastered the screams of the SCP-895 suicide guard
+- Remastered the remaining commotion sound effects played at the start of the game
+- Remastered the PA system voice lines in the intro
+- Remastered all scientist voice lines in the intro
+- Remastered the ambience of SCP-173's chamber (Track: "173 Concept" by Slagar)
+- Remastered the sound of SCP-173 scurrying through the vents
+- Remastered the voicelines of the personnel in the storeroom
+- Remastered the sound effect used by light blackouts
+- Remastered the klaxon sound effect used by auto-closing doors (Lockrooms, checkpoints, doors opened by MTF units)
+- Remastered the sound effect that plays when SCP-049 spawns during the Surveillance Room event
+- Remastered the sound effect of gas pipes bursting in the HCZ tunnel room
+- Remastered all of SCP-035's voice lines
+- Remastered all of SCP-049's voice lines
+- Remastered SCP-049's footstep sound effects
+- Remastered all of SCP-079's broadcasts and voice lines
+- Remastered SCP-096's screams
+- Remastered the sound that plays when triggering SCP-096
+- Changed SCP-106's breathing to be more akin to vanilla
+- Changed SCP-173's necksnap sound effects to be more punchy
+- Changed SCP-173's stone-dragging sound effect
+- Changed SCP-914's sounds to be less digital-sounding
+- Remastered SCP-1048-A's screaming sound
+- Remastered the sound effect of ears growing all over your body
+- Tweaked SCP-1499's entrance/exit sound effects to be quieter and shorter
+- Remastered all footstep sound effects again (not including SCP-860-1 forest footsteps)
+
+Workshop Page:
+- Added skuffymelon as a contributor (Creator of the mod's original LCZ/HCZ/EZ ambience tracks)
+- Mod philosophy change (No longer "Vanilla+", just aiming to be higher-quality now)
+- Added a "showcase video"
+- Added various screenshot thumbnails
+- Added description header images
+- Re-wrote the description and shortened the credits section
+- Updated the mod's icon
+
+-------------------------------------------------------------------------------------
+
+Alpha v1.3.2
+
+- Removed muted commotion sounds (leftover testing feature from Nikki's Custom Commotion)
+
+-------------------------------------------------------------------------------------
+
+Alpha v1.3.1
+
+- Updated Credits.txt to reflect all new additions made since Alpha v1.2.3
+
+-------------------------------------------------------------------------------------
+
+Alpha v1.3
+
+- Removed all unnecessary custom captions
+- Changed "Class-D Personnel" to "Class D Personnel" in the loading screen
+- Removed unnecessary font files and their folders in GFX/font
+
+Visuals:
+- Added a custom loading screen image for Class D Personnel
+- Removed the custom SCP labels, as they deviated too far from the mod's philosophy (They will be available in a separate mod along with other miscellaneous additions)
+
+Audio:
+- Remastered all sound effects used by the Apache helicopters during the ending sequences
+- Revamped the sound effect of SCP-106 catching the player
+- Remastered the sound effects of SCP-079 opening/closing doors
+- Remastered the sound effect of SCP-173 opening a door
+- Changed the Beep.ogg sound effect used by elevators to a higher-quality version (courtesy of the Director's Cut mod)
+- Remastered BodyFall.ogg (used by the SCP-106 victim and SCP-895 suicide guard events)
+- Remastered the sound effect of a bullet missing the player
+- Changed the generator sound effect loop to be more akin to vanilla
+- Remastered the window shattering sound effect
+- Remastered the gas hissing sound effect
+- Revamped the light switch sound effect
+- Revamped the Euclid difficulty saving sound effect
+- Remastered the general slash sound effects
+- Remastered the horror sound used in SCP-079 related events
+- Remastered Horror12.ogg to use the SCP-049 chase theme from SCP: Secret Laboratory
+- Remastered the SCP-049 kill sound effect
+- Revamped the SCP-106 chase theme
+- Changed the pocket dimension ambience to that of SCP: Secret Laboratory
+- Remastered the music used in Storage Area 6 and the Maintenance Tunnels
+- Remastered the sound effect of falling in an SCP-106 sinkhole
+- Improved the radio sound effect of the SCP-895 suicide guard
+- Remastered the sounds of entering/exiting the Pocket Dimension
+- Improved DoorOpen/Close.ogg used by SCP-914
+- Remastered the SCP-939 attack jumpscare sound effect
+
+-------------------------------------------------------------------------------------
+
+Alpha v1.2.4
+
+Visuals:
+- Created new SCP containment labels from scratch, heavily inspired by those from SCP: Secret Laboratory
+- Reduced the opacity of smoke.png and smoke2.png by 25%
+
+-------------------------------------------------------------------------------------
+
+Alpha v1.2.3
+
+- Edited the loading screen text for Night Vision Goggles, Class-D Personnel, and The SCP Foundation
+
+Visuals:
+- Revamped the loading screen images for SCP-012, 035, 049, 066, 079, 372, and the Chaos Insurgency
+- Added a custom ending/credits screen with the Inclemency name
+
+Audio:
+- Unmuted all Zone1 and General ambience sounds (leftover testing feature)
+- Revamped the basic LCZ/EZ door opening and closing sound effects
+- Revamped the sound effect of opening/closing SCP-860's door
+- Changed the intro music to "No Friends" from the Slender: The Arrival soundtrack (placeholder, will likely be changed in the future)
+- Revamped Corrosion1-3.ogg used by SCP-106 and related encounters
+- Revamped SCP-173's neck snapping and stone dragging sound effects
+
+-------------------------------------------------------------------------------------
+
+Alpha v1.2.2
+
+Patched the Courier Condensed font file to include the previously missing Unicode characters used for arrows in the mods screen, which were taken from the Courier New font used in the vanilla game.
+
+-------------------------------------------------------------------------------------
+
+Alpha v1.2.1
+
+Small patch.
+
+-------------------------------------------------------------------------------------
+
+Alpha v1.2
+
+- Mod now features a new font: Courier Condensed.
+- Fixed up strings.ini (Tweaked some lines, shortened some achievement descriptions so they don't clip off-screen)
+
+Visuals:
+- Added remastered inventory item icons with transparent backgrounds, courtesy of Skall and their CB workshop mod "Transparent Item Icons (4x scaled) WIP" on Steam. Further details can be found in the credits section of Inclemency's workshop page description.
+- Updated the icon of the Everything's Better Blue achievement to use Skall's Key Card Omni icon, for consistency sake.
+- Remastered the loading screen images for The Foundation and SCP-096.
+
+Audio:
+- Remastered the sound effects of gunshots and bullets hitting the player.
+- Remastered the sound effect loop used by cameras throughout the site.
+- Remastered the radio's static sound effect, and the very fine radio's buzz sound effect.
+- Revamped Chatter1-4.ogg, franklin1-4.ogg, and OhGod.ogg to fit Inclemency's new radio sounds.
+- Fixed a bug with the tesla gate's audio.
+- Remastered the sound effect of a pillar killing the player in the Pocket Dimension.
+- Remastered the Decay 0-3.ogg and WallDecay1-3.ogg sound effects used by SCP-106 and related encounters.
+- Remastered SCP-035's radio transmissions to fit Inclemency's new radio sounds.
+
+Steam Workshop Page:
+- Made two 16:9 branding images for Inclemency to be shown on the Workshop page.
+- Added a nice, long description detailing the ambitions of Inclemency.
+- Added a notice at the top detailing the purpose of Inclemency's indev release.
+- Added credits to third parties whose assets are used in Inclemency.
+
+-------------------------------------------------------------------------------------
+
+Alpha v1.1
+
+- REMADE STRINGS.INI! Almost all on-screen messages in the game have been replaced with custom ones and all achievements have been renamed and given new descriptions.
+
+Visuals:
+- Improved all HUD assets (Removed glow and blood effects from them)
+- Improved all menu assets (Removed bloom effects and fixed launcher)
+- Created a custom gas mask overlay
+- Remastered smoke.png and smoke2.png
+
+Audio:
+- Remastered Damage1.ogg and Damage3-9.ogg in SFX/Character/D9341
+- Replaced all general horror sound effects with ones from Slender: The Arrival
+- Remastered all item pickup sound effects, button press sound effects, keycard use sound effects, and the lever flip sound effect.
+- Replaced squelch.ogg with a sound effect from SCP - Secret Laboratory
+- Remastered the broken radio sound effect from the guard that commits suicide in SCP-895's chamber
+- Replaced the SCP-106 sinkhole sound effect with one from SCP - Secret Laboratory
+- Revamped all vanilla footstep sound effects with cloth foley (Forest footsteps are still from Slender: The Arrival, and they have been given cloth foley as well)
+
+-------------------------------------------------------------------------------------
+
+Alpha v1
+
+- Remastered all HUD icons
+- Remastered all menu assets
+- Brought over audio replacements from previous mods: SCP-914 Sound Overhaul, Tesla Gate Sound Overhaul, Nikki's Custom Commotion (never released, cancelled in favor of Inclemency)
+- Remastered all SCP-914 panels
+- Remastered the checkpoint lockdown computer screens
+- Remastered all signage in miscsigns.jpg, miscsigns2.jpg, miscsigns3.jpg, miscsigns4.jpg, and SLH_miscsigns.jpg
+- Remastered all blood decals, bullet hole decals, and the SCP-106 sinkhole decal
+- Remastered light source flare and muzzle flash effects
+- Revamped SCP-860 forest footstep sound effects (Sounds from Slender: The Arrival)
+- Remastered RadioAlarm.ogg and replaced RadioAlarm2.ogg with custom Inclement Contingency automated radio announcement
+- Replaced menu theme with the one from Slender: The Arrival
+- Replaced PickItem0.ogg with the page collection sound effect from Slender: The Arrival
+- Replaced Horror0.ogg and Horror8.ogg with sound effects from Slender: The Arrival
+- Replaced GeneratorOn.ogg with a sound effect from Slender: The Arrival
