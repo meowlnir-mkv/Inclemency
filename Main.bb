@@ -4861,7 +4861,6 @@ Function MovePlayer()
 					End If
 				EndIf
 				If tempchn <> 0 Then ChannelVolume tempchn, (1.0-(Crouch*0.6))*SFXVolume#
-				If tempchn2 <> 0 Then ChannelVolume tempchn2, (1.0-(Crouch*0.6))*SFXVolume#
 				If tempchn3 <> 0 Then ChannelVolume tempchn3, (1.0-(Crouch*0.6))*SFXVolume#
 				If tempchn4 <> 0 Then ChannelVolume tempchn4, (1.0-(Crouch*0.6))*SFXVolume#
 			EndIf	

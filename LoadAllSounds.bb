@@ -3,14 +3,12 @@ Function LoadAllSounds()
 For i = 0 To 2
 	OpenDoorSFX(0,i) = LoadSound_Strict("SFX\Door\Normal\DoorOpen" + (i + 1) + ".ogg")
 	CloseDoorSFX(0,i) = LoadSound_Strict("SFX\Door\Normal\DoorClose" + (i + 1) + ".ogg")
+	OpenDoorSFX(1,i) = LoadSound_Strict("SFX\Door\Blast\BigDoorOpen" + (i + 1) + ".ogg")
+	CloseDoorSFX(1,i) = LoadSound_Strict("SFX\Door\Blast\BigDoorClose" + (i + 1) + ".ogg")
 	OpenDoorSFX(2,i) = LoadSound_Strict("SFX\Door\Heavy\Door2Open" + (i + 1) + ".ogg")
 	CloseDoorSFX(2,i) = LoadSound_Strict("SFX\Door\Heavy\Door2Close" + (i + 1) + ".ogg")
 	OpenDoorSFX(3,i) = LoadSound_Strict("SFX\General\Elevator\ElevatorOpen" + (i + 1) + ".ogg")
 	CloseDoorSFX(3,i) = LoadSound_Strict("SFX\General\Elevator\ElevatorClose" + (i + 1) + ".ogg")
-Next
-For i = 0 To 1
-	OpenDoorSFX(1,i) = LoadSound_Strict("SFX\Door\Blast\BigDoorOpen" + (i + 1) + ".ogg")
-	CloseDoorSFX(1,i) = LoadSound_Strict("SFX\Door\Blast\BigDoorClose" + (i + 1) + ".ogg")
 Next
 
 KeyCardSFX1 = LoadSound_Strict("SFX\Player\Interact\KeyCardUse1.ogg")
