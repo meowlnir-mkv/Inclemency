@@ -3483,7 +3483,7 @@ While IsRunning
 			EndIf
 			Update294()
 			UpdateDecals()
-			;UpdateMTF()
+			UpdateMTF()
 			UpdateNPCs()
 			UpdateItems()
 			UpdateParticles()
