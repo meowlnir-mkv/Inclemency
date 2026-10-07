@@ -131,6 +131,8 @@ Global MenuWhite%, MenuBlack%, MenuTrans%
 Global ButtonSFX% = LoadSound_Strict("SFX\Player\Interact\Button.ogg")
 Global ScreenSFX% = LoadSound_Strict("SFX\Player\Interact\Screen.ogg")
 Global ClickSFX[4]
+Global SaveSFX[3]
+Global ScreenSaveSFX[3]
 Global MenuQuitSFX% = LoadSound_Strict("SFX\Menu\QuitToMenu.ogg")
 
 Dim ScreamSFX%(20)
@@ -143,6 +145,13 @@ Dim DamagedGasSFX%(20)
 
 For i = 0 To 3
 	ClickSFX[i] = LoadSound_Strict("SFX\Menu\Click"+i+".ogg")
+Next
+
+For i = 0 To 2
+	SaveSFX[i] = LoadSound_Strict("SFX\General\Save"+i+".ogg")
+Next
+For i = 0 To 2
+	ScreenSaveSFX[i] = LoadSound_Strict("SFX\General\ScreenSave"+i+".ogg")
 Next
 
 Global DubbedAudio% = GetOptionInt("audio", "dubbed audio")
