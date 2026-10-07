@@ -458,9 +458,9 @@ Function SaveGame(file$)
 	
 	If Not MenuOpen Then
 		If SelectedDifficulty\saveType = SAVEONSCREENS Then
-			PlaySound_Strict(LoadTempSound("SFX\General\Save2.ogg"))
+			PlaySound_Strict(LoadTempSound("SFX\General\ScreenSave"+(Rand(1,3))+".ogg"))
 		Else
-			PlaySound_Strict(LoadTempSound("SFX\General\Save1.ogg"))
+			PlaySound_Strict(LoadTempSound("SFX\General\Save"+(Rand(1,3))+".ogg"))
 		EndIf
 		
 		Msg = I_Loc\MessageSave_Saved
