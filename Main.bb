@@ -3679,7 +3679,7 @@ While IsRunning
 				EndIf
 			ElseIf SelectedDifficulty\saveType = SAVEONSCREENS
 				If SelectedScreen=Null And SelectedMonitor=Null Then
-					Msg = I_Loc\MessageSave_Screens
+					Msg = I_Loc\MessageSave_DisabledScreens
 					MsgTimer = 70 * 4
 				Else
 					RN$ = PlayerRoom\RoomTemplate\Name$
@@ -3708,7 +3708,7 @@ While IsRunning
 			EndIf
 		Else If SelectedDifficulty\saveType = SAVEONSCREENS And (SelectedScreen<>Null Or SelectedMonitor<>Null)
 			If (Msg<>I_Loc\MessageSave_Saved And Msg<>I_Loc\MessageSave_DisabledLocation And Msg<>I_Loc\MessageSave_DisabledMoment) Or MsgTimer<=0 Then
-				Msg = Format(I_Loc\MessageSave_Anywhere, GetKeyName(KEY_SAVE))
+				Msg = Format(I_Loc\MessageSave_ClickedScreen, GetKeyName(KEY_SAVE))
 				MsgTimer = 70*4
 			EndIf
 			

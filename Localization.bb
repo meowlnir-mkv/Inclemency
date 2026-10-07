@@ -371,6 +371,8 @@ Type LocalizationTable
     Field MessageSave_DisabledMoment$
     Field MessageSave_DisabledLoading$
     Field MessageSave_Saved$
+	Field MessageSave_DisabledScreens$
+	Field MessageSave_ClickedScreen$
     Field MessageShot_Neck$
     Field MessageShot_Chest$
     Field MessageShot_ChestVest$
@@ -917,6 +919,8 @@ Function LoadLocalization(loc.LocalizationTable, file$)
                             Case "disabled.moment" If loc\MessageSave_DisabledMoment = "" Then loc\MessageSave_DisabledMoment = value
                             Case "disabled.loading" If loc\MessageSave_DisabledLoading = "" Then loc\MessageSave_DisabledLoading = value
                             Case "saved" If loc\MessageSave_Saved = "" Then loc\MessageSave_Saved = value
+							Case "disabled.screens" If loc\MessageSave_DisabledScreens = "" Then loc\MessageSave_DisabledScreens = value
+							Case "clickedscreen" If loc\MessageSave_ClickedScreen = "" Then loc\MessageSave_ClickedScreen = value
                         End Select
                     Case "Message Shot"
                         Select key
