@@ -373,7 +373,7 @@ Function UpdateMainMenu()
 				Next
 				
 				Color(255, 255, 255)
-				DrawFrameFull(x + 150 * MenuScale,y + 155 * MenuScale, 410*MenuScale, 150*MenuScale)
+				DrawFrame(x + 150 * MenuScale,y + 155 * MenuScale, 410*MenuScale, 150*MenuScale)
 				
 				If SelectedDifficulty\customizable Then
 					SelectedDifficulty\permaDeath =  DrawTick(x + 160 * MenuScale, y + 165 * MenuScale, SelectedDifficulty\permaDeath)
@@ -2150,24 +2150,6 @@ Function InputBox$(x%, y%, width%, height%, Txt$, ID% = 0, virtualKeyboardMode=0
 End Function
 
 Function DrawFrame(x%, y%, width%, height%, xoffset%=0, yoffset%=0, scrollY%=True)
-	Local srcY%
-	If scrollY Then srcY = y Mod 256
-	Color 255, 255, 255
-	DrawTiledImageRect(MenuWhite, xoffset, srcY, 512, 512, x, y, width, height)
-	
-	DrawTiledImageRect(MenuBlack, yoffset, srcY, 512, 512, x+3*MenuScale, y+3*MenuScale, width-6*MenuScale, height-6*MenuScale)	
-End Function
-
-Function DrawFrameBlack(x%, y%, width%, height%, xoffset%=0, yoffset%=0, scrollY%=True)
-	Local srcY%
-	If scrollY Then srcY = y Mod 256
-	Color 255, 255, 255
-	DrawTiledImageRect(MenuTrans, xoffset, srcY, 512, 512, x, y, width, height)
-	
-	DrawTiledImageRect(MenuBlack, yoffset, srcY, 512, 512, x+3*MenuScale, y+3*MenuScale, width-6*MenuScale, height-6*MenuScale)	
-End Function
-
-Function DrawFrameFull(x%, y%, width%, height%, xoffset%=0, yoffset%=0, scrollY%=True)
 	Local srcY%
 	If scrollY Then srcY = y Mod 256
 	Color 255, 255, 255
