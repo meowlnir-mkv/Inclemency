@@ -605,7 +605,7 @@ Function UpdateConsole()
 		Local temp%,  i%
 		Local ev.Events, r.Rooms, it.Items
 		
-		DrawFrameFull x,y,width,height+30*MenuScale
+		DrawFrame x,y,width,height+30*MenuScale
 		
 		Local consoleHeight% = 0
 		Local scrollbarHeight% = 0
@@ -5671,7 +5671,7 @@ Function DrawGUI()
 				Rect(x - 1, y - 1, width + 2, height + 2)
 			EndIf
 			
-			DrawFrameFull(x, y, width, height, (x Mod 64 * HUDScale), (x Mod 64 * HUDScale))
+			DrawFrame(x, y, width, height, (x Mod 64 * HUDScale), (x Mod 64 * HUDScale))
 			
 			If OtherOpen = Null Then Exit
 			
@@ -5898,7 +5898,7 @@ Function DrawGUI()
 			EndIf
 			
 			Color 255, 255, 255
-			DrawFrameFull(x, y, width, height, (x Mod 64 * HUDScale), (x Mod 64 * HUDScale))
+			DrawFrame(x, y, width, height, (x Mod 64 * HUDScale), (x Mod 64 * HUDScale))
 			
 			If Inventory(n) <> Null Then
 				If (SelectedItem <> Inventory(n) Or isMouseOn) Then 
