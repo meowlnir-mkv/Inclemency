@@ -9947,23 +9947,11 @@ End Function
 
 Function UpdatePausedMusic()
 	If IsPauseMenuOpen() Then
-		PlayPausedMusic()
+		If PausedCHN = 0 Then PausedCHN = StreamSound_Strict("SFX\Music\"+Music(26)+".ogg",MusicVolume)
 	Else
-		StopPausedMusic()
+		If PausedCHN <> 0 Then StopStream_Strict(PausedCHN)
+		PausedCHN = 0
 	EndIf
-End Function
-
-Function PlayPausedMusic()
-	If PausedCHN = 0
-		PausedCHN = StreamSound_Strict("SFX\Music\"+Music(26)+".ogg",MusicVolume)
-	EndIf
-End Function
-
-Function StopPausedMusic()
-	If PausedCHN <> 0
-		StopStream_Strict(PausedCHN)
-	EndIf
-	PausedCHN = 0
 End Function
 
 Function PauseSounds()
