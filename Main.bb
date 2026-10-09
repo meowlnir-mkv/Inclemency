@@ -5109,7 +5109,7 @@ Function MouseLook()
 		;EndIf
 
 		Local up# = (Sin(Shake) / (20.0+CrouchState*20.0))*0.4*ViewBobScale
-		Local side# = Max(Min(Cos(Shake/2)/17.5*Min(Injuries+0.25,3.0),8.0),-8.0)*ViewBobScale		
+		;Local side# = Max(Min(Cos(Shake/2)/17.5*Min(Injuries+0.25,3.0),8.0),-8.0)*ViewBobScale		
 		Local roll# = Max(Min(Sin(Shake/2)*2*Min(Injuries+0.25,3.0),8.0),-8.0)*ViewBobScale
 		
 		;käännetään kameraa sivulle jos pelaaja on vammautunut
