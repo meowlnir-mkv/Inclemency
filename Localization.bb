@@ -358,6 +358,8 @@ Type LocalizationTable
     Field MessageItem_1162UseKey$
     Field MessageItem_1162UseHearing$
     Field MessageItem_1162UseTicket$
+	Field MessageItem_LightCig$
+	Field MessageItem_LitCigUse$[5]
     Field MessageHelp_Paper$
     Field MessageHelp_Inventory$
     Field MessageHelp_View$
@@ -900,6 +902,12 @@ Function LoadLocalization(loc.LocalizationTable, file$)
                             Case "1162.use.key" If loc\MessageItem_1162UseKey = "" Then loc\MessageItem_1162UseKey = value
                             Case "1162.use.hearing" If loc\MessageItem_1162UseHearing = "" Then loc\MessageItem_1162UseHearing = value
                             Case "1162.use.ticket" If loc\MessageItem_1162UseTicket = "" Then loc\MessageItem_1162UseTicket = value
+							Case "light.cig" If loc\MessageItem_LightCig = "" Then loc\MessageItem_LightCig = value
+							Case "litcig.use_1" If loc\MessageItem_LitCigUse[1] = "" Then loc\MessageItem_LitCigUse[1] = value
+							Case "litcig.use_2" If loc\MessageItem_LitCigUse[2] = "" Then loc\MessageItem_LitCigUse[2] = value
+							Case "litcig.use_3" If loc\MessageItem_LitCigUse[3] = "" Then loc\MessageItem_LitCigUse[3] = value
+							Case "litcig.use_4" If loc\MessageItem_LitCigUse[4] = "" Then loc\MessageItem_LitCigUse[4] = value
+							Case "litcig.use_5" If loc\MessageItem_LitCigUse[5] = "" Then loc\MessageItem_LitCigUse[5] = value
                         End Select
                     Case "Message Help"
                         Select key

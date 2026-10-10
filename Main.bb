@@ -6158,6 +6158,20 @@ Function DrawGUI()
 										MsgTimer = 70 * 5
 								End Select
 								;[End Block]
+							Case "lighter"
+								;[Block]
+								Select Inventory(MouseSlot)\itemtemplate\name
+									Case "cigarette"
+									If SelectedItem\itemtemplate\sound <> 66 Then PlaySound_Strict LoadTempSound("SFX\Player\Interact\LightCig.ogg")
+									SelectedItem = Null
+									RemoveItem (Inventory(MouseSlot))
+									Inventory(MouseSlot) = CreateItem("litcig", 1,1,1)
+									Msg = I_Loc\MessageItem_LightCig
+									MsgTimer = 70 * 5
+								Default
+									Msg = I_Loc\MessageItem_Cantcombine
+									MsgTimer = 70 * 5
+								End Select
 							Default
 								;[Block]
 								Msg = I_Loc\MessageItem_Cantcombine
@@ -7554,6 +7568,17 @@ Function DrawGUI()
 						
 						RemoveItem(SelectedItem)
 						SelectedItem = Null
+					EndIf
+					;[End Block]
+				Case "litcig"
+					;[Block]
+					If CanUseItem(False,False,True)
+						Msg = I_Loc\MessageItem_LitCigUse[Rand(1,5)]
+						Injuries = Max(Injuries-0.5, 0)
+						BlurTimer = 500
+						PlaySound_Strict LoadTempSound("SFX\Player\Interact\SmokeCig.ogg")
+						MsgTimer = 70 * 5
+						RemoveItem(SelectedItem)
 					EndIf
 					;[End Block]
 				Default
