@@ -3554,9 +3554,11 @@ While IsRunning
 			If Sanity < 0 Then
 				If RestoreSanity Then Sanity = Min(Sanity + FPSfactor / 16, 0.0)
 				BlurTimer = (-Sanity)
-				CameraShake = (-Sanity)/1000
-				If Sanity < (-200) Then 
-					darkA = Max(Min((-Sanity - 200) / 700.0, 0.6), darkA)
+				CameraShake = (-Sanity)/500
+				darkA = Max(Min((-Sanity) / 700.0, 0.6), darkA)
+				CurrCameraZoom = Max(CurrCameraZoom, (Sin(Float(MilliSecs())/20.0)+1.0)*15.0*Max((5-((-Sanity+500)/100))/3.5,0.0))
+				BlurVolume = Max(Max(Min((5.0 - ((-Sanity+500)/100)) / 6.0, 0.9), 0.1), BlurVolume)
+				If Sanity < (-200) Then
 					tempamb = 375
 					If Scared = False Then ShouldPlay = 27
 					PlayerZone = 6

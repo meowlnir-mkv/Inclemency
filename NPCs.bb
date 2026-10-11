@@ -746,9 +746,6 @@ Function UpdateNPCs()
 							
 							;player is looking at it -> doesn't move
 							If move=False Then
-								BlurVolume = Max(Max(Min((4.0 - dist) / 6.0, 0.9), 0.1), BlurVolume)
-								CurrCameraZoom = Max(CurrCameraZoom, (Sin(Float(MilliSecs())/20.0)+1.0)*15.0*Max((3.5-dist)/3.5,0.0))								
-								
 								If dist < 3.5 And MilliSecs() - n\LastSeen > 60000 And temp Then
 									SightScare()
 									Scared = True
