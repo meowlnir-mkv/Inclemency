@@ -332,7 +332,7 @@ Function UpdateEvents()
 							EndIf
 						EndIf
 						
-						If (i>26) Then
+						If (i>31) Then
 							If e\room\NPC[0] <> Null Then RemoveNPC(e\room\NPC[0])
 							;If e\room\NPC[1] <> Null Then RemoveNPC(e\room\NPC[1])
 							;If e\room\NPC[2] <> Null Then RemoveNPC(e\room\NPC[2])

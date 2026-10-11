@@ -2045,7 +2045,6 @@ Music(30) = "..\Music\Scared\939"
 Music(31) = "..\Music\Panic\939"
 
 Global MusicVolume# = GetOptionFloat("audio", "music volume")
-Global PauseMusicVol# = GetOptionFloat("audio", "music volume")
 ;Global MusicCHN% = StreamSound_Strict("SFX\Music\"+Music(2)+".ogg", MusicVolume, CurrMusicStream)
 
 Global CurrMusicStream, MusicCHN, PausedCHN
@@ -2178,6 +2177,8 @@ Dim GearSFX(20)
 Dim ScrapeSFX(8, 5)
 
 Dim Step2SFX(6)
+
+Dim InsaneLightSFX(3)
 
 DrawLoading(30, True)
 
@@ -3404,7 +3405,7 @@ While IsRunning
 		
 		If PlayerRoom\RoomTemplate\Name <> "pocketdimension" And PlayerRoom\RoomTemplate\Name <> "gatea" And PlayerRoom\RoomTemplate\Name <> "exit1" And (Not IsAnyMenuOpen()) Then 
 			
-			Local tempamb = 1500
+			Local tempamb%
 			
 			If Rand(tempamb/FPSfactor) = 1 Then
 				For i = 0 To 5
@@ -3550,23 +3551,29 @@ While IsRunning
 		Local darkA# = 0.0
 		If (Not MenuOpen) Then
 			If DrainSanity Then Sanity = Max(Sanity - FPSfactor / 8, -500)
-			If Injuries > 1.0 Then Sanity = Sanity - Bloodloss*4
+			If Injuries > 1.0 Then Sanity = Max(Sanity - Bloodloss*4, -500)
 			If Sanity < 0 Then
 				If RestoreSanity Then Sanity = Min(Sanity + FPSfactor / 16, 0.0)
-				BlurTimer = (-Sanity)
-				CameraShake = (-Sanity)/500
-				darkA = Max(Min((-Sanity) / 700.0, 0.6), darkA)
-				CurrCameraZoom = Max(CurrCameraZoom, (Sin(Float(MilliSecs())/20.0)+1.0)*15.0*Max((5-((-Sanity+500)/100))/3.5,0.0))
-				BlurVolume = Max(Max(Min((5.0 - ((-Sanity+500)/100)) / 6.0, 0.9), 0.1), BlurVolume)
+				darkA = Max(Min((Abs(Sanity)) / 700.0, 0.6), darkA)
+				BlurTimer = Abs(Sanity)
 				If Sanity < (-200) Then
+					CameraShake = (Abs(Sanity+200))/500
+					If Rand((250000/Abs(Sanity))/FPSfactor) = 1 Then
+						LightBlink = (Rand(3,5))
+						PlaySound_Strict(InsaneLightSFX(Rand(0,2)))
+					EndIf
 					tempamb = 375
-					If Scared = False Then ShouldPlay = 27
 					PlayerZone = 6
+					If Scared = False Then ShouldPlay = 27
+					BlinkEffect = 0.9
+					BlinkEffectTimer = 1
 					If KillTimer => 0 Then 
 						HeartBeatVolume = Min(Abs(Sanity+200)/500.0,1.0)
 						HeartBeatRate = Max(70 + Abs(Sanity+200)/6.0,HeartBeatRate)
 					EndIf
 				EndIf
+			Else
+				tempamb = 1500
 			EndIf
 			
 			If EyeStuck > 0 Then 
@@ -3627,8 +3634,9 @@ While IsRunning
 			If (Not WearingNightVision) Then darkA = Max((1.0-SecondaryLightOn)*0.9, darkA)
 			
 			If KillTimer < 0 Then
-				ShouldPlay = 66
 				InvOpen = False
+				Scared = False
+				ScareMusic = 0
 				SelectedItem = Null
 				SelectedScreen = Null
 				SelectedMonitor = Null
@@ -4316,7 +4324,7 @@ Function KillScream()
 End Function
 
 Function SightScare()
-	If Sanity > (-250) Then Sanity = Max(Sanity-Rand(100,200), -250)
+	If Sanity > (-250) Then Sanity = Max(Sanity-Rand(50,100), -250)
 	CurrCameraZoom = 20.0
 	Select Rand(5)
 		Case 1
@@ -4333,7 +4341,7 @@ Function SightScare()
 End Function
 
 Function Jumpscare()
-	Sanity = Max(Sanity-Rand(250,500), -500)
+	Sanity = Max(Sanity-Rand(125,250), -500)
 	CurrCameraZoom = 40.0
 	CameraShake = 5
 	Select Rand(3)
@@ -7898,8 +7906,8 @@ Function DrawHUD()
 		Text x, 110, "Active textures: "+ActiveTextures()
 		Text x, 130, "SCP-427 state (secs): "+Int(I_427\Timer/70.0)
 		Text x, 150, "SCP-008 infection: "+Infect
-		Text x, 170, "Insanity: "+(-Sanity)
-		Text x, 190, "Scared Timer: "+ScareTimer
+		Text x, 170, "Insanity: "+Abs(Sanity)
+		Text x, 190, "Scared Music Timer: "+ScareTimer
 		For i = 0 To 5
 			Text x + 500, 50+(20*i), "SCP-1025 State "+i+": "+SCP1025state[i]
 		Next

@@ -298,6 +298,10 @@ For i = 0 To 4
 	ScrapeSFX(7, i) = LoadSound_Strict("SFX\Player\Footsteps\Metal\Thick\Scrape" + (i + 1) + ".ogg")
 Next
 
+For i = 0 To 2
+	InsaneLightSFX(i) = LoadSound_Strict("SFX\General\Environment\InsaneLight"+(i+1)+".ogg")
+Next
+
 End Function
 
 

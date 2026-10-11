@@ -746,11 +746,15 @@ Function UpdateNPCs()
 							
 							;player is looking at it -> doesn't move
 							If move=False Then
-								If dist < 3.5 And MilliSecs() - n\LastSeen > 60000 And temp Then
-									SightScare()
+								If dist < 3.5 And temp Then
+									If MilliSecs() - n\LastSeen > 60000 Then
+										SightScare()
+										Scared = True
+										If ScareTimer < 200 Then ScareTimer = 200
+										ScareMusic = 28
+									EndIf
+									If ScareTimer > 0 and ScareTimer < 200 Then ScareTimer = 200
 									Scared = True
-									ScareTimer = 300
-									ScareMusic = 28
 									n\LastSeen = MilliSecs()
 								EndIf
 								
@@ -760,7 +764,7 @@ Function UpdateNPCs()
 									GiveAchievement(AchvJumpscare)
 									Jumpscare()
 									Scared = True
-									ScareTimer = 250
+									ScareTimer = ScareTimer + 200
 									ScareMusic = 29
 								EndIf									
 									
@@ -1708,7 +1712,7 @@ Function UpdateNPCs()
 								PlayerSeeAble% = MeNPCSeesPlayer(n)
 								If PlayerSeeAble%=True Or n\State2>0 Then ;Player is visible for 049's sight - attacking
 									GiveAchievement(Achv049)
-									SightScare()
+									If n\PrevState <= 1 Then SightScare()
 									;Playing a sound after detecting the player
 									If n\PrevState <= 1 And ChannelPlaying(n\SoundChn2)=False
 										If n\Sound2 <> 0 Then FreeSound_Strict(n\Sound2)
@@ -3827,7 +3831,7 @@ Function UpdateNPCs()
 								n\SoundChn = PlaySound2(n\Sound, Camera, n\Collider)
 								Jumpscare()
 								Scared = True
-								ScareTimer = 250
+								ScareTimer = ScareTimer + 250
 								ScareMusic = 31
 								n\State3 = 1
 							EndIf
