@@ -4793,11 +4793,11 @@ Function UpdateEvents()
 					
 					e\EventState3 = UpdateElevators(e\EventState3, e\room\RoomDoors[2], e\room\RoomDoors[3],e\room\Objects[2],e\room\Objects[3], e)
 					
-					If EntityY(Collider)<-4600*RoomScale Then
+					If EntityY(Collider)<-4600*RoomScale Then						
 						
-						GiveAchievement(Achv939)
-						
-						ShouldPlay = 7
+						If Scared = False Then
+							If ScaredBy939 = True Then ShouldPlay = 30 Else ShouldPlay = 7
+						EndIf
 						
 						If e\room\NPC[0]=Null Or e\room\NPC[1]=Null Or e\room\NPC[2]=Null Then
 							If QuickLoadPercent = -1 Then
@@ -6263,7 +6263,7 @@ Function UpdateEvents()
 									
 									Injuries=Injuries+Rnd(0.4,0.8)
 									PlaySound_Strict DamageSFX(Rand(2,3))
-									PlaySound_Strict(DamagedSFX(Rand(0,7)))
+									Grunt()
 									CameraShake = 0.5
 									
 									e\EventState2 = Rnd(-0.1, 0.1)
@@ -7724,12 +7724,12 @@ Function UpdateEvents()
 								If Injuries > 15
 									DeathMSG = I_Loc\DeathMessage_1162
 									PlaySound_Strict LoadTempSound("SFX\SCP\1162\BodyHorrorExchange"+Rand(1,4)+".ogg")
-									If (WearingGasMask>0 Or WearingHazmat Or Wearing1499) Then PlaySound_Strict(ScreamGasSFX(Rand(0,17))) Else PlaySound_Strict(ScreamSFX(Rand(0,17)))
+									Scream()
 									LightFlash = 5.0
 									Kill()
 								Else
 									PlaySound_Strict LoadTempSound("SFX\SCP\1162\BodyHorrorExchange"+Rand(1,4)+".ogg")
-									If (WearingGasMask>0 Or WearingHazmat Or Wearing1499) Then PlaySound_Strict(ScreamGasSFX(Rand(0,17))) Else PlaySound_Strict(ScreamSFX(Rand(0,17)))
+									Scream()
 									LightFlash = 5.0
 									Msg = I_Loc\Message_1162ExchangeFailure
 									MsgTimer = 70*5
@@ -7754,12 +7754,12 @@ Function UpdateEvents()
 							If Injuries > 15
 								DeathMSG = I_Loc\DeathMessage_1162
 								PlaySound_Strict LoadTempSound("SFX\SCP\1162\BodyHorrorExchange"+Rand(1,4)+".ogg")
-								If (WearingGasMask>0 Or WearingHazmat Or Wearing1499) Then PlaySound_Strict(ScreamGasSFX(Rand(0,17))) Else PlaySound_Strict(ScreamSFX(Rand(0,17)))
+								Scream()
 								LightFlash = 5.0
 								Kill()
 							Else
 								PlaySound_Strict LoadTempSound("SFX\SCP\1162\BodyHorrorExchange"+Rand(1,4)+".ogg")
-								If (WearingGasMask>0 Or WearingHazmat Or Wearing1499) Then PlaySound_Strict(ScreamGasSFX(Rand(0,17))) Else PlaySound_Strict(ScreamSFX(Rand(0,17)))
+								Scream()
 								LightFlash = 5.0
 								Msg = I_Loc\Message_1162ExchangeSuccess
 								MsgTimer = 70*5

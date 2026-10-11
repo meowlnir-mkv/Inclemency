@@ -459,7 +459,10 @@ Global Mesh_MagX#, Mesh_MagY#, Mesh_MagZ#
 ;player stats -------------------------------------------------------------------------------------------------------
 Global KillTimer#, KillAnim%, FallTimer#, DeathTimer#
 Global Sanity#, ForceMove#, ForceAngle#
-Global RestoreSanity%
+Global RestoreSanity%, DrainSanity%
+Global Scared%
+Global ScareTimer#
+Global ScareMusic%
 
 Global Playable% = True
 
@@ -1898,6 +1901,10 @@ Function UpdateConsole()
 				Case "jumpscare"
 					Jumpscare()
 					CreateConsoleMsg("aaah")
+				Case "drainsanity"
+					DrainSanity = True
+					RestoreSanity = False
+					CreateConsoleMsg("Draining Sanity")
 				Case Chr($6A)+Chr($6F)+Chr($72)+Chr($67)+Chr($65)
 					;[Block]
 					ConsoleFlush = True 
@@ -2031,7 +2038,11 @@ Music(23) = "Ending"
 Music(24) = "Credits"
 Music(25) = "SaveMeFrom"
 Music(26) = "Paused"
-;Music(27) = "Menu2"
+Music(27) = "Insanity"
+Music(28) = "..\Music\Scared\173"
+Music(29) = "..\Music\Panic\173"
+Music(30) = "..\Music\Scared\939"
+Music(31) = "..\Music\Panic\939"
 
 Global MusicVolume# = GetOptionFloat("audio", "music volume")
 Global PauseMusicVol# = GetOptionFloat("audio", "music volume")
@@ -2109,13 +2120,15 @@ Dim InvMoveWalSFX%(10)
 Dim InvUseSFX%(10)
 
 Global AmbientSFXCHN%, CurrAmbientSFX%
-Dim AmbientSFXAmount(6)
+Dim AmbientSFXAmount(7)
 ;0 = light containment, 1 = heavy containment, 2 = entrance
 AmbientSFXAmount(0)=8 : AmbientSFXAmount(1)=11 : AmbientSFXAmount(2)=12
 ;3 = general, 4 = pre-breach
 AmbientSFXAmount(3)=15 : AmbientSFXAmount(4)=5
 ;5 = forest
 AmbientSFXAmount(5)=10
+;6 = insanity
+AmbientSFXAmount(6)=14
 
 Dim AmbientSFX%(6, 15)
 
@@ -3339,10 +3352,6 @@ While IsRunning
 	UpdateMusic()
 	If EnableSFXRelease Then AutoReleaseSounds()
 	
-	;Local menmu1% = 11
-	;Local menmu2% = 27
-	;Local menmu% = menmu1% + (menmu2% - menmu1%) * Rand(0,1)
-	
 	If MainMenuOpen Then
 		If ShouldPlay = 21 Then
 			EndBreathSFX = LoadSound(DetermineModdedSoundPath("SFX\Ending\MenuBreath.ogg"))
@@ -3351,11 +3360,9 @@ While IsRunning
 		ElseIf ShouldPlay = 66
 			If (Not ChannelPlaying(EndBreathCHN)) Then
 				FreeSound(EndBreathSFX)
-				;ShouldPlay = menmu%
 				ShouldPlay = 11
 			EndIf
 		Else
-			;ShouldPlay = menmu%
 			ShouldPlay = 11
 			If Rand(3000/FPSfactor) = 1 Then
 				PlaySound_Strict LoadTempSound("SFX\Intro\Commotion\Commotion" + (Rand(1,25)) +".ogg") 
@@ -3377,19 +3384,29 @@ While IsRunning
 		For s.FireAndForgetSounds = Each FireAndForgetSounds
 			UpdateFireAndForgetSounds(s)
 		Next
-
-		ShouldPlay = Min(PlayerZone,2)
+		
+		If Scared = True Then 
+			ShouldPlay = ScareMusic
+			ScareTimer = Max(ScareTimer - FPSfactor / 4, 0)
+		Else
+			ShouldPlay = Min(PlayerZone,2)
+			ScareMusic = 66
+		EndIf
+		If ScareTimer = 0 Then Scared = False
 		
 		DrawHandIcon = False
 		
-		RestoreSanity = True
+		If (DrainSanity = True or Injuries > 1 or Scared = True) Then tempsan = 0 Else tempsan = -1
+		RestoreSanity = tempsan
 		ShouldEntitiesFall = True
 		
 		If FPSfactor > 0 And PlayerRoom\RoomTemplate\Name <> "dimension1499" Then UpdateSecurityCams()
 		
 		If PlayerRoom\RoomTemplate\Name <> "pocketdimension" And PlayerRoom\RoomTemplate\Name <> "gatea" And PlayerRoom\RoomTemplate\Name <> "exit1" And (Not IsAnyMenuOpen()) Then 
 			
-			If Rand(1500/FPSfactor) = 1 Then
+			Local tempamb = 1500
+			
+			If Rand(tempamb/FPSfactor) = 1 Then
 				For i = 0 To 5
 					If AmbientSFX(i,CurrAmbientSFX)<>0 Then
 						If ChannelPlaying(AmbientSFXCHN)=0 Then FreeSound_Strict AmbientSFX(i,CurrAmbientSFX) : AmbientSFX(i,CurrAmbientSFX) = 0
@@ -3430,6 +3447,8 @@ While IsRunning
 						If AmbientSFX(PlayerZone,CurrAmbientSFX)=0 Then AmbientSFX(PlayerZone,CurrAmbientSFX)=LoadSound_Strict("SFX\Intro\Ambience\Ambient"+(CurrAmbientSFX+1)+".ogg")
 					Case 5
 						If AmbientSFX(PlayerZone,CurrAmbientSFX)=0 Then AmbientSFX(PlayerZone,CurrAmbientSFX)=LoadSound_Strict("SFX\SCP\860\Ambience\ambient"+(CurrAmbientSFX+1)+".ogg")
+					Case 6
+						If AmbientSFX(PlayerZone,CurrAmbientSFX)=0 Then AmbientSFX(PlayerZone,CurrAmbientSFX)=LoadSound_Strict("SFX\Ambient\Insane\SpookyAmb"+(CurrAmbientSFX+1)+".ogg")
 				End Select
 				
 				AmbientSFXCHN = PlaySound2(AmbientSFX(PlayerZone,CurrAmbientSFX), Camera, SoundEmitter)
@@ -3529,17 +3548,24 @@ While IsRunning
 		;[Block]
 		
 		Local darkA# = 0.0
-		If (Not MenuOpen)  Then
+		If (Not MenuOpen) Then
+			If DrainSanity Then Sanity = Max(Sanity - FPSfactor / 8, -500)
+			If Injuries > 1.0 Then Sanity = Sanity - Bloodloss*4
 			If Sanity < 0 Then
-				If RestoreSanity Then Sanity = Min(Sanity + FPSfactor, 0.0)
+				If RestoreSanity Then Sanity = Min(Sanity + FPSfactor / 16, 0.0)
+				BlurTimer = (-Sanity)
+				CameraShake = (-Sanity)/1000
 				If Sanity < (-200) Then 
 					darkA = Max(Min((-Sanity - 200) / 700.0, 0.6), darkA)
+					tempamb = 375
+					If Scared = False Then ShouldPlay = 27
+					PlayerZone = 6
 					If KillTimer => 0 Then 
 						HeartBeatVolume = Min(Abs(Sanity+200)/500.0,1.0)
 						HeartBeatRate = Max(70 + Abs(Sanity+200)/6.0,HeartBeatRate)
 					EndIf
 				EndIf
-			End If
+			EndIf
 			
 			If EyeStuck > 0 Then 
 				BlinkTimer = BLINKFREQ
@@ -3599,6 +3625,7 @@ While IsRunning
 			If (Not WearingNightVision) Then darkA = Max((1.0-SecondaryLightOn)*0.9, darkA)
 			
 			If KillTimer < 0 Then
+				ShouldPlay = 66
 				InvOpen = False
 				SelectedItem = Null
 				SelectedScreen = Null
@@ -3822,6 +3849,10 @@ While IsRunning
 	;If SteamRichPresenceActive Lor DiscordActive Then
 		;PlayerArea = GetCurrentPlayerArea()
 	;EndIf
+	
+	If DiscordActive Then
+		PlayerArea = GetCurrentPlayerArea()
+	EndIf
 
 	Local newAreaStr$
 	;If SteamRichPresenceActive Then
@@ -3878,6 +3909,7 @@ While IsRunning
 					Case 3 newAreaStr = "jorge has been expecting you"
 					Case 4 newAreaStr = "Being tested on SCP-173"
 					Case 5 newAreaStr = "Traversing a blue-hued forest"
+					Case 6 newAreaStr = "Going crazy"
 					Case 100 newAreaStr = "Wearing a GP-5 Gas Mask"
 					Case 101 newAreaStr = "Trapped in the Pocket Dimension"
 					Case 102 newAreaStr = "Escaping through Gate A"
@@ -4282,6 +4314,8 @@ Function KillScream()
 End Function
 
 Function SightScare()
+	If Sanity > (-250) Then Sanity = Max(Sanity-Rand(100,200), -250)
+	CurrCameraZoom = 20.0
 	Select Rand(5)
 		Case 1
 			PlaySound_Strict(HorrorSFX(0))
@@ -4297,6 +4331,9 @@ Function SightScare()
 End Function
 
 Function Jumpscare()
+	Sanity = Max(Sanity-Rand(250,500), -500)
+	CurrCameraZoom = 40.0
+	CameraShake = 5
 	Select Rand(3)
 		Case 1
 			PlaySound_Strict(HorrorSFX(Rand(1, 2)))
@@ -7859,15 +7896,17 @@ Function DrawHUD()
 		Text x, 110, "Active textures: "+ActiveTextures()
 		Text x, 130, "SCP-427 state (secs): "+Int(I_427\Timer/70.0)
 		Text x, 150, "SCP-008 infection: "+Infect
+		Text x, 170, "Insanity: "+(-Sanity)
+		Text x, 190, "Scared Timer: "+ScareTimer
 		For i = 0 To 5
-			Text x, 170+(20*i), "SCP-1025 State "+i+": "+SCP1025state[i]
+			Text x + 500, 50+(20*i), "SCP-1025 State "+i+": "+SCP1025state[i]
 		Next
 		If SelectedMonitor <> Null Then
-			Text x, 310, "Current monitor: "+SelectedMonitor\ScrObj
+			Text x + 500, 170, "Current monitor: "+SelectedMonitor\ScrObj
 		Else
-			Text x, 310, "Current monitor: NULL"
+			Text x + 500, 190, "Current monitor: NULL"
 		EndIf
-		Text x, 330, "Current trigger: " + CheckTriggers(PlayerRoom, EntityX(Collider), EntityY(Collider), EntityZ(Collider))
+		Text x + 500, 210, "Current trigger: " + CheckTriggers(PlayerRoom, EntityX(Collider), EntityY(Collider), EntityZ(Collider))
 		
 		SetFont Font1
 	EndIf
@@ -9693,6 +9732,10 @@ Function NullGame(playbuttonsfx%=True)
 	SuperManTimer = 0
 	Sanity = 0
 	RestoreSanity = True
+	DrainSanity = False
+	Scared = False
+	ScareTimer = 0
+	ScareMusic = 0
 	Crouch = False
 	CrouchState = 0.0
 	LightVolume = 0.0
@@ -9702,6 +9745,7 @@ Function NullGame(playbuttonsfx%=True)
 	PrevSecondaryLightOn# = True
 	RemoteDoorOn = True
 	SoundTransmission = False
+	ScaredBy939 = False
 	
 	InfiniteStamina% = False
 	
@@ -9930,7 +9974,7 @@ Function UpdateMusic()
 		If Not ChannelPlaying(ConsoleMusPlay) Then ConsoleMusPlay = PlaySound(ConsoleMusFlush)
 	ElseIf (Not PlayCustomMusic)
 		If NowPlaying <> ShouldPlay ; playing the wrong clip, fade out
-			CurrMusicVolume# = Max(CurrMusicVolume - (FPSfactor / 250.0), 0)
+			If Scared = True Then CurrMusicVolume = 0 Else CurrMusicVolume# = Max(CurrMusicVolume - (FPSfactor / 250.0), 0)
 			If CurrMusicVolume = 0
 				If NowPlaying<66
 					StopStream_Strict(MusicCHN)
@@ -9940,7 +9984,7 @@ Function UpdateMusic()
 				CurrMusic=0
 			EndIf
 		Else ; playing the right clip
-			CurrMusicVolume = CurrMusicVolume + (MusicVolume - CurrMusicVolume) * (0.1*FPSfactor)
+			If Scared = True Then CurrMusicVolume = MusicVolume Else CurrMusicVolume = CurrMusicVolume + (MusicVolume - CurrMusicVolume) * (0.1*FPSfactor)
 		EndIf
 		
 		If NowPlaying < 66

@@ -1,5 +1,6 @@
 ;[Block]
 Global Curr173.NPCs, Curr106.NPCs, Curr096.NPCs, Curr5131.NPCs
+Global ScaredBy939%
 Const NPCtype173% = 1, NPCtypeOldMan% = 2, NPCtypeGuard% = 3, NPCtypeD% = 4
 Const NPCtype372% = 6, NPCtypeApache% = 7, NPCtypeMTF% = 8, NPCtype096 = 9
 Const NPCtype049% = 10, NPCtypeZombie% = 11, NPCtype5131% = 12, NPCtypeTentacle% = 13
@@ -750,18 +751,20 @@ Function UpdateNPCs()
 								
 								If dist < 3.5 And MilliSecs() - n\LastSeen > 60000 And temp Then
 									SightScare()
-									
+									Scared = True
+									ScareTimer = 300
+									ScareMusic = 28
 									n\LastSeen = MilliSecs()
 								EndIf
 								
 								If dist < 1.5 And Rand(700/FPSfactor) = 1 Then PlaySound2(Scp173SFX(Rand(0, 2)), Camera, n\obj)
 								
 								If dist < 1.5 And n\LastDist > 2.0 And temp Then
-									CurrCameraZoom = 40.0
-									HeartBeatRate = Max(HeartBeatRate, 140)
-									HeartBeatVolume = 0.5
 									GiveAchievement(AchvJumpscare)
 									Jumpscare()
+									Scared = True
+									ScareTimer = 250
+									ScareMusic = 29
 								EndIf									
 									
 								n\LastDist = dist
@@ -1035,7 +1038,6 @@ Function UpdateNPCs()
 										CurrCameraZoom = Max(CurrCameraZoom, (Sin(Float(MilliSecs())/20.0)+1.0) * 20.0 * Max((4.0-dist)/4.0,0))
 										
 										If MilliSecs() - n\LastSeen > 60000 Then 
-											CurrCameraZoom = 40
 											SightScare()
 											n\LastSeen = MilliSecs()
 										EndIf
@@ -1142,8 +1144,9 @@ Function UpdateNPCs()
 										
 										If Ceil(n\Frame) = 110 And (Not GodMode) Then
 											PlaySound_Strict(DamageSFX(1))
-											PlaySound_Strict(HorrorSFX(5))					
-											If (WearingGasMask>0 Or WearingHazmat Or Wearing1499) Then PlaySound_Strict(ScreamGasSFX(Rand(0,17))) Else PlaySound_Strict(ScreamSFX(Rand(0,17)))
+											PlaySound_Strict(HorrorSFX(5))
+											SightScare()
+											Scream()
 											If PlayerRoom\RoomTemplate\Name = "pocketdimension" Then
 												DeathMSG = I_Loc\DeathMessage_106Pd
 												Kill()
@@ -1708,7 +1711,7 @@ Function UpdateNPCs()
 								PlayerSeeAble% = MeNPCSeesPlayer(n)
 								If PlayerSeeAble%=True Or n\State2>0 Then ;Player is visible for 049's sight - attacking
 									GiveAchievement(Achv049)
-									
+									SightScare()
 									;Playing a sound after detecting the player
 									If n\PrevState <= 1 And ChannelPlaying(n\SoundChn2)=False
 										If n\Sound2 <> 0 Then FreeSound_Strict(n\Sound2)
@@ -2268,7 +2271,7 @@ Function UpdateNPCs()
 											If (Abs(DeltaYaw(n\Collider,Collider))<=60.0)
 												PlaySound_Strict DamageSFX(Rand(5,8))
 												If WearingHazmat Then PlaySound_Strict(LoadTempSound("SFX\General\Damage\HazmatHit.ogg"))
-												If (WearingGasMask>0 Or WearingHazmat Or Wearing1499) Then PlaySound_Strict(DamagedGasSFX(Rand(0,17))) Else PlaySound_Strict(DamagedSFX(Rand(0,17)))
+												Grunt()
 												Injuries = Injuries+Rnd(0.4,1.0)
 												DeathMSG = I_Loc\DeathMessage_0492
 											EndIf
@@ -2284,7 +2287,7 @@ Function UpdateNPCs()
 											If (Abs(DeltaYaw(n\Collider,Collider))<=60.0)
 												PlaySound_Strict DamageSFX(Rand(5,8))
 												If WearingHazmat Then PlaySound_Strict(LoadTempSound("SFX\General\Damage\HazmatHit.ogg"))
-												If (WearingGasMask>0 Or WearingHazmat Or Wearing1499) Then PlaySound_Strict(DamagedGasSFX(Rand(0,17))) Else PlaySound_Strict(DamagedSFX(Rand(0,17)))
+												Grunt()
 												Injuries = Injuries+Rnd(0.4,1.0)
 												DeathMSG = I_Loc\DeathMessage_0492
 											EndIf
@@ -3271,12 +3274,12 @@ Function UpdateNPCs()
 											If WearingHazmat Then
 												Injuries = Injuries+Rnd(0.5)
 												PlaySound_Strict(LoadTempSound("SFX\General\Damage\HazmatHit.ogg"))
-												PlaySound_Strict(DamagedGasSFX(Rand(0,17)))
+												Grunt()
 											Else
 												BlurTimer = 100
 												Injuries = Injuries+Rnd(1.0,1.5)
 												PlaySound_Strict DamageSFX(Rand(2,3))
-												If (WearingGasMask>0 Or Wearing1499) Then PlaySound_Strict(DamagedGasSFX(Rand(0,17))) Else PlaySound_Strict(DamagedSFX(Rand(0,17)))
+												Grunt()
 												
 												If Injuries > 3.0 Then
 													If PlayerRoom\RoomTemplate\Name = "room2offices" Then
@@ -3755,13 +3758,7 @@ Function UpdateNPCs()
 									If temp Then
 										If Distance(n\EnemyX, n\EnemyZ, EntityX(n\Collider), EntityZ(n\Collider))<1.5 Then
 											PlaySound_Strict n\Sound2
-											If Injuries<=4.0 Then
-												If (WearingGasMask>0 Or WearingHazmat Or Wearing1499) Then
-													PlaySound_Strict(DamagedGasSFX(Rand(0,17)))
-												Else
-													PlaySound_Strict(DamagedSFX(Rand(0,17)))
-												EndIf
-											EndIf
+											If Injuries<=4.0 Then Grunt()
 											Injuries = Injuries + Rnd(1.5, 2.5)-WearingVest*0.5
 											BlurTimer = 500		
 										Else
@@ -3830,9 +3827,11 @@ Function UpdateNPCs()
 							If n\State3 = 0 Then
 								If n\Sound <> 0 Then FreeSound_Strict n\Sound : n\Sound = 0
 								n\Sound = LoadSound_Strict("SFX\SCP\939\"+(n\ID Mod 3)+"Attack"+Rand(1,3)+".ogg")
-								n\SoundChn = PlaySound2(n\Sound, Camera, n\Collider)										
-								
-								PlaySound_Strict(LoadTempSound("SFX\SCP\939\attack.ogg"))
+								n\SoundChn = PlaySound2(n\Sound, Camera, n\Collider)
+								Jumpscare()
+								Scared = True
+								ScareTimer = 250
+								ScareMusic = 31
 								n\State3 = 1
 							EndIf
 							
@@ -3845,8 +3844,10 @@ Function UpdateNPCs()
 								
 								n\Frame = 175
 								n\Reload = 70 * 3
-								;SetAnimTime(n\obj, 175)	
+								;SetAnimTime(n\obj, 175)
+								SightScare()
 								GiveAchievement(Achv939)
+								ScaredBy939 = True
 							EndIf
 							
 							n\State = 1
@@ -4357,7 +4358,8 @@ Function UpdateNPCs()
 								;If n\Frame>2173.0 And prevFrame<=2173.0 Or n\Frame>2203.0 And prevFrame<=2203.0 Or n\Frame>2227.0 And prevFrame<=2227.0 Then
 								If (n\Frame>470.0 And prevFrame<=470.0) Or (n\Frame>500.0 And prevFrame<=500.0) Or (n\Frame>527.0 And prevFrame<=527.0)
 									PlaySound2(LoadTempSound("SFX\General\Damage\Slash"+Rand(1,2)+".ogg"), Camera, n\Collider)
-									If (WearingGasMask>0 Or Wearing1499) Then PlaySound_Strict(DamagedGasSFX(Rand(0,17))) Else PlaySound_Strict(DamagedSFX(Rand(0,17)))
+									If WearingNightVision = 0 Then Jumpscare()
+									Grunt()
 									Injuries = Injuries + Rnd(0.5,1.0)								
 								EndIf	
 							EndIf
@@ -4766,13 +4768,7 @@ Function UpdateNPCs()
 									Else
 										Injuries = Injuries + Rnd(0.75,1.5)
 										PlaySound2(LoadTempSound("SFX\General\Damage\Slash"+Rand(1,2)+".ogg"), Camera, n\Collider)
-										If Injuries<=10.0 Then
-											If (WearingGasMask>0 Or WearingHazmat Or Wearing1499) Then
-												PlaySound_Strict(DamagedGasSFX(Rand(0,17)))
-											Else
-												PlaySound_Strict(DamagedSFX(Rand(0,17)))
-											EndIf
-										EndIf
+										If Injuries<=10.0 Then Grunt()
 										If Injuries > 10.0
 											Kill()
 											If PlayerRoom\RoomTemplate\Name$ = "dimension1499"
@@ -4963,7 +4959,7 @@ Function UpdateNPCs()
 									If (Abs(DeltaYaw(n\Collider,Collider))<=60.0)
 										If WearingHazmat Then PlaySound_Strict(LoadTempSound("SFX\General\Damage\HazmatHit.ogg"))
 										PlaySound_Strict DamageSFX(Rand(5,8))
-										PlaySound_Strict(DamagedGasSFX(Rand(0,17)))
+										Grunt()
 										Injuries = Injuries+Rnd(0.4,1.0)
 										Infect = Infect + (1+(1*SelectedDifficulty\aggressiveNPCs))
 										DeathMSG = I_Loc\DeathMessage_008zombie
