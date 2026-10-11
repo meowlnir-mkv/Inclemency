@@ -10,23 +10,28 @@
 Gameplay:
 - Added four new rooms to the Light Containment Zone
 - You can no longer save via quitting on the Keter difficulty
+- Being scared and losing blood negatively affects the player's sanity
 - Agent Ulgrin no longer hands you SCP-173's document in the intro
 - You no longer recieve SCP-173's document when starting a new game with the intro disabled
 - Added new achievements: Object of Attention, Oh Shit!, Anklebreaker, To Hell..., ...And Back, Sacrifice, Absconded, Iron Resolve, Go-Fer, Freedom In A Flash
+- New "Lighter" and "Lit Cigarette" items: use the Lighter to light a cigarette which you can then smoke
 - Removed 'Mods' button from the main menu
 - Buffed SCP-1499
 
 Visuals:
 - Added extra HUD icon states for blinking, standing still (+ crouched variant), and walking
 - Completely removed all custom lightmaps due to various issues
+- Visual effects for low sanity (slight screen shake + blur)
 - Remastered whitewall and officewall to have a higher resolution
 - Changed the textures for smoke and smoke2
 - Changed the textures for metal3, metal, and metal_darker
 - Tweaked viewbob intensity and speed to resemble a more normal walking gait and match the footstep speed
 
 Audio:
+- Dynamic music systems for SCP encounters
+- Added a special music track and ambience set for low sanity
 - Added randomized ambience that plays in the main menu
-- Expanded the footstep sound system dramatically with randomized foley and more footstep variation
+- Expanded the footstep sound system dramatically with randomized foley, more footstep variation and more materials
 - Tweaked footstep speed to resemble a more normal walking gait
 - Added different sound effects for different inventory interactions
 - Added a new inventory sound effect category for cards and badges
@@ -35,6 +40,8 @@ Audio:
 - Added a large variety of screams and grunts that play when killed and damaged respectively (+ gas mask variants)
 - Added cloth foley sounds when crouching/uncrouching
 - Larger variety of scare sounds + an ironed out implementation of them
+- Added a larger variety of randomized sound effects when saving the game
+- Added a sound effect that plays when viewing a clickable monitor
 - Remastered the sound effects for blast doors
 - Added special sounds when getting hit and dying while wearing a hazmat suit
 - Remastered the end dialogue for Ending B2
