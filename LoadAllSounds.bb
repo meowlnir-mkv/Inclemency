@@ -299,7 +299,7 @@ For i = 0 To 4
 Next
 
 For i = 0 To 2
-	InsaneLightSFX(i) = LoadSound_Strict("SFX\General\Environment\InsaneLight"+(i+1)+".ogg")
+	InsaneLightSFX(i) = LoadSound_Strict("SFX\Player\Insanity\InsaneLight"+(i+1)+".ogg")
 Next
 
 End Function

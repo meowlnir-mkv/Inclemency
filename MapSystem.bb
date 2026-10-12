@@ -6549,7 +6549,7 @@ Function UpdateSecurityCams()
 						DeathMSG = I_Loc\DeathMessage_895
 						
 						If VomitTimer < -10 Then
-							Kill()
+							Kill(False)
 						EndIf
 					EndIf
 					

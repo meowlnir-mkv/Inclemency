@@ -748,7 +748,7 @@ Function UpdateNPCs()
 							If move=False Then
 								If dist < 3.5 And temp Then
 									If MilliSecs() - n\LastSeen > 60000 Then
-										SightScare()
+										SightScare(True, True)
 										Scared = True
 										If ScareTimer < 200 Then ScareTimer = 200
 										ScareMusic = 28
@@ -762,7 +762,7 @@ Function UpdateNPCs()
 								
 								If dist < 1.5 And n\LastDist > 2.0 And temp Then
 									GiveAchievement(AchvJumpscare)
-									Jumpscare()
+									Jumpscare(True)
 									Scared = True
 									ScareTimer = ScareTimer + 200
 									ScareMusic = 29
@@ -857,7 +857,7 @@ Function UpdateNPCs()
 												Else
 													TurnEntity(Camera, 0, Rand(-100,-80), 0)
 												EndIf
-												Kill()
+												Kill(False)
 												
 											EndIf
 										Else
@@ -1002,6 +1002,7 @@ Function UpdateNPCs()
 								EndIf
 								
 								PlaySound_Strict(DecaySFX(0))
+								GiveAchievement(Achv106)
 							End If
 							
 							If Rand(500/FPSfactor) = 1 Then PlaySound2(OldManSFX(Rand(0, 2)), Camera, n\Collider)
@@ -1031,7 +1032,6 @@ Function UpdateNPCs()
 								If Visible Then
 									If PlayerRoom\RoomTemplate\Name <> "gatea" Then n\PathTimer = 0
 									If EntityInView(n\Collider, Camera) Then
-										GiveAchievement(Achv106)
 										
 										;Achievements(Achv106) = True
 										
@@ -1039,7 +1039,7 @@ Function UpdateNPCs()
 										CurrCameraZoom = Max(CurrCameraZoom, (Sin(Float(MilliSecs())/20.0)+1.0) * 20.0 * Max((4.0-dist)/4.0,0))
 										
 										If MilliSecs() - n\LastSeen > 60000 Then 
-											SightScare()
+											SightScare(True, True)
 											n\LastSeen = MilliSecs()
 										EndIf
 									EndIf
@@ -1146,11 +1146,11 @@ Function UpdateNPCs()
 										If Ceil(n\Frame) = 110 And (Not GodMode) Then
 											PlaySound_Strict(DamageSFX(1))
 											PlaySound_Strict(HorrorSFX(5))
-											SightScare()
+											SightScare(True, True)
 											Scream()
 											If PlayerRoom\RoomTemplate\Name = "pocketdimension" Then
 												DeathMSG = I_Loc\DeathMessage_106Pd
-												Kill()
+												Kill(False)
 											Else
 												PlaySound_Strict(OldManSFX(3))
 												FallTimer = Min(-1, FallTimer)
@@ -1379,7 +1379,7 @@ Function UpdateNPCs()
 												CameraShake = 30
 												BlurTimer = 2000
 												DeathMSG = I_Loc\DeathMessage_096
-												Kill()
+												Kill(False)
 												KillAnim = 1
 												For i = 0 To 6
 													PositionEntity pvt, EntityX(Collider)+Rnd(-0.1,0.1),EntityY(Collider)-0.05,EntityZ(Collider)+Rnd(-0.1,0.1)
@@ -1712,7 +1712,7 @@ Function UpdateNPCs()
 								PlayerSeeAble% = MeNPCSeesPlayer(n)
 								If PlayerSeeAble%=True Or n\State2>0 Then ;Player is visible for 049's sight - attacking
 									GiveAchievement(Achv049)
-									If n\PrevState <= 1 Then SightScare()
+									If n\PrevState <= 1 Then SightScare(True, True)
 									;Playing a sound after detecting the player
 									If n\PrevState <= 1 And ChannelPlaying(n\SoundChn2)=False
 										If n\Sound2 <> 0 Then FreeSound_Strict(n\Sound2)
@@ -1777,7 +1777,7 @@ Function UpdateNPCs()
 													Next
 												Else
 													DeathMSG = I_Loc\DeathMessage_049
-													Kill() : KillAnim = 0
+													Kill(False) : KillAnim = 0
 												EndIf
 												PlaySound_Strict HorrorSFX(13)
 												If n\Sound2 <> 0 Then FreeSound_Strict(n\Sound2)
@@ -2880,6 +2880,7 @@ Function UpdateNPCs()
 									If EntityInView(n\Collider,Camera) Then
 										If EntityVisible(Collider, n\Collider) Then
 											n\LastSeen = 1
+											SightScare(False,True)
 											PlaySound_Strict LoadTempSound("SFX\SCP\513\Bell"+Rand(2,3)+".ogg")
 										EndIf
 									EndIf
@@ -2928,6 +2929,7 @@ Function UpdateNPCs()
 													If EntityInView(n\Collider,Camera) Then
 														If EntityVisible(Collider, n\Collider) Then
 															n\LastSeen = 1
+															SightScare(False,True)
 															PlaySound_Strict LoadTempSound("SFX\SCP\513\Bell"+Rand(2,3)+".ogg")
 														EndIf
 													EndIf
@@ -3288,7 +3290,7 @@ Function UpdateNPCs()
 													Else
 														DeathMSG = I_Loc\DeathMessage_035Tentacle
 													EndIf
-													Kill()
+													Kill(False)
 												EndIf
 											EndIf
 											
@@ -3606,7 +3608,7 @@ Function UpdateNPCs()
 								
 								;Animate2(n\obj, AnimTime(n\obj), 451,493, 0.5, False)
 								If (prevFrame < 461 And n\Frame=>461) Then 
-									If KillTimer => 0 Then Kill() : KillAnim = 0
+									If KillTimer => 0 Then Kill(False) : KillAnim = 0
 									PlaySound_Strict(n\Sound)
 								EndIf
 								If (prevFrame < 476 And n\Frame=>476) Then PlaySound_Strict(n\Sound2)
@@ -3770,7 +3772,7 @@ Function UpdateNPCs()
 									
 									If Injuries>4.0 Then 
 										DeathMSG=I_Loc\DeathMessage_939
-										KillScream()
+										Kill(True)
 										If (Not GodMode) Then n\State = 5
 									EndIf								
 								Else
@@ -3829,7 +3831,7 @@ Function UpdateNPCs()
 								If n\Sound <> 0 Then FreeSound_Strict n\Sound : n\Sound = 0
 								n\Sound = LoadSound_Strict("SFX\SCP\939\"+(n\ID Mod 3)+"Attack"+Rand(1,3)+".ogg")
 								n\SoundChn = PlaySound2(n\Sound, Camera, n\Collider)
-								Jumpscare()
+								Jumpscare(True)
 								Scared = True
 								ScareTimer = ScareTimer + 250
 								ScareMusic = 31
@@ -3846,7 +3848,7 @@ Function UpdateNPCs()
 								n\Frame = 175
 								n\Reload = 70 * 3
 								;SetAnimTime(n\obj, 175)
-								SightScare()
+								SightScare(True, True)
 								GiveAchievement(Achv939)
 								ScaredBy939 = True
 							EndIf
@@ -4359,7 +4361,7 @@ Function UpdateNPCs()
 								;If n\Frame>2173.0 And prevFrame<=2173.0 Or n\Frame>2203.0 And prevFrame<=2203.0 Or n\Frame>2227.0 And prevFrame<=2227.0 Then
 								If (n\Frame>470.0 And prevFrame<=470.0) Or (n\Frame>500.0 And prevFrame<=500.0) Or (n\Frame>527.0 And prevFrame<=527.0)
 									PlaySound2(LoadTempSound("SFX\General\Damage\Slash"+Rand(1,2)+".ogg"), Camera, n\Collider)
-									If WearingNightVision = 0 Then Jumpscare()
+									If WearingNightVision = 0 Then Jumpscare(True)
 									Grunt()
 									Injuries = Injuries + Rnd(0.5,1.0)								
 								EndIf	
@@ -4440,7 +4442,7 @@ Function UpdateNPCs()
 						
 						If (n\State2>70*15) Then
 							DeathMSG = I_Loc\DeathMessage_1048a
-							Kill()
+							Kill(False)
 							n\State = 3
 						EndIf
 
@@ -4771,7 +4773,7 @@ Function UpdateNPCs()
 										PlaySound2(LoadTempSound("SFX\General\Damage\Slash"+Rand(1,2)+".ogg"), Camera, n\Collider)
 										If Injuries<=10.0 Then Grunt()
 										If Injuries > 10.0
-											Kill()
+											Kill(False)
 											If PlayerRoom\RoomTemplate\Name$ = "dimension1499"
 												DeathMSG = I_Loc\DeathMessage_14991Dimension
 											Else
@@ -4793,7 +4795,7 @@ Function UpdateNPCs()
 										PlaySound2(LoadTempSound("SFX\General\Damage\Slash"+Rand(1,2)+".ogg"), Camera, n\Collider)
 										If Injuries < 10.0 Then Grunt()
 										If Injuries => 10.0
-											If KillTimer >= 0 Then KillScream()
+											If KillTimer >= 0 Then Kill(True)
 											If PlayerRoom\RoomTemplate\Name$ = "dimension1499"
 												DeathMSG = I_Loc\DeathMessage_14991Dimension
 											Else
@@ -6862,7 +6864,7 @@ Function Shoot(x#, y#, z#, hitProb# = 1.0, particles% = True, instaKill% = False
 	
 	If (Not GodMode) Then 
 		
-		If instaKill Then Kill() : PlaySound_Strict BullethitSFX : Return
+		If instaKill Then Kill(False) : PlaySound_Strict BullethitSFX : Return
 		
 		If Rnd(1.0) =< hitProb Then
 			TurnEntity Camera, Rnd(-3,3), Rnd(-3,3), 0
@@ -6903,12 +6905,12 @@ Function Shoot(x#, y#, z#, hitProb# = 1.0, particles% = True, instaKill% = False
 				EndIf
 				
 				If Injuries >= 5
-					If Rand(3) = 1 Then Kill()
+					If Rand(3) = 1 Then Kill(False)
 				EndIf
 			Else
 				Select Rand(6)
 					Case 1
-						Kill()
+						Kill(False)
 					Case 2
 						BlurTimer = 500
 						ShotMessageUpdate = I_Loc\MessageShot_Leftleg
@@ -6940,7 +6942,7 @@ Function Shoot(x#, y#, z#, hitProb# = 1.0, particles% = True, instaKill% = False
 
 			Injuries = Min(Injuries, 4.0)
 			
-			;Kill()
+			;Kill(False)
 			PlaySound_Strict BullethitSFX
 		ElseIf particles And ParticleAmount>0
 			Local pvt = CreatePivot()

@@ -460,6 +460,7 @@ Global Mesh_MagX#, Mesh_MagY#, Mesh_MagZ#
 Global KillTimer#, KillAnim%, FallTimer#, DeathTimer#
 Global Sanity#, ForceMove#, ForceAngle#
 Global RestoreSanity%, DrainSanity%
+Global SanityDrainRate%
 Global Scared%
 Global ScareTimer#
 Global ScareMusic%
@@ -1896,15 +1897,15 @@ Function UpdateConsole()
 					Grunt()
 					CreateConsoleMsg("owww")
 				Case "sight"
-					SightScare()
+					SightScare(True, True)
 					CreateConsoleMsg("oh shit")
 				Case "jumpscare"
-					Jumpscare()
+					Jumpscare(True)
 					CreateConsoleMsg("aaah")
 				Case "drainsanity"
-					DrainSanity = True
-					RestoreSanity = False
-					CreateConsoleMsg("Draining Sanity")
+					DrainSanity = (Not DrainSanity)
+					If DrainSanity = True Then CreateConsoleMsg("Draining Sanity") Else CreateConsoleMsg("Restoring Sanity")
+					SanityDrainRate% = 16
 				Case Chr($6A)+Chr($6F)+Chr($72)+Chr($67)+Chr($65)
 					;[Block]
 					ConsoleFlush = True 
@@ -2126,10 +2127,10 @@ AmbientSFXAmount(0)=8 : AmbientSFXAmount(1)=11 : AmbientSFXAmount(2)=12
 AmbientSFXAmount(3)=15 : AmbientSFXAmount(4)=5
 ;5 = forest
 AmbientSFXAmount(5)=10
-;6 = insanity
-AmbientSFXAmount(6)=14
+;6 = spooky, 7 = insanity
+AmbientSFXAmount(6)=14 : AmbientSFXAmount(7)=14
 
-Dim AmbientSFX%(6, 15)
+Dim AmbientSFX%(7, 15)
 
 Dim OldManSFX%(8)
 
@@ -2140,6 +2141,8 @@ Dim HorrorSFX%(20)
 DrawLoading(25, True)
 
 Dim IntroSFX%(20)
+
+Global AmbChance%
 
 ;IntroSFX(13) = LoadSound_Strict("SFX\intro\shoot1.ogg")
 ;IntroSFX(14) = LoadSound_Strict("SFX\intro\shoot2.ogg")
@@ -2267,6 +2270,8 @@ Global ClerkOBJ
 Global IntercomStreamCHN%
 
 Global ForestNPC,ForestNPCTex,ForestNPCData#[3]
+
+Global Active5131%
 ;[End Block]
 
 ;-----------------------------------------  Images ----------------------------------------------------------
@@ -3397,17 +3402,13 @@ While IsRunning
 		
 		DrawHandIcon = False
 		
-		If (DrainSanity = True or Injuries > 1 or Scared = True) Then tempsan = 0 Else tempsan = -1
-		RestoreSanity = tempsan
 		ShouldEntitiesFall = True
 		
 		If FPSfactor > 0 And PlayerRoom\RoomTemplate\Name <> "dimension1499" Then UpdateSecurityCams()
 		
 		If PlayerRoom\RoomTemplate\Name <> "pocketdimension" And PlayerRoom\RoomTemplate\Name <> "gatea" And PlayerRoom\RoomTemplate\Name <> "exit1" And (Not IsAnyMenuOpen()) Then 
 			
-			Local tempamb%
-			
-			If Rand(tempamb/FPSfactor) = 1 Then
+			If Rand(AmbChance/FPSfactor) = 1 Then
 				For i = 0 To 5
 					If AmbientSFX(i,CurrAmbientSFX)<>0 Then
 						If ChannelPlaying(AmbientSFXCHN)=0 Then FreeSound_Strict AmbientSFX(i,CurrAmbientSFX) : AmbientSFX(i,CurrAmbientSFX) = 0
@@ -3417,6 +3418,7 @@ While IsRunning
 				PositionEntity (SoundEmitter, EntityX(Camera) + Rnd(-1.0, 1.0), 0.0, EntityZ(Camera) + Rnd(-1.0, 1.0))
 				
 				If Rand(3)=1 Then PlayerZone = 3
+				If PlayerZone = 7 And Rand(2)=1 Then PlayerZone = 6
 				
 				If PlayerRoom\RoomTemplate\Name = "173" Then 
 					PlayerZone = 4
@@ -3449,7 +3451,9 @@ While IsRunning
 					Case 5
 						If AmbientSFX(PlayerZone,CurrAmbientSFX)=0 Then AmbientSFX(PlayerZone,CurrAmbientSFX)=LoadSound_Strict("SFX\SCP\860\Ambience\ambient"+(CurrAmbientSFX+1)+".ogg")
 					Case 6
-						If AmbientSFX(PlayerZone,CurrAmbientSFX)=0 Then AmbientSFX(PlayerZone,CurrAmbientSFX)=LoadSound_Strict("SFX\Ambient\Insane\SpookyAmb"+(CurrAmbientSFX+1)+".ogg")
+						If AmbientSFX(PlayerZone,CurrAmbientSFX)=0 Then AmbientSFX(PlayerZone,CurrAmbientSFX)=LoadSound_Strict("SFX\Player\Insanity\Ambient\Stage1\Ambient"+(CurrAmbientSFX+1)+".ogg")
+					Case 7
+						If AmbientSFX(PlayerZone,CurrAmbientSFX)=0 Then AmbientSFX(PlayerZone,CurrAmbientSFX)=LoadSound_Strict("SFX\Player\Insanity\Ambient\Stage2\Ambient"+(CurrAmbientSFX+1)+".ogg")
 				End Select
 				
 				AmbientSFXCHN = PlaySound2(AmbientSFX(PlayerZone,CurrAmbientSFX), Camera, SoundEmitter)
@@ -3550,31 +3554,10 @@ While IsRunning
 		
 		Local darkA# = 0.0
 		If (Not MenuOpen) Then
-			If DrainSanity Then Sanity = Max(Sanity - FPSfactor / 8, -500)
-			If Injuries > 1.0 Then Sanity = Max(Sanity - Bloodloss*4, -500)
-			If Sanity < 0 Then
-				If RestoreSanity Then Sanity = Min(Sanity + FPSfactor / 16, 0.0)
-				darkA = Max(Min((Abs(Sanity)) / 700.0, 0.6), darkA)
-				BlurTimer = Abs(Sanity)
-				If Sanity < (-200) Then
-					CameraShake = (Abs(Sanity+200))/500
-					If Rand((250000/Abs(Sanity))/FPSfactor) = 1 Then
-						LightBlink = (Rand(3,5))
-						PlaySound_Strict(InsaneLightSFX(Rand(0,2)))
-					EndIf
-					tempamb = 375
-					PlayerZone = 6
-					If Scared = False Then ShouldPlay = 27
-					BlinkEffect = 0.9
-					BlinkEffectTimer = 1
-					If KillTimer => 0 Then 
-						HeartBeatVolume = Min(Abs(Sanity+200)/500.0,1.0)
-						HeartBeatRate = Max(70 + Abs(Sanity+200)/6.0,HeartBeatRate)
-					EndIf
-				EndIf
-			Else
-				tempamb = 1500
-			EndIf
+			
+			UpdateSanity()
+			;line relied upon local variable, moved here
+			darkA = Max(Min((Abs(Sanity)) / 700.0, 0.6), darkA)
 			
 			If EyeStuck > 0 Then 
 				BlinkTimer = BLINKFREQ
@@ -4273,7 +4256,7 @@ Function QuickLoadEvents()
 	
 End Function
 
-Function Kill()
+Function Kill(Scream%)
 	If GodMode Then Return
 	
 	If BreathCHN <> 0 Then
@@ -4283,6 +4266,7 @@ Function Kill()
 	If KillTimer >= 0 Then
 		KillAnim = Rand(0,1)
 		PlaySound_Strict(DamageSFX(0))
+		If Scream% = True Then Scream()
 		PlaySound_Strict LoadTempSound("SFX\Player\Death.ogg")
 		If WearingHazmat Then PlaySound_Strict LoadTempSound("SFX\Player\HazmatDeath.ogg")
 		If SelectedDifficulty\permaDeath Then
@@ -4298,50 +4282,33 @@ Function Kill()
 	EndIf
 End Function
 
-Function KillScream()
-	If GodMode Then Return
-	
-	If BreathCHN <> 0 Then
-		If ChannelPlaying(BreathCHN) Then StopChannel(BreathCHN)
+Function SightScare(shouldsound%, affectsanity%)
+	If affectsanity% Then
+		If Sanity > (-500) Then
+			Sanity = Max(Sanity-Rand(50,100), -500)
+		ElseIf Sanity > (-1000) Then
+			Sanity = Max(Sanity-Rand(25,50), -1000)
+		EndIf
 	EndIf
-	
-	If KillTimer >= 0 Then
-		KillAnim = Rand(0,1)
-		PlaySound_Strict(DamageSFX(0))
-		Scream()
-		PlaySound_Strict LoadTempSound("SFX\Player\Death.ogg")
-		If SelectedDifficulty\permaDeath Then
-			DeleteFile(CurrentDir() + SavePath + CurrSave+".cbsav")
-			LoadSaveGames()
-		End If
-		
-		KillTimer = Min(-1, KillTimer)
-		ShowEntity Head
-		PositionEntity(Head, EntityX(Camera, True), EntityY(Camera, True), EntityZ(Camera, True), True)
-		ResetEntity (Head)
-		RotateEntity(Head, 0, EntityYaw(Camera), 0)		
-	EndIf
-End Function
-
-Function SightScare()
-	If Sanity > (-250) Then Sanity = Max(Sanity-Rand(50,100), -250)
 	CurrCameraZoom = 20.0
-	Select Rand(5)
-		Case 1
-			PlaySound_Strict(HorrorSFX(0))
-		Case 2
-			PlaySound_Strict(HorrorSFX(Rand(3, 6)))
-		Case 3
-			PlaySound_Strict(HorrorSFX(8))
-		Case 4
-			PlaySound_Strict(HorrorSFX(10))
-		Case 5
-			PlaySound_Strict(HorrorSFX(Rand(16, 20)))
-	End Select
+	If shouldsound% Then
+		Select Rand(5)
+			Case 1
+				PlaySound_Strict(HorrorSFX(0))
+			Case 2
+				PlaySound_Strict(HorrorSFX(Rand(3, 6)))
+			Case 3
+				PlaySound_Strict(HorrorSFX(8))
+			Case 4
+				PlaySound_Strict(HorrorSFX(10))
+			Case 5
+				PlaySound_Strict(HorrorSFX(Rand(16, 20)))
+		End Select
+	EndIf
 End Function
 
-Function Jumpscare()
-	Sanity = Max(Sanity-Rand(125,250), -500)
+Function Jumpscare(affectsanity%)
+	If affectsanity% Then Sanity = Max(Sanity-Rand(125,250), -1000)
 	CurrCameraZoom = 40.0
 	CameraShake = 5
 	Select Rand(3)
@@ -4367,6 +4334,83 @@ Function Scream()
 		PlaySound_Strict(ScreamGasSFX(Rand(0,17)))
 	Else
 		PlaySound_Strict(ScreamSFX(Rand(0,17)))
+	EndIf
+End Function
+
+Function UpdateSanity()
+	
+	Local Faked106%
+	Local tempsan%
+	Local blinkimg%
+	
+	If Active5131 = True Then DrainSanity = True
+	
+	If DrainSanity = True or Injuries > 1 or Scared = True Then
+		tempsan% = False
+	Else
+		tempsan% = True
+	EndIf
+	RestoreSanity = tempsan%
+	
+	If DrainSanity Then Sanity = Max(Sanity - FPSfactor / SanityDrainRate%, -1000)
+	If Injuries > 1.0 Then Sanity = Max(Sanity - Bloodloss*4, -1000)
+	
+	If Sanity < 0 Then
+		If RestoreSanity Then Sanity = Min(Sanity + FPSfactor / 16, 0.0)
+		BlurTimer = Abs(Sanity/2)
+		
+		If Sanity < (-250) Then
+			CameraShake = (Abs(Sanity+200))/500			
+			AmbChance = 375
+			PlayerZone = 6
+			If Scared = False Then ShouldPlay = 27
+			
+			If Rand((1000000/Abs(Sanity))/FPSfactor) = 1 Then
+				LightBlink = (Rand(3,5))
+				PlaySound_Strict(InsaneLightSFX(Rand(0,2)))
+			EndIf
+			
+			If KillTimer => 0 Then 
+				HeartBeatVolume = Min(Abs((Sanity+250)/2)/500.0,1.0)
+				HeartBeatRate = Max(70 + Abs((Sanity+250)/2)/6.0,HeartBeatRate)
+			EndIf
+			
+			If Sanity < (-500) Then
+				If RestoreSanity Then Sanity = Min(Sanity + FPSfactor / 32, -500)
+				PlayerZone = 7
+				
+				If Faked106% = False Then
+					If Rand(10000)=1 and (Not PlayerRoom\RoomTemplate\DisableDecals) Then
+						FakeOutAchv(Achv106)
+						de.Decals = CreateDecal(0, EntityX(Collider), 0.01, EntityZ(Collider), 90, Rand(360), 0)
+						de\Size = 0.05 : de\SizeChange = 0.001 : EntityAlpha(de\obj, 0.8) : UpdateDecals
+						Faked106% = True
+						PlaySound_Strict LoadTempSound("SFX\Player\Insanity\106FakeOut.ogg")
+					EndIf
+				EndIf
+				
+				If BlinkTimer < -3 And BlinkTimer > -10 Then
+					If blinkimg% = 0 Then
+						If BlinkTimer > -5 And Rand(500)=1 Then
+							PlaySound_Strict DripSFX(0)
+							If blinkimg% = 0 Then blinkimg% = LoadImage_Strict("GFX\insbln.png")
+						EndIf
+					Else
+						DrawImage blinkimg%, GraphicWidth/2-Rand(390,310), GraphicHeight/2-Rand(290,310)
+					EndIf
+				Else
+					If blinkimg% <> 0 Then FreeImage blinkimg% : blinkimg% = 0
+				EndIf
+				
+				If Sanity < (-750) Then
+					If Scared = False Then ShouldPlay = 66
+					If Rand(10000)=1 Then SightScare(True,False)
+				EndIf
+				If Sanity = (-1000) Then GiveAchievement(AchvInsane)
+			EndIf
+		EndIf
+	Else
+		AmbChance = 1500
 	EndIf
 End Function
 
@@ -4762,7 +4806,7 @@ Function MovePlayer()
 		
 		If SuperManTimer > 70 * 50 Then
 			DeathMSG = I_Loc\DeathMessage_914Superman
-			Kill()
+			Kill(False)
 			ShowEntity Fog
 		Else
 			BlurTimer = 500		
@@ -4774,7 +4818,7 @@ Function MovePlayer()
 		DeathTimer=DeathTimer-FPSfactor
 		If DeathTimer < 1 Then DeathTimer = -1.0
 	ElseIf DeathTimer < 0 
-		Kill()
+		Kill(False)
 	EndIf
 	
 	If CurrSpeed > 0 Then
@@ -4802,18 +4846,18 @@ Function MovePlayer()
 			temp = 0
 			If WearingGasMask>0 Or Wearing1499>0 Or WearingHazmat>0 Then temp=1
 			If ChannelPlaying(BreathCHN)=False Then BreathCHN = PlaySound_Strict(BreathSFX((temp), Rand(0,5)))
-		ElseIf Stamina < 100
+		ElseIf Stamina <= 100
 			If BreathCHN=0 Then
 				temp = 0
 				If WearingGasMask>0 Or Wearing1499>0 Or WearingHazmat>0 Then temp=1
 				BreathCHN = PlaySound_Strict(BreathSFX((temp), Rand(6,14)))
-				ChannelVolume BreathCHN, Min((70.0-Stamina)/70.0,1.0)*SFXVolume
+				If Sanity < (-500) Then ChannelVolume BreathCHN, Min(Abs(Sanity+500)/100,1.0)*SFXVolume Else ChannelVolume BreathCHN, Min((70.0-Stamina)/70.0,1.0)*SFXVolume
 			Else
 				If ChannelPlaying(BreathCHN)=False Then
 					temp = 0
 					If WearingGasMask>0 Or Wearing1499>0 Or WearingHazmat>0 Then temp=1
 					BreathCHN = PlaySound_Strict(BreathSFX((temp), Rand(6,14)))
-					ChannelVolume BreathCHN, Min((70.0-Stamina)/70.0,1.0)*SFXVolume			
+					If Sanity < (-500) Then ChannelVolume BreathCHN, Min(Abs(Sanity+500)/100,1.0)*SFXVolume Else ChannelVolume BreathCHN, Min((70.0-Stamina)/70.0,1.0)*SFXVolume
 				EndIf
 			EndIf
 		EndIf
@@ -5091,7 +5135,7 @@ Function MovePlayer()
 		
 		If Bloodloss > 60 Then Crouch = True
 		If Bloodloss => 100 Then 
-			Kill()
+			Kill(False)
 			HeartBeatVolume = 0.0
 		ElseIf Bloodloss > 80.0
 			HeartBeatRate = Max(150-(Bloodloss-80)*5,HeartBeatRate)
@@ -5358,7 +5402,7 @@ Function MouseLook()
 						BlurTimer = Max(BlurTimer, 500)
 						If SCP1025state[i]>140 Then 
 							DeathMSG = I_Loc\DeathMessage_1025Cardiacarrest
-							Kill()
+							Kill(False)
 						EndIf
 					Else
 						HeartBeatRate=Max(HeartBeatRate, 70+SCP1025state[i])
@@ -6318,7 +6362,7 @@ Function DrawGUI()
 							LightFlash = 7
 							PlaySound_Strict(LoadTempSound("SFX\SCP\1123\Touch.ogg"))		
 							DeathMSG = I_Loc\DeathMessage_1123
-							Kill()
+							Kill(False)
 							Return
 						EndIf
 						For e.Events = Each Events
@@ -6341,6 +6385,7 @@ Function DrawGUI()
 				Case "scp513"
 					;[Block]
 					PlaySound_Strict LoadTempSound("SFX\SCP\513\Bell1.ogg")
+					If Active5131% <> True Then Active5131% = True
 					
 					If Curr5131 = Null
 						Curr5131 = CreateNPC(NPCtype5131, 0,0,0)
@@ -6626,7 +6671,7 @@ Function DrawGUI()
 						strtemp = GetINIString2(iniStr, loc, "deathmessage")
 						If strtemp <> "" Then DeathMSG = strtemp
 
-						If GetINIInt2(iniStr, loc, "lethal") Then Kill()
+						If GetINIInt2(iniStr, loc, "lethal") Then Kill(False)
 						
 						BlurTimer = Max(BlurTimer + GetINIInt2(iniStr, loc, "blur")*70, 0);*temp
 						CameraShakeTimer = Max(CameraShakeTimer + GetINIString2(iniStr, loc, "camerashake"), 0)
@@ -7620,12 +7665,16 @@ Function DrawGUI()
 				Case "litcig"
 					;[Block]
 					If CanUseItem(False,False,True)
-						Msg = I_Loc\MessageItem_LitCigUse[Rand(1,5)]
-						Injuries = Max(Injuries-0.5, 0)
+						Sanity = Sanity+250
 						BlurTimer = 500
+						StaminaEffect = 1.5
+						StaminaEffectTimer = StaminaEffectTimer+30
 						PlaySound_Strict LoadTempSound("SFX\Player\Interact\SmokeCig.ogg")
+						Msg = I_Loc\MessageItem_LitCigUse[Rand(1,5)]
 						MsgTimer = 70 * 5
-						RemoveItem(SelectedItem)
+						SelectedItem\state = SelectedItem\state+1
+						If SelectedItem\state = 3 Then RemoveItem(SelectedItem)
+						SelectedItem = Null
 					EndIf
 					;[End Block]
 				Default
@@ -10817,6 +10866,8 @@ Function Use914(item.Items, setting$, x#, y#, z#)
 					Next
 					d.Decals = CreateDecal(0, x, 8*RoomScale+0.010, z, 90, Rand(360), 0)
 					d\Size = 0.2 : EntityAlpha(d\obj, 0.8) : ScaleSprite(d\obj, d\Size, d\Size)
+					If Active5131% <> False Then Active5131% = False
+					SanityDrainRate% = 32
 				Case "1:1", "fine", "very fine"
 					it2 = CreateItem("scp513", x, y, z)
 					
@@ -11344,7 +11395,7 @@ Function Use427()
 			BlurTimer = 800
 		EndIf
 		If I_427\Timer >= 70*420 Then
-			Kill()
+			Kill(False)
 			DeathMSG = I_Loc\DeathMessage_427
 		ElseIf I_427\Timer >= 70*390 Then
 			Crouch = True
@@ -11556,7 +11607,7 @@ Function UpdateInfect()
 						
 						DeathMSG = I_Loc\DeathMessage_008
 						
-						Kill()
+						Kill(False)
 						Local de.Decals = CreateDecal(3, EntityX(PlayerRoom\NPC[0]\Collider), 544*RoomScale + 0.01, EntityZ(PlayerRoom\NPC[0]\Collider),90,Rnd(360),0)
 						de\Size = 0.8
 						ScaleSprite(de\obj, de\Size,de\Size)
@@ -11591,7 +11642,7 @@ Function UpdateInfect()
 					TurnEntity Head, 80+(Sin(MilliSecs()/5.0))*30,(Sin(MilliSecs()/5.0))*40,0
 				EndIf
 			Else
-				Kill()
+				Kill(False)
 				BlinkTimer = Max(Min(-10*(Infect-96),BlinkTimer),-10)
 				If PlayerRoom\RoomTemplate\Name = "dimension1499" Then
 					DeathMSG = I_Loc\DeathMessage_1499

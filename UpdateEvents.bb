@@ -1696,7 +1696,7 @@ Function UpdateEvents()
 								EndIf
 								EntityTexture(NVOverlay, NVTexture)
 								If VomitTimer < -10 Then
-									Kill()
+									Kill(False)
 								EndIf
 							ElseIf Sanity < - 800 Then
 								If Rand(3) = 1 Then EntityTexture(NVOverlay, NVTexture)
@@ -1705,7 +1705,7 @@ Function UpdateEvents()
 									For i% = 0 To MaxItemAmount - 1
 										If (Inventory(i) <> Null) Then
 											If (WearingNightVision = 1 And Inventory(i)\itemtemplate\name = "nvgoggles") Or (WearingNightVision = 2 And Inventory(i)\itemtemplate\name = "supernv") Or (WearingNightVision = 3 And Inventory(i)\itemtemplate\name = "finenvgoggles") Then
-												If Inventory(i)\state2 = 1 Then Jumpscare()
+												If Inventory(i)\state2 = 1 Then Jumpscare(False)
 												Inventory(i)\state2 = 2
 												Exit
 											EndIf
@@ -1723,7 +1723,7 @@ Function UpdateEvents()
 									For i% = 0 To MaxItemAmount - 1
 										If (Inventory(i) <> Null) Then
 											If (WearingNightVision = 1 And Inventory(i)\itemtemplate\name = "nvgoggles") Or (WearingNightVision = 2 And Inventory(i)\itemtemplate\name = "supernv") Or (WearingNightVision = 3 And Inventory(i)\itemtemplate\name = "finenvgoggles") Then
-												If Inventory(i)\state2 = 0 Then SightScare()
+												If Inventory(i)\state2 = 0 Then SightScare(True, False)
 												Inventory(i)\state2 = 1
 												Exit
 											EndIf
@@ -2020,7 +2020,7 @@ Function UpdateEvents()
 							
 							If e\EventState > 65*70 Then
 								If Rand(800/FPSfactor)=1 Then	
-									SightScare()
+									SightScare(True, True)
 									Curr106\State = -0.1
 									Curr106\Idle = False
 									e\EventState = 601
@@ -2198,7 +2198,8 @@ Function UpdateEvents()
 										DebugLog "Loaded screech sound"
 									EndIf
 									
-									Sanity = Max(Sanity - FPSfactor / temp / 8,-1000)
+									DrainSanity = True
+									SanityDrainRate% = (temp / 8)
 									
 									;e\SoundCHN = LoopSound2(OldManSFX(4), e\SoundCHN, Camera, e\room\Objects[17], 5.0, 0.6)
 									
@@ -2330,7 +2331,7 @@ Function UpdateEvents()
 							Else ;the player is not at the exit, must've fallen down
 								
 								If KillTimer => 0 Then 
-									SightScare()
+									SightScare(True, False)
 									DeathMSG = I_Loc\DeathMessage_106PdFall
 								EndIf
 								KillTimer = Min(-1, KillTimer)	
@@ -2467,7 +2468,7 @@ Function UpdateEvents()
 							If Rand(750/FPSfactor)=1 And e\EventState2 > 12 Then
 								BlinkTimer = -10
 								e\EventState2 = e\EventState2-1
-								SightScare()
+								SightScare(True, True)
 							EndIf
 							
 							If e\EventState2 = 12 Then
@@ -2498,7 +2499,7 @@ Function UpdateEvents()
 								UpdateDoors()
 								UpdateRooms()
 							Else ;somewhere else -> must've fallen down
-								If KillTimer => 0 Then SightScare()
+								If KillTimer => 0 Then SightScare(True, False)
 								KillTimer = Min(-1, KillTimer)	
 								BlurTimer = 3000
 							EndIf
@@ -2642,7 +2643,7 @@ Function UpdateEvents()
 						RotateEntity(e\room\NPC[1]\Collider,0,CurveAngle(EntityYaw(e\room\NPC[1]\obj),EntityYaw(e\room\NPC[1]\Collider),30.0),0,True)
 					Else
 						If e\EventState-FPSfactor < 70*6.5 Then 
-							SightScare()
+							SightScare(True, False)
 							PlaySound_Strict (LightSFX)
 						EndIf
 						BlinkTimer = Max((70*6.5-e\EventState)/5.0 - Rnd(0.0,2.0),-10)
@@ -2955,7 +2956,7 @@ Function UpdateEvents()
 											ShowEntity Light
 											LightFlash = 0.4
 											CameraShake = 1.0
-											Kill()
+											Kill(False)
 											DeathMSG = I_Loc\DeathMessage_Tesla
 										EndIf
 									Next
@@ -3940,7 +3941,7 @@ Function UpdateEvents()
 								If WrapAngle(EntityYaw(pvt)-EntityYaw(Curr106\Collider))<80 Then
 									Curr106\State = -11
 									Curr106\Idle = False
-									Jumpscare()
+									Jumpscare(True)
 									e\EventState = 260
 								EndIf
 								FreeEntity pvt
@@ -4142,7 +4143,7 @@ Function UpdateEvents()
 						If e\room\RoomDoors[0]\open = True Then 
 							If e\room\RoomDoors[0]\openstate = 180 Then 
 								e\EventState = 1
-								SightScare()
+								SightScare(True, False)
 							EndIf
 						Else
 							If (EntityDistance(Collider, e\room\RoomDoors[0]\obj)<1.5) And (RemoteDoorOn) Then
@@ -5054,7 +5055,7 @@ Function UpdateEvents()
 										de\Size = 0.1 : de\maxsize = 0.45 : de\sizechange = 0.0002 : UpdateDecals()
 									ElseIf e\EventState3>85*70 And e\EventState3-FPSfactor=<85*70	
 										DeathMSG = I_Loc\DeathMessage_012
-										Kill()
+										Kill(False)
 									EndIf
 									
 									RotateEntity(Collider, EntityPitch(Collider), CurveAngle(EntityYaw(Collider)+Sin(e\EventState3*(e\EventState3/2000))*(e\EventState3/300), EntityYaw(Collider), 80), 0)
@@ -6270,7 +6271,7 @@ Function UpdateEvents()
 									e\EventState3 = Rnd(-0.1, 0.1)
 									
 									If (Injuries>5.0) Then
-										KillScream()
+										Kill(True)
 									EndIf
 								EndIf
 								
@@ -6342,7 +6343,7 @@ Function UpdateEvents()
 						;the player fell
 						If (Not NoClip)
 							If EntityY(Collider)<=28.5 Then 
-								Kill() 
+								Kill(False) 
 								BlinkTimer=-2
 							ElseIf EntityY(Collider)>EntityY(fr\Forest_Pivot,True)+0.5
 								MoveEntity(Collider, 0, ((EntityY(fr\Forest_Pivot,True)+0.5) - EntityY(Collider))*FPSfactor, 0)
@@ -6875,7 +6876,7 @@ Function UpdateEvents()
 						d\Size = Rnd(0.5, 0.7) : EntityAlpha(d\obj, 0.7) : d\ID = 1 : ScaleSprite(d\obj, d\Size, d\Size)
 						EntityAlpha(d\obj, Rnd(0.7, 0.85))
 						
-						Jumpscare()
+						Jumpscare(True)
 					ElseIf e\room\dist > 8.0
 						If Rand(5) = 1 Then
 							Curr106\Idle = False
@@ -7125,7 +7126,7 @@ Function UpdateEvents()
 								ChangeNPCTextureID(e\room\NPC[0],5)
 								e\room\NPC[0]\State=6
 								
-								SightScare()
+								SightScare(True, True)
 								PlaySound2(DecaySFX(2), Camera, e\room\NPC[0]\Collider, 15.0)
 							EndIf
 							
@@ -7726,7 +7727,7 @@ Function UpdateEvents()
 									PlaySound_Strict LoadTempSound("SFX\SCP\1162\BodyHorrorExchange"+Rand(1,4)+".ogg")
 									Scream()
 									LightFlash = 5.0
-									Kill()
+									Kill(False)
 								Else
 									PlaySound_Strict LoadTempSound("SFX\SCP\1162\BodyHorrorExchange"+Rand(1,4)+".ogg")
 									Scream()
@@ -7756,7 +7757,7 @@ Function UpdateEvents()
 								PlaySound_Strict LoadTempSound("SFX\SCP\1162\BodyHorrorExchange"+Rand(1,4)+".ogg")
 								Scream()
 								LightFlash = 5.0
-								Kill()
+								Kill(False)
 							Else
 								PlaySound_Strict LoadTempSound("SFX\SCP\1162\BodyHorrorExchange"+Rand(1,4)+".ogg")
 								Scream()
@@ -9272,7 +9273,7 @@ Function UpdateEndings()
 												NoClip = 0
 												KillTimer = -0.1
 												DeathMSG = ""
-												Kill()
+												Kill(False)
 												BlinkTimer = -10
 												
 												For n.NPCs = Each NPCs
@@ -9549,7 +9550,7 @@ Function UpdateEndings()
 									PositionEntity (Curr106\obj, EntityX(e\room\Objects[3],True),EntityY(Collider)-50.0,EntityZ(e\room\Objects[3],True),True)
 									Local de.Decals = CreateDecal(0, EntityX(e\room\Objects[3],True),EntityY(e\room\Objects[3],True)+0.01,EntityZ(e\room\Objects[3],True), 90, Rand(360), 0)
 									de\Size = 0.05 : de\SizeChange = 0.001 : EntityAlpha(de\obj, 0.8) : UpdateDecals() 
-									SightScare()
+									SightScare(True, True)
 									PlaySound_Strict DecaySFX(0)
 								ElseIf Curr106\State < 0
 									HideEntity Curr106\obj2
@@ -9828,7 +9829,7 @@ Function UpdateEndings()
 											NoClip = 0
 											KillTimer = -0.1
 											DeathMSG = ""
-											Kill()
+											Kill(False)
 										EndIf
 										
 										If SelectedEnding <> "" Then
@@ -9903,7 +9904,7 @@ Function UpdateEndings()
 											NoClip = 0
 											KillTimer = -0.1
 											DeathMSG = ""
-											Kill()
+											Kill(False)
 											BlinkTimer = -10
 											RemoveEvent(e)
 											Exit

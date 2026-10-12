@@ -11,6 +11,7 @@ Type Achievements
 	Field Description$
 	Field Img%
 	Field Unlocked%
+	Field FakedOut%
 End Type
 
 Function CreateAchievement.Achievements(name$, isSCP% = False)
@@ -24,6 +25,7 @@ Function CreateAchievement.Achievements(name$, isSCP% = False)
 	a\Img = LoadImage_Strict("GFX\menu\achievements\Achv"+name+".png")
 	ResizeImage(a\Img, 64*GraphicHeight/768.0, 64*GraphicHeight/768.0)
 	a\Unlocked = False
+	a\FakedOut = False
 	Return a
 End Function
 
@@ -63,6 +65,7 @@ Global AchvPDEscape.Achievements = CreateAchievement("PDEscape")
 Global AchvSNAV.Achievements = CreateAchievement("SNAV")
 Global AchvJuked.Achievements = CreateAchievement("Juked")
 Global AchvJumpscare.Achievements = CreateAchievement("Jumpscare")
+Global AchvInsane.Achievements = CreateAchievement("Insane")
 Global AchvTesla.Achievements = CreateAchievement("Tesla")
 Global AchvCont.Achievements = CreateAchievement("Cont")
 Global AchvHarp.Achievements = CreateAchievement("Harp")
@@ -96,6 +99,18 @@ Function GiveAchievement(achv.Achievements, showMessage%=True)
 			;Steam_Achieve("Achv" + achv\Name)
 		;End If
 	EndIf
+End Function
+
+Function FakeOutAchv(achv.Achievements)
+	If Not achv\FakedOut and AchvMSGenabled Then
+		CreateAchievementMsg(achv)
+		PlaySound_Strict LoadTempSound("SFX\General\AchvGet"+Rand(1,3)+".ogg")
+		achv\FakedOut = True
+	EndIf
+End Function
+
+Function RemoveAchv(achv.Achievements)
+	If achv\Unlocked Then achv\Unlocked=False
 End Function
 
 Function AchievementTooltip(achv.Achievements)

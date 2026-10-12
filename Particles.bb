@@ -140,7 +140,7 @@ Function UpdateEmitters()
 		If EyeIrritation > (70 * 6) Then BlurVolume = Max(BlurVolume, (EyeIrritation - (70 * 6)) / (70.0 * 24.0))
 		If EyeIrritation > (70 * 24) Then 
 			DeathMSG = I_Loc\DeathMessage_Gassed
-			Kill()
+			Kill(False)
 		EndIf
 		
 		If KillTimer => 0 Then 
@@ -255,7 +255,7 @@ Function UpdateDevilEmitters()
 		If EyeIrritation > (70 * 6) Then BlurVolume = Max(BlurVolume, (EyeIrritation - (70 * 6)) / (70.0 * 24.0))
 		If EyeIrritation > (70 * 24) Then 
 			DeathMSG = I_Loc\DeathMessage_Gassed
-			Kill()
+			Kill(False)
 		EndIf
 		
 		If KillTimer => 0 Then 

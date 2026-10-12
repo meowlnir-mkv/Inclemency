@@ -553,7 +553,7 @@ Function PickItem(item.Items)
 								LightFlash = 7
 								PlaySound_Strict(LoadTempSound("SFX\SCP\1123\Touch.ogg"))		
 								DeathMSG = I_Loc\DeathMessage_1123
-								Kill()
+								Kill(False)
 							EndIf
 							For e.Events = Each Events
 								If e\eventname = "room1123" Then 
@@ -575,7 +575,7 @@ Function PickItem(item.Items)
 						LightFlash = 1.0
 						PlaySound_Strict(IntroSFX(11))
 						DeathMSG = I_Loc\DeathMessage_Killbat
-						Kill()
+						Kill(False)
 					Case "scp148"
 						GiveAchievement(Achv148)	
 					Case "scp513"
