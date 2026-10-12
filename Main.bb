@@ -9805,6 +9805,7 @@ Function NullGame(playbuttonsfx%=True)
 	RemoteDoorOn = True
 	SoundTransmission = False
 	ScaredBy939 = False
+	Active5131 = False
 	
 	InfiniteStamina% = False
 	
