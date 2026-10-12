@@ -1,25 +1,23 @@
-﻿
+﻿*Containment Breach: Inclemency - Programming
+
+	meowlnir.mkv
+
 *Containment Breach: Inclemency - Audio/Visual Art
 
-	Almost everything in the mod - meowlnir.mkv
+	meowlnir.mkv
 
 *Containment Breach: Inclemency - Original Music Tracks
 
-	Concrete (LCZ Ambient) - skuffymelon
-	Catwalks (HCZ Ambient) - skuffymelon
-	Cubicles (EZ Ambient) - skuffymelon
+	skuffymelon
 
 *Containment Breach: Inclemency - Third Party Music Tracks
 
-	Slender (Menu) - Brenden Frank, Blue Isle Studios
-	No Friends (Intro) - Brenden, Blue Isle Studios
-	Object of Attention (SCP-173 Theme) - Sixxy, Northwood Studios
-	Apex Predator (SCP-939 Theme) - Sixxy, Northwood Studios
-	Conceal (Edited, 096 Chase) - Brenden Frank, Blue Isle Studios
-	Cut the Chatter (MenuBreath) - Brandon McKagan, Trepang Studios
-	Thermonuclear (Credits) - Brandon McKagan, Trepang Studios
-	The Waiting Game (Elevators) Ava, Fragik, Northwood Studios
-	Dead Man's Switch (Gate B Ending) - Sixxy, Northwood Studios
+	Brenden Frank
+	Blue Isle Studios
+	Brandon McKagan
+	Sixxy
+	Ava
+	Fragik
 
 *Containment Breach: Inclemency - Third Party Assets
 
@@ -38,23 +36,6 @@
 	Inward3D
 	Skall
 	fiddlesticks
-
-	Hi! Thank you for playing Containment Breach: Inclemency. I hope you've had
-	a good time with it! I know I'm having a good time making it, even if I've
-	hit a few roadblocks and taken hits to my morale from time to time. Working 
-	on a solo project as an amateur in everything is a very daunting task.
-	Inclemency means a lot to me, I've gone through thick and thin with it and I
-	hope that my ambitions and effort won't be for nothing, and that my goal of
-	making the original game better will be achieved.
-
-	Thank you to everyone who has rode along with me during development so far,
-	and I hope you stick around to see where Inclemency goes in the future. If
-	you've had any qualms or issues with the mod, please join the Discord and let
-	me know!
-
-	Love you! <3
-
-	- meowlnir.mkv
 
 -
 

@@ -10,18 +10,28 @@
 Gameplay:
 - Added four new rooms to the Light Containment Zone
 - You can no longer save via quitting on the Keter difficulty
-- Being scared and losing blood negatively affects the player's sanity
+- Heavily expanded insanity feature with new visual effects and sounds
 - Agent Ulgrin no longer hands you SCP-173's document in the intro
 - You no longer recieve SCP-173's document when starting a new game with the intro disabled
-- Added new achievements: Object of Attention, Oh Shit!, Anklebreaker, To Hell..., ...And Back, Sacrifice, Absconded, Iron Resolve, Go-Fer, Freedom In A Flash
+- Added new achievements (Listed below)
+- Object of Attention - Saw The Sculpture breach containment.
+- Oh Shit! - Got up close and personal with The Sculpture.
+- Anklebreaker - Got dangerously close to the Plague Doctor.
+- To Hell... - Entered the Pocket Dimension.
+- ...And Back - Escaped the Pocket Dimension.
+- Sacrifice - Successfully contained The Old Man.
+- Mindfuck - Reached an insanely low point.
+- Absconded - Escaped the facility.
+- Iron Resolve - Escaped while playing on the Euclid difficulty or higher.
+- Go-Fer - Brought the Insurgency a gift.
+- Freedom In A Flash - Escaped the facility in under 30 minutes.
 - New "Lighter" and "Lit Cigarette" items: use the Lighter to light a cigarette which you can then smoke
 - Removed 'Mods' button from the main menu
-- Buffed SCP-1499
+- Buffed SCP-1499-1 instances
 
 Visuals:
 - Added extra HUD icon states for blinking, standing still (+ crouched variant), and walking
 - Completely removed all custom lightmaps due to various issues
-- Visual effects for low sanity (slight screen shake + blur)
 - Remastered whitewall and officewall to have a higher resolution
 - Changed the textures for smoke and smoke2
 - Changed the textures for metal3, metal, and metal_darker
@@ -29,7 +39,6 @@ Visuals:
 
 Audio:
 - Dynamic music systems for SCP encounters
-- Added a special music track and ambience set for low sanity
 - Added randomized ambience that plays in the main menu
 - Expanded the footstep sound system dramatically with randomized foley, more footstep variation and more materials
 - Tweaked footstep speed to resemble a more normal walking gait
