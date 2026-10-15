@@ -464,6 +464,7 @@ Global SanityDrainRate%
 Global Scared%
 Global ScareTimer#
 Global ScareMusic%
+Global Faked106%
 
 Global Playable% = True
 
@@ -4339,7 +4340,6 @@ End Function
 
 Function UpdateSanity()
 	
-	Local Faked106%
 	Local tempsan%
 	Local blinkimg%
 	
@@ -4379,7 +4379,7 @@ Function UpdateSanity()
 				If RestoreSanity Then Sanity = Min(Sanity + FPSfactor / 32, -500)
 				PlayerZone = 7
 				
-				If Faked106% = False Then
+				If Faked106% <> True Then
 					If Rand(10000)=1 and (Not PlayerRoom\RoomTemplate\DisableDecals) Then
 						FakeOutAchv(Achv106)
 						de.Decals = CreateDecal(0, EntityX(Collider), 0.01, EntityZ(Collider), 90, Rand(360), 0)
