@@ -1712,7 +1712,6 @@ Function UpdateNPCs()
 								PlayerSeeAble% = MeNPCSeesPlayer(n)
 								If PlayerSeeAble%=True Or n\State2>0 Then ;Player is visible for 049's sight - attacking
 									GiveAchievement(Achv049)
-									If n\PrevState <= 1 Then SightScare(True, True)
 									;Playing a sound after detecting the player
 									If n\PrevState <= 1 And ChannelPlaying(n\SoundChn2)=False
 										If n\Sound2 <> 0 Then FreeSound_Strict(n\Sound2)
