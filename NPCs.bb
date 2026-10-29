@@ -752,9 +752,11 @@ Function UpdateNPCs()
 										Scared = True
 										If ScareTimer < 200 Then ScareTimer = 200
 										ScareMusic = 28
+									ElseIf ScareTimer > 0 and ScareTimer < 200 Then
+										ScareTimer = 200
+										ScareMusic = 28
+										Scared = True
 									EndIf
-									If ScareTimer > 0 and ScareTimer < 200 Then ScareTimer = 200
-									Scared = True
 									n\LastSeen = MilliSecs()
 								EndIf
 								

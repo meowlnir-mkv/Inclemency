@@ -1,6 +1,6 @@
 Const VersionNumber$ = "Alpha v2"
 ;Only change this if the version given isn't working with the current build version - ENDSHN
-Const CompatibleNumber$ = "1.3.12"
+Const CompatibleNumber$ = "Alpha v2"
 
 InitErrorMsgs(11, True)
 SetErrorMsg(0, "An error occured in Containment Breach: Inclemency " + VersionNumber)
@@ -104,15 +104,15 @@ Include "DevilParticleSystem.bb"
 	;If Steam_Init() <> 0 Then RuntimeErrorExt("Steam failed to initialize")
 ;EndIf
 
-Global DiscordLastStatus%, DiscordCooldown%
-Global DiscordActive% = GetOptionInt("general", "enable discord rich presence") And (Not HasCLIFlag("nodiscord"))
-If DiscordActive Then
-	DiscordActive = (BlitzcordCreateCore("1465275739342377014") = 0)
-	If DiscordActive Then BlitzcordSetLargeImage("logo")
-EndIf
+;Global DiscordLastStatus%, DiscordCooldown%
+;Global DiscordActive% = GetOptionInt("general", "enable discord rich presence") And (Not HasCLIFlag("nodiscord"))
+;If DiscordActive Then
+;	DiscordActive = (BlitzcordCreateCore("1465275739342377014") = 0)
+;	If DiscordActive Then BlitzcordSetLargeImage("logo")
+;EndIf
 
 ; Used for rich presence
-Global PlayerArea%
+;Global PlayerArea%
 
 Global IsRestart% = False
 .Start
@@ -3844,11 +3844,11 @@ While IsRunning
 		;PlayerArea = GetCurrentPlayerArea()
 	;EndIf
 	
-	If DiscordActive Then
-		PlayerArea = GetCurrentPlayerArea()
-	EndIf
+	;If DiscordActive Then
+	;	PlayerArea = GetCurrentPlayerArea()
+	;EndIf
 
-	Local newAreaStr$
+	;Local newAreaStr$
 	;If SteamRichPresenceActive Then
 		;If SteamLastStatus <> PlayerArea Then
 			;Local displayBase$
@@ -3879,46 +3879,46 @@ While IsRunning
 		;Steam_Update()
 	;EndIf
 
-	If DiscordActive Then
-		If PlayerArea <> DiscordLastStatus And MilliSecs() > DiscordCooldown Then
-			If PlayerArea = -1 Then
-				BlitzcordSetActivityDetails("Browsing the menus")
-				BlitzcordSetLargeText("")
-				BlitzcordSetSmallImage("")
-				BlitzcordSetTimestampStart(BlitzcordGetCurrentTimestamp())
-				BlitzcordUpdateActivity()
-				DiscordCooldown = MilliSecs() + 5000
-			Else
-				If DiscordLastStatus = -1 Then
-					BlitzcordSetLargeText(GetSeedString(False))
-					BlitzcordSetSmallImage(Lower(SelectedDifficulty\name))
-					BlitzcordSetSmallText("Difficulty: " + SelectedDifficulty\name)
-					BlitzcordSetTimestampStart(BlitzcordGetCurrentTimestamp())
-				EndIf
-
-				Select PlayerArea
-					Case 0 newAreaStr = "Roaming the Light Containment Zone"
-					Case 1 newAreaStr = "Roaming the Heavy Containment Zone"
-					Case 2 newAreaStr = "Roaming the Entrance Zone"
-					Case 3 newAreaStr = "jorge has been expecting you"
-					Case 4 newAreaStr = "Being tested on SCP-173"
-					Case 5 newAreaStr = "Traversing a blue-hued forest"
-					Case 6 newAreaStr = "Going crazy"
-					Case 100 newAreaStr = "Wearing a GP-5 Gas Mask"
-					Case 101 newAreaStr = "Trapped in the Pocket Dimension"
-					Case 102 newAreaStr = "Escaping through Gate A"
-					Case 103 newAreaStr = "Escaping through Gate B"
-					Case 104 newAreaStr = "Lost in the Maintenance Tunnels"
-				End Select
-				BlitzcordSetActivityDetails(newAreaStr)
-				BlitzcordUpdateActivity()
-				DiscordCooldown = MilliSecs() + 5000
-			EndIf
-			DiscordLastStatus = PlayerArea
-		EndIf
-
-		BlitzcordRunCallbacks()
-	EndIf
+	;If DiscordActive Then
+	;	If PlayerArea <> DiscordLastStatus And MilliSecs() > DiscordCooldown Then
+	;		If PlayerArea = -1 Then
+	;			BlitzcordSetActivityDetails("Browsing the menus")
+	;			BlitzcordSetLargeText("")
+	;			BlitzcordSetSmallImage("")
+	;			BlitzcordSetTimestampStart(BlitzcordGetCurrentTimestamp())
+	;			BlitzcordUpdateActivity()
+	;			DiscordCooldown = MilliSecs() + 5000
+	;		Else
+	;			If DiscordLastStatus = -1 Then
+	;				BlitzcordSetLargeText(GetSeedString(False))
+	;				BlitzcordSetSmallImage(Lower(SelectedDifficulty\name))
+	;				BlitzcordSetSmallText("Difficulty: " + SelectedDifficulty\name)
+	;				BlitzcordSetTimestampStart(BlitzcordGetCurrentTimestamp())
+	;			EndIf
+	;
+	;			Select PlayerArea
+	;				Case 0 newAreaStr = "Roaming the Light Containment Zone"
+	;				Case 1 newAreaStr = "Roaming the Heavy Containment Zone"
+	;				Case 2 newAreaStr = "Roaming the Entrance Zone"
+	;				Case 3 newAreaStr = "jorge has been expecting you"
+	;				Case 4 newAreaStr = "Being tested on SCP-173"
+	;				Case 5 newAreaStr = "Traversing a blue-hued forest"
+	;				Case 6 newAreaStr = "Going crazy"
+	;				Case 100 newAreaStr = "Wearing a GP-5 Gas Mask"
+	;				Case 101 newAreaStr = "Trapped in the Pocket Dimension"
+	;				Case 102 newAreaStr = "Escaping through Gate A"
+	;				Case 103 newAreaStr = "Escaping through Gate B"
+	;				Case 104 newAreaStr = "Lost in the Maintenance Tunnels"
+	;			End Select
+	;			BlitzcordSetActivityDetails(newAreaStr)
+	;			BlitzcordUpdateActivity()
+	;			DiscordCooldown = MilliSecs() + 5000
+	;		EndIf
+	;		DiscordLastStatus = PlayerArea
+	;	EndIf
+	;
+	;	BlitzcordRunCallbacks()
+	;EndIf
 
 	Flip Vsync Lor MainMenuOpen
 Wend
@@ -3929,7 +3929,7 @@ If ShouldRestart Then
 EndIf
 
 ;If SteamActive Then Steam_Shutdown()
-If DiscordActive Then BlitzcordClearActivity()
+;If DiscordActive Then BlitzcordClearActivity()
 
 Function Restart()
 	Cls
@@ -3940,19 +3940,19 @@ Function Restart()
 	ShouldRestart = True
 End Function
 
-Function GetCurrentPlayerArea%()
-	If MainMenuOpen Then Return -1
-	Select PlayerRoom\RoomTemplate\Name
-		Case "173" Return 4
-		Case "room860" If EntityY(Collider,True)>4.0 Then Return 5
-		Case "dimension1499" Return 100
-		Case "pocketdimension" Return 101
-		Case "gatea" Return 102
-		Case "exit1" Return 103
-		Case "room2tunnel" If EntityY(Collider,True)>4.0 Then Return 104
-		Default Return PlayerZone
-	End Select
-End Function
+;Function GetCurrentPlayerArea%()
+;	If MainMenuOpen Then Return -1
+;	Select PlayerRoom\RoomTemplate\Name
+;		Case "173" Return 4
+;		Case "room860" If EntityY(Collider,True)>4.0 Then Return 5
+;		Case "dimension1499" Return 100
+;		Case "pocketdimension" Return 101
+;		Case "gatea" Return 102
+;		Case "exit1" Return 103
+;		Case "room2tunnel" If EntityY(Collider,True)>4.0 Then Return 104
+;		Default Return PlayerZone
+;	End Select
+;End Function
 
 ;----------------------------------------------------------------------------------------------------------------------------------------------------
 ;----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -4341,7 +4341,6 @@ End Function
 Function UpdateSanity()
 	
 	Local tempsan%
-	Local blinkimg%
 	
 	If Active5131 = True Then DrainSanity = True
 	
@@ -4360,7 +4359,7 @@ Function UpdateSanity()
 		BlurTimer = Abs(Sanity/2)
 		
 		If Sanity < (-250) Then
-			CameraShake = (Abs(Sanity+200))/500			
+			CameraShake = (Abs(Sanity+250))/500			
 			AmbChance = 375
 			PlayerZone = 6
 			If Scared = False Then ShouldPlay = 27
@@ -4389,22 +4388,9 @@ Function UpdateSanity()
 					EndIf
 				EndIf
 				
-				If BlinkTimer < -3 And BlinkTimer > -10 Then
-					If blinkimg% = 0 Then
-						If BlinkTimer > -5 And Rand(500)=1 Then
-							PlaySound_Strict DripSFX(0)
-							If blinkimg% = 0 Then blinkimg% = LoadImage_Strict("GFX\insbln.png")
-						EndIf
-					Else
-						DrawImage blinkimg%, GraphicWidth/2-Rand(390,310), GraphicHeight/2-Rand(290,310)
-					EndIf
-				Else
-					If blinkimg% <> 0 Then FreeImage blinkimg% : blinkimg% = 0
-				EndIf
-				
-				If Sanity < (-750) Then
-					If Scared = False Then ShouldPlay = 66
+				If Sanity < (-750) Then 
 					If Rand(10000)=1 Then SightScare(True,False)
+					If Rand(5000000)=1 Then Jumpscare(False)
 				EndIf
 				If Sanity = (-1000) Then GiveAchievement(AchvInsane)
 			EndIf
@@ -8081,18 +8067,17 @@ Function DrawMenu()
 		OtherOpen = Null
 		SelectedScreen = Null
 		
-		Color 255,255,255
-		SetFont ConsoleFont
-		Text 20,GraphicHeight-35,"Containment Breach: Inclemency - " + VersionNumber
-	
-		Color 255,0,0
-		SetFont ConsoleFont
-		Text 20,GraphicHeight-60,"IN DEVELOPMENT, CONTENT SUBJECT TO CHANGE"
-		
 		width = ImageWidth(PauseMenuIMG)
 		height = ImageHeight(PauseMenuIMG)
 		x = GraphicWidth / 2 - width / 2
 		y = GraphicHeight / 2 - height / 2
+		
+		SetFont ConsoleFont
+		Text((GraphicWidth / 2)+1, GraphicHeight-35, "Containment Breach: Inclemency - " + VersionNumber, True, False)
+	
+		Color 255,0,0
+		SetFont ConsoleFont
+		Text((GraphicWidth / 2)+1, GraphicHeight-60, "IN DEVELOPMENT, CONTENT SUBJECT TO CHANGE", True, False)
 		
 		DrawImage PauseMenuIMG, x, y
 		
