@@ -2288,6 +2288,8 @@ Global CrouchIcon% = 0
 Global CrouchStillIcon% = 0
 Global HandIcon% = 0
 Global HandIcon2% = 0
+Global HandIcon3% = 0
+Global HandIcon4% = 0
 
 Global StaminaMeterIMG% = 0
 
@@ -2753,7 +2755,7 @@ Function UseDoor(d.Doors, showmsg%=True, playsfx%=True)
 				EndIf
 				Return				
 			ElseIf temp >= d\KeyCard 
-				SelectedItem = Null
+				;SelectedItem = Null
 				If showmsg = True Then
 					If d\locked Then
 						PlaySound_Strict KeyCardSFX2
@@ -2769,7 +2771,7 @@ Function UseDoor(d.Doors, showmsg%=True, playsfx%=True)
 					EndIf
 				EndIf
 			Else
-				SelectedItem = Null
+				;SelectedItem = Null
 				If showmsg = True Then 
 					PlaySound_Strict KeyCardSFX2					
 					If d\locked Then
@@ -2788,7 +2790,7 @@ Function UseDoor(d.Doors, showmsg%=True, playsfx%=True)
 		If SelectedItem <> Null Then
 			temp = (SelectedItem\itemtemplate\name = "hand" And d\KeyCard=-1) Or (SelectedItem\itemtemplate\name = "hand2" And d\KeyCard=-2)
 		EndIf
-		SelectedItem = Null
+		;SelectedItem = Null
 		If temp <> 0 Then
 			PlaySound_Strict ScannerSFX1
 			Msg = I_Loc\MessageButton_DnaSuccess
@@ -7797,13 +7799,30 @@ End Function
 
 Function DrawItemImg(i.Items)
 	If Not HUDenabled Then Return
-	DrawImage(i\itemtemplate\invimg, GraphicWidth / 2 - ImageWidth(i\itemtemplate\invimg) / 2, GraphicHeight / 2 - ImageHeight(i\itemtemplate\invimg) / 2)
+	;DrawImage(i\itemtemplate\invimg, GraphicWidth / 2 - ImageWidth(i\itemtemplate\invimg) / 2, GraphicHeight / 2 - ImageHeight(i\itemtemplate\invimg) / 2 HUDEndY - 95 * HUDScale)
+	Local width% = 70 * HUDScale
+	Local height% = 70 * HUDScale
+	
+	x = HUDEndX - 95 * HUDScale
+	y = HUDEndY - 95 * HUDScale
+	
+	DrawFrame(x, y, width, height, (x Mod 64 * HUDScale), (x Mod 64 * HUDScale))
+	DrawImage(i\itemtemplate\invimg, x + width / 2 - 32 * HUDScale, y + height / 2 - 32 * HUDScale)
+	
+	If DrawItemUseProgress Then y1 = HUDEndY - 85.5 * HUDScale Else y1 = y + height / 2 - 32 * HUDScale
+	x2 = (HUDEndX - 115 * HUDScale) - StringWidth(i\itemtemplate\displayname$)
+	Color 255,255,255
+	SetFont ConsoleFont
+	Text x2, y1, i\itemtemplate\displayname
 End Function
 
 Function DrawItemUseProgress(i.Items)
 	If Not HUDenabled Then Return
+	x = HUDEndX - 319 * HUDScale
+	y = HUDEndY - 55 * HUDScale
+	
 	DrawItemImg(i)
-	DrawBar(BlinkMeterIMG, GraphicWidth / 2, GraphicHeight / 2 + 80 * HUDScale, 300 * HUDScale, i\state / 100.0, True)
+	DrawBar(BlinkMeterIMG, x, y, 204 * HUDScale, i\state / 100.0)
 End Function
 
 Function ResetDiseases()
@@ -8826,6 +8845,8 @@ Function LoadEntities()
 	If CrouchStillIcon = 0 Then CrouchStillIcon% = LoadImageHUDScaled("GFX\crouchstillicon.png")
 	If HandIcon = 0 Then HandIcon% = LoadImageHUDScaled("GFX\handsymbol.png")
 	If HandIcon2 = 0 Then HandIcon2% = LoadImageHUDScaled("GFX\handsymbol2.png")
+	If HandIcon3 = 0 Then HandIcon3% = LoadImageHUDScaled("GFX\handsymbol3.png")
+	If HandIcon4 = 0 Then HandIcon4% = LoadImageHUDScaled("GFX\handsymbol4.png")
 
 	If StaminaMeterIMG = 0 Then StaminaMeterIMG% = LoadImageHUDScaled("GFX\staminameter.png")
 

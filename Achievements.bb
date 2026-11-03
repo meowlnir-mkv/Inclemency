@@ -179,7 +179,7 @@ Function UpdateAchievementMsg()
 	For amsg = Each AchievementMsg
 		If amsg\msgtime <> 0
 			x=GraphicWidth+amsg\msgx
-			y=(GraphicHeight-height)
+			y=0
 			For amsg2 = Each AchievementMsg
 				If amsg2 <> amsg
 					If amsg2\msgID > amsg\msgID
