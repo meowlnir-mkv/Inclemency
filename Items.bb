@@ -13,6 +13,7 @@ Type ItemTemplates
 	Field displayname$
 	Field name$
 	Field group$
+	Field desc$
 	
 	Field sound%
 	
@@ -29,7 +30,7 @@ Type ItemTemplates
 	Field tex%, texpath$
 End Type 
 
-Function CreateItemTemplate.ItemTemplates(name$, group$, displayname$, objpath$, invimgpath$, imgpath$, scale#, texturepath$ = "",invimgpath2$="",Anim%=0, texflags%=9)
+Function CreateItemTemplate.ItemTemplates(name$, group$, displayname$, desc$, objpath$, invimgpath$, imgpath$, scale#, texturepath$ = "",invimgpath2$="",Anim%=0, texflags%=9)
 	Local it.ItemTemplates = New ItemTemplates, n
 	
 	
@@ -110,6 +111,14 @@ Function CreateItemTemplate.ItemTemplates(name$, group$, displayname$, objpath$,
 		EndIf
 	EndIf
 	
+	it\desc = GetModdedINIString(StringsFile, "Desc", name)
+	If it\desc = "" Then
+		it\desc = desc
+		If it\desc = "" Then
+			it\desc = name
+		EndIf
+	EndIf
+	
 	it\sound = 1
 
 	HideEntity it\obj
@@ -121,7 +130,7 @@ End Function
 Function InitItemTemplatesFromFile(file$)
 	If FileType(file) <> 1 Then Return
 
-	Local name$, group$, displayname$
+	Local name$, group$, displayname$, desc$
 	Local model$, textureoverride$, textureflags%, anim%
 	Local invicon$, invicon2$
 	Local document$
@@ -135,7 +144,7 @@ Function InitItemTemplatesFromFile(file$)
 			Local splitterPos = Instr(l, "=")
 			If splitterPos = 0 And Instr(l, "[") = 1 Then
 				If name <> "" Then
-					Local itt.ItemTemplates = CreateItemTemplate(name, group, displayname, model, invicon, document, scale, textureoverride, invicon2, anim, textureflags)
+					Local itt.ItemTemplates = CreateItemTemplate(name, group, displayname, desc, model, invicon, document, scale, textureoverride, invicon2, anim, textureflags)
 					If hasCustomColor Then
 						EntityColor(itt\obj, r, g, b)
 					EndIf
@@ -148,6 +157,7 @@ Function InitItemTemplatesFromFile(file$)
 				EndIf
 				group = ""
 				displayname = ""
+				desc = ""
 				model = ""
 				textureoverride = ""
 				textureflags = 9
@@ -167,6 +177,8 @@ Function InitItemTemplatesFromFile(file$)
 						group = value
 					Case "display name"
 						displayname = value
+					Case "desc"
+						desc = value
 					Case "model"
 						model = value
 					Case "invicon"
@@ -199,7 +211,7 @@ Function InitItemTemplatesFromFile(file$)
 	CloseFile(f)
 	
 	If name <> "" Then
-		itt.ItemTemplates = CreateItemTemplate(name, group, displayname, model, invicon, document, scale, textureoverride, invicon2, anim, textureflags)
+		itt.ItemTemplates = CreateItemTemplate(name, group, displayname, desc, model, invicon, document, scale, textureoverride, invicon2, anim, textureflags)
 		If hasCustomColor Then
 			EntityColor(itt\obj, r, g, b)
 		EndIf
@@ -255,6 +267,7 @@ End Type
 
 Type Items
 	Field displayname$
+	Field desc$
 	Field collider%,model%
 	Field itemtemplate.ItemTemplates
 	Field DropSpeed#
@@ -295,6 +308,7 @@ Function CreateItem.Items(name$, x#, y#, z#)
 			EntityPickMode i\collider, 1, False
 			i\model = CopyEntity(it\obj,i\collider)
 			i\displayname = it\displayname
+			i\desc = it\desc
 			ShowEntity i\collider
 			ShowEntity i\model
 			Exit

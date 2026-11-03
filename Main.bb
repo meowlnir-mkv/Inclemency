@@ -3801,7 +3801,11 @@ While IsRunning
 						If SelectedItem\itemtemplate\group = "paper" Or SelectedItem\itemtemplate\name = "oldpaper"
 							temp% = True
 						EndIf
+					ElseIf SelectedScreen <> Null Then
+						temp% = True
 					EndIf
+				ElseIf (InvOpen And OtherOpen = Null) then
+					temp% = True
 				EndIf
 				
 				Local messageOpacity% = Min(MsgTimer / 2, 255)
@@ -5765,6 +5769,12 @@ Function DrawGUI()
 					Text(x + width / 2 + 1, y + height + spacing - 15 + 1, OtherOpen\Inventory\Items[n]\itemtemplate\displayname, True)
 					Color 255, 255, 255	
 					Text(x + width / 2, y + height + spacing - 15, OtherOpen\Inventory\Items[n]\itemtemplate\displayname, True)
+					
+					Color 0,0,0
+					Text((GraphicWidth/2)+1, ((GraphicHeight / 2) + 200)+1, OtherOpen\Inventory\Items[n]\itemtemplate\desc, True)
+					Color 255, 255, 255	
+					Text(GraphicWidth/2, (GraphicHeight / 2) + 200, OtherOpen\Inventory\Items[n]\itemtemplate\desc, True)
+					
 					If SelectedItem = Null Then
 						If MouseHit1 Then
 							SelectedItem = OtherOpen\Inventory\Items[n]
@@ -6012,6 +6022,11 @@ Function DrawGUI()
 						Text(x + width / 2 + 1, y + height + spacing - 15 + 1, Inventory(n)\displayname, True)							
 						Color 255, 255, 255	
 						Text(x + width / 2, y + height + spacing - 15, Inventory(n)\displayname, True)	
+						
+						Color 0,0,0
+						Text((GraphicWidth/2)+1, (GraphicHeight / 2) + 200+1, Inventory(n)\desc, True)
+						Color 255, 255, 255	
+						Text(GraphicWidth/2, (GraphicHeight / 2) + 200, Inventory(n)\desc, True)
 						
 					EndIf
 				EndIf
