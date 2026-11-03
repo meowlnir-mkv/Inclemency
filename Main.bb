@@ -130,6 +130,7 @@ Global ConsoleFont%
 Global MenuWhite%, MenuBlack%, MenuTrans%
 Global ButtonSFX% = LoadSound_Strict("SFX\Player\Interact\Button.ogg")
 Global ScreenSFX% = LoadSound_Strict("SFX\Player\Interact\Screen.ogg")
+Global TapSFX% = LoadSound_Strict("SFX\Player\Interact\TapMetal.ogg")
 Global ClickSFX[4]
 Global SaveSFX[3]
 Global ScreenSaveSFX[3]
@@ -2721,9 +2722,9 @@ Function UseDoor(d.Doors, showmsg%=True, playsfx%=True)
 		If SelectedItem = Null Then
 			If showmsg = True Then
 				If Not HasKeyCardMsg() Then
+					PlaySound2(TapSFX, Camera, ClosestButton)
 					Msg = I_Loc\MessageButton_KeyRequired
 					MsgTimer = 70 * 7
-					ActivateKeyCardMsgCooldown()
 				EndIf
 			EndIf
 			Return
@@ -2748,9 +2749,9 @@ Function UseDoor(d.Doors, showmsg%=True, playsfx%=True)
 			If temp =-1 Then 
 				If showmsg = True Then
 					If Not HasKeyCardMsg() Then
+						PlaySound2(TapSFX, Camera, ClosestButton)
 						Msg = I_Loc\MessageButton_KeyRequired
 						MsgTimer = 70 * 7
-						ActivateKeyCardMsgCooldown()
 					EndIf
 				EndIf
 				Return				
@@ -2758,13 +2759,13 @@ Function UseDoor(d.Doors, showmsg%=True, playsfx%=True)
 				;SelectedItem = Null
 				If showmsg = True Then
 					If d\locked Then
-						PlaySound_Strict KeyCardSFX2
+						PlaySound2(KeyCardSFX2, Camera, ClosestButton)
 						Msg = I_Loc\MessageButton_KeyNothing
 						MsgTimer = 70 * 7
 						ActivateKeyCardMsgCooldown()
 						Return
 					Else
-						PlaySound_Strict KeyCardSFX1
+						PlaySound2(KeyCardSFX1, Camera, ClosestButton)
 						Msg = I_Loc\MessageButton_KeyInserted
 						MsgTimer = 70 * 7	
 						ActivateKeyCardMsgCooldown()
@@ -2773,7 +2774,7 @@ Function UseDoor(d.Doors, showmsg%=True, playsfx%=True)
 			Else
 				;SelectedItem = Null
 				If showmsg = True Then 
-					PlaySound_Strict KeyCardSFX2					
+					PlaySound2(KeyCardSFX2, Camera, ClosestButton)
 					If d\locked Then
 						Msg = I_Loc\MessageButton_KeyNothing
 					Else
@@ -2792,13 +2793,13 @@ Function UseDoor(d.Doors, showmsg%=True, playsfx%=True)
 		EndIf
 		;SelectedItem = Null
 		If temp <> 0 Then
-			PlaySound_Strict ScannerSFX1
+			PlaySound2(ScannerSFX1, Camera, ClosestButton)
 			Msg = I_Loc\MessageButton_DnaSuccess
 			MsgTimer = 70 * 10
 			ActivateScannerMsgCooldown()
 		Else
 			If showmsg = True And (Not HasScannerMsg()) Then 
-				PlaySound_Strict ScannerSFX2
+				PlaySound2(ScannerSFX2, Camera, ClosestButton)
 				Msg = I_Loc\MessageButton_DnaSelf
 				MsgTimer = 70 * 10
 			EndIf
@@ -2808,7 +2809,7 @@ Function UseDoor(d.Doors, showmsg%=True, playsfx%=True)
 		If d\locked Then
 			If showmsg = True Then 
 				If Not (d\IsElevatorDoor>0) Then
-					PlaySound_Strict ButtonSFX2
+					PlaySound2(ButtonSFX2, Camera, ClosestButton)
 					If PlayerRoom\RoomTemplate\Name <> "room2elevator" Then
                         If d\open Then
                             Msg = I_Loc\MessageButton_Nothing
@@ -2868,7 +2869,9 @@ Function UseDoor(d.Doors, showmsg%=True, playsfx%=True)
 				
 			EndIf
 			Return
-		EndIf	
+		Else
+			PlaySound2(ButtonSFX, Camera, ClosestButton)
+		EndIf
 	EndIf
 	
 	d\open = (Not d\open)
@@ -5502,7 +5505,6 @@ Function DrawGUI()
 				If ClosestDoor\Code <> "" Then
 					SelectedDoor = ClosestDoor
 				ElseIf Playable Then
-					PlaySound2(ButtonSFX, Camera, ClosestButton)
 					UseDoor(ClosestDoor,True)				
 				EndIf
 			EndIf
