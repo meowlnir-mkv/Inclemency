@@ -13,7 +13,11 @@ Gameplay:
 - Heavily expanded insanity feature with new visual effects and sounds
 - Agent Ulgrin no longer hands you SCP-173's document in the intro
 - You no longer recieve SCP-173's document when starting a new game with the intro disabled
-- Added new achievements (Listed below)
+- Keycards and severed hands are no longer unequipped after using them
+- New "Lighter" and "Lit Cigarette" items: use the Lighter to light a cigarette which you can then smoke
+- Removed 'Mods' button from the main menu
+- Buffed SCP-1499-1 instances
+- Added 11 new achievements (Listed below)
 - Object of Attention - Saw The Sculpture breach containment.
 - Oh Shit! - Got up close and personal with The Sculpture.
 - Anklebreaker - Got dangerously close to the Plague Doctor.
@@ -25,20 +29,19 @@ Gameplay:
 - Iron Resolve - Escaped while playing on the Euclid difficulty or higher.
 - Go-Fer - Brought the Insurgency a gift.
 - Freedom In A Flash - Escaped the facility in under 30 minutes.
-- New "Lighter" and "Lit Cigarette" items: use the Lighter to light a cigarette which you can then smoke
-- Removed 'Mods' button from the main menu
-- Buffed SCP-1499-1 instances
 
 Visuals:
 - Added extra HUD icon states for blinking, standing still (+ crouched variant), and walking
+- New HUD in the bottom right corner for held items
 - Completely removed all custom lightmaps due to various issues
 - Remastered whitewall and officewall to have a higher resolution
 - Changed the textures for smoke and smoke2
 - Changed the textures for metal3, metal, and metal_darker
+- Changed the D-Class Orientation Leaflet found in the intro
 - Tweaked viewbob intensity and speed to resemble a more normal walking gait and match the footstep speed
 
 Audio:
-- Dynamic music systems for SCP encounters
+- Dynamic music systems for certain SCP encounters
 - Added randomized ambience that plays in the main menu
 - Expanded the footstep sound system dramatically with randomized foley, more footstep variation and more materials
 - Tweaked footstep speed to resemble a more normal walking gait
@@ -51,7 +54,7 @@ Audio:
 - Larger variety of scare sounds + an ironed out implementation of them
 - Added a larger variety of randomized sound effects when saving the game
 - Added a sound effect that plays when viewing a clickable monitor
-- Remastered the sound effects for blast doors
+- Remastered the sound effects for blast doors and the doors in the Heavy Containment Zone
 - Added special sounds when getting hit and dying while wearing a hazmat suit
 - Remastered the end dialogue for Ending B2
 - Lowered the volume of the tesla gates' sound effects
