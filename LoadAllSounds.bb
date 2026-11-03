@@ -85,7 +85,7 @@ ElevatorBeepSFX = LoadSound_Strict("SFX\General\Elevator\Beep.ogg")
 ElevatorMoveSFX = LoadSound_Strict("SFX\General\Elevator\Moving.ogg") 
 
 ;Dim PickSFX%(10)
-For i = 0 To 4
+For i = 0 To 5
 	PickSFX(i) = LoadSound_Strict("SFX\Player\Interact\PickItem" + i + ".ogg")
 Next
 
@@ -97,7 +97,7 @@ For i = 0 To 4
 	InvMoveClipSFX(i) = LoadSound_Strict("SFX\Player\Interact\Inventory\InvMoveWal" + i + ".ogg")
 Next
 
-For i = 0 To 4
+For i = 0 To 5
 	InvUseSFX(i) = LoadSound_Strict("SFX\Player\Interact\Inventory\InvUse" + i + ".ogg")
 Next
 
