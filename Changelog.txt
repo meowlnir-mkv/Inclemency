@@ -32,6 +32,7 @@ Gameplay:
 
 Visuals:
 - Added extra HUD icon states for blinking, standing still (+ crouched variant), and walking
+- Added description text when hovering over items in the inventory
 - New HUD in the bottom right corner for held items
 - Completely removed all custom lightmaps due to various issues
 - Remastered whitewall and officewall to have a higher resolution
