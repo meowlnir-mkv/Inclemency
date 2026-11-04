@@ -17,6 +17,7 @@ Gameplay:
 - New "Lighter" and "Lit Cigarette" items: use the Lighter to light a cigarette which you can then smoke
 - Removed 'Mods' button from the main menu
 - Buffed SCP-1499-1 instances
+- New loading screen for SCP-008
 - Added 11 new achievements (Listed below)
 - Object of Attention - Saw The Sculpture breach containment.
 - Oh Shit! - Got up close and personal with The Sculpture.
