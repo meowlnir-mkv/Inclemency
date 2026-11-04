@@ -2152,7 +2152,7 @@ Global AmbChance%
 
 Dim AlarmSFX%(5)
 
-Dim CommotionState%(25)
+Dim CommotionState%(30)
 
 Global HeartBeatSFX 
 
@@ -2836,6 +2836,7 @@ Function UseDoor(d.Doors, showmsg%=True, playsfx%=True)
 						Msg = I_Loc\MessageButton_ElevatorCall
 						MsgTimer = 70 * 5
 					ElseIf d\IsElevatorDoor = 3 Then
+						PlaySound2(ButtonSFX2, Camera, ClosestButton)
 						Msg = I_Loc\MessageButton_ElevatorFloor
 						MsgTimer = 70 * 5
 					ElseIf (Msg<>I_Loc\MessageButton_ElevatorCall)
@@ -2848,15 +2849,19 @@ Function UseDoor(d.Doors, showmsg%=True, playsfx%=True)
 							EndIf
 							Select rnd
 								Case 1
+									PlaySound2(ButtonSFX2, Camera, ClosestButton)
 									Msg = I_Loc\MessageButton_ElevatorStop
 									MsgTimer = 70 * 7
 								Case 2
+									PlaySound2(ButtonSFX2, Camera, ClosestButton)
 									Msg = I_Loc\MessageButton_ElevatorFaster
 									MsgTimer = 70 * 7
 								Case 3
+									PlaySound2(ButtonSFX2, Camera, ClosestButton)
 									Msg = I_Loc\MessageButton_ElevatorMav
 									MsgTimer = 70 * 7
 								Default
+									PlaySound2(ButtonSFX2, Camera, ClosestButton)
 									Msg = I_Loc\MessageButton_ElevatorAlready
 									MsgTimer = 70 * 7
 							End Select
