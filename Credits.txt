@@ -1,4 +1,4 @@
-﻿*Containment Breach: Inclemency - Programming
+*Containment Breach: Inclemency - Programming
 
 	meowlnir.mkv
 
@@ -8,7 +8,7 @@
 
 *Containment Breach: Inclemency - Original Music Tracks
 
-	skuffymelon
+	anonymous
 
 *Containment Breach: Inclemency - Third Party Music Tracks
 
@@ -144,7 +144,7 @@
 
 *SCP - Containment Breach - Testers
 
-		Christian Rieß
+		Christian Rie�
 		Emil215p
 		Flipsy
 		Inclination

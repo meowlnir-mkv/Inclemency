@@ -1,4 +1,4 @@
-﻿Alpha v2 - IN DEVELOPMENT, ADDITIONS AND CHANGELOG NOT FINALIZED
+Alpha v2 - IN DEVELOPMENT, ADDITIONS AND CHANGELOG NOT FINALIZED
 
 - Migration to a standalone release
 - Made a ModDB page for Containment Breach: Inclemency (https://www.moddb.com/mods/cb-inclemency)
@@ -117,7 +117,7 @@ Audio:
 - Changed Gunshot2.ogg to be a copy of Gunshot1.ogg
 - Changed the Safe difficulty saving sound to be the same as that of Euclid
 - Touched up the jumpscare sound used in SCP-079-related events
-- Added custom music tracks: "Concrete", "Catwalks", and "Cubicles" (Light Containment, Heavy Containment, and Entrance Zone ambient themes respectively), all composed by skuffymelon
+- Added custom music tracks: "Concrete", "Catwalks", and "Cubicles" (Light Containment, Heavy Containment, and Entrance Zone ambient themes respectively), all composed by anonymous
 - Remastered the following music tracks: On Mount Golgotha (SCP-012 music), SCP-079's chamber theme, SCP-106's chase theme, and SCP-106's pocket dimension trenches ambient theme
 - Replaced the following music tracks: SCP-096's angered/chase themes (Track: "Conceal" from Slender: The Arrival), and the credits theme (Track: "Thermonuclear" from TREPANG2)
 - Touched up the Storage Area 6/Maintenance Tunnels ambient theme
@@ -153,7 +153,7 @@ Audio:
 - Remastered all footstep sound effects again (not including SCP-860-1 forest footsteps)
 
 Workshop Page:
-- Added skuffymelon as a contributor (Creator of the mod's original LCZ/HCZ/EZ ambience tracks)
+- Added anonymous as a contributor (Creator of the mod's original LCZ/HCZ/EZ ambience tracks)
 - Mod philosophy change (No longer "Vanilla+", just aiming to be higher-quality now)
 - Added a "showcase video"
 - Added various screenshot thumbnails
