@@ -12676,7 +12676,3 @@ Function Update096ElevatorEvent#(e.Events,EventState#,d.Doors,elevatorobj%)
 	Return EventState
 	
 End Function
-
-
-;~IDEal Editor Parameters:
-;~C#Blitz3D TSS
