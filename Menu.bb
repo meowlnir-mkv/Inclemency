@@ -11,8 +11,8 @@ ScaleImage(Menu173, MenuScale, MenuScale)
 
 For i = 0 To 3
 	ArrowIMG(i) = LoadImage_Strict("GFX\menu\arrow.png", HUDScale)
-	RotateImage(ArrowIMG(i), 90 * i)
 	HandleImage(ArrowIMG(i), 0, 0)
+	RotateImage(ArrowIMG(i), 90 * i)
 Next
 
 Global RandomSeed$, RandomSeedNumeric%, HasNumericSeed%
@@ -1171,10 +1171,9 @@ Dim GfxModeWidthsByAspectRatio%(0, 0), GfxModeHeightsByAspectRatio%(0, 0)
 
 Function UpdateLauncher()
 	MenuScale = 1
-
-	Graphics3DExt(LauncherWidth, LauncherHeight, 0, 2)
-
-	;InitExt
+	
+	SetDarkMode(True)
+	Graphics(LauncherWidth, LauncherHeight, 32, 2)
 	
 	SetBuffer BackBuffer()
 	
@@ -1361,21 +1360,9 @@ Function UpdateLauncher()
 	
 	PutINIValue(OptionFile, "graphics", "width", GfxModeWidthsByAspectRatio(SelectedAspectRatio, SelectedGfxMode))
 	PutINIValue(OptionFile, "graphics", "height", GfxModeHeightsByAspectRatio(SelectedAspectRatio, SelectedGfxMode))
-	If Fullscreen Then
-		PutINIValue(OptionFile, "graphics", "fullscreen", "true")
-	Else
-		PutINIValue(OptionFile, "graphics", "fullscreen", "false")
-	EndIf
-	If LauncherEnabled Then
-		PutINIValue(OptionFile, "launcher", "launcher enabled", "true")
-	Else
-		PutINIValue(OptionFile, "launcher", "launcher enabled", "false")
-	EndIf
-	If BorderlessWindowed Then
-		PutINIValue(OptionFile, "graphics", "borderless windowed", "true")
-	Else
-		PutINIValue(OptionFile, "graphics", "borderless windowed", "false")
-	EndIf
+	PutINIValue(OptionFile, "graphics", "fullscreen", Fullscreen)
+	PutINIValue(OptionFile, "launcher", "launcher enabled", LauncherEnabled)
+	PutINIValue(OptionFile, "graphics", "borderless windowed", BorderlessWindowed)
 	
 	FreeImage(LauncherIMG) : LauncherIMG = 0
 	
@@ -1599,7 +1586,7 @@ Function DrawLoading(percent%, shortloading=False)
 			Local strtemp$ = ""
 			temp = Rand(2,9)
 			For i = 0 To temp
-				strtemp$ = STRTEMP + RandomDefaultWidthChar(48,122,"?")
+				strtemp$ = strtemp + RandomDefaultWidthChar(48,122,"?")
 			Next
 			Text(GraphicWidth / 2, GraphicHeight / 2 + 80*MenuScale, strtemp, True, True)
 			
