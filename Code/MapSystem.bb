@@ -2092,11 +2092,11 @@ Function SetupTriggerBoxes(r.Rooms)
 	Local tb.Triggerboxes = r\FirstTriggerbox
 	
 	While tb <> Null
-		sx = EntityScaleX(tb\obj, 1)
-		sy = Max(EntityScaleY(tb\obj, 1), 0.001)
-		sz = EntityScaleZ(tb\obj, 1)
+		sx = EntityScaleX(tb\Obj, 1)
+		sy = Max(EntityScaleY(tb\Obj, 1), 0.001)
+		sz = EntityScaleZ(tb\Obj, 1)
 		
-		GetMeshExtents(tb\obj)
+		GetMeshExtents(tb\Obj)
 		
 		pxmin = Cos(r\angle) * sx*Mesh_MinX - Sin(r\angle) * sz*Mesh_MinZ + r\x
 		pzmin = Sin(r\angle) * sx*Mesh_MinX + Cos(r\angle) * sz*Mesh_MinZ + r\z
@@ -3901,8 +3901,8 @@ Function FillRoom(r.Rooms)
 			it = CreateItem("docRAND1", r\x -137.0 * RoomScale, r\y + 153.0 * RoomScale, r\z + 464.0 * RoomScale)
 			EntityParent(it\collider, r\obj)
 			
-			w.waypoints = CreateWaypoint(r\x - 32.0 * RoomScale, r\y + 66.0 * RoomScale, r\z + 288.0 * RoomScale, Null, r)
-			w2.waypoints = CreateWaypoint(r\x, r\y + 66.0 * RoomScale, r\z - 448.0 * RoomScale, Null, r)
+			w.WayPoints = CreateWaypoint(r\x - 32.0 * RoomScale, r\y + 66.0 * RoomScale, r\z + 288.0 * RoomScale, Null, r)
+			w2.WayPoints = CreateWaypoint(r\x, r\y + 66.0 * RoomScale, r\z - 448.0 * RoomScale, Null, r)
 			w\connected[0] = w2 : w\dist[0] = EntityDistance(w\obj, w2\obj)
 			w2\connected[0] = w : w2\dist[0] = w\dist[0]
 			;[End Block]
@@ -4319,8 +4319,8 @@ Function FillRoom(r.Rooms)
 			HideEntity r\Objects[3]
 			EntityParent(r\Objects[3], r\obj)
 			
-			w.waypoints = CreateWaypoint(r\x, r\y + 66.0 * RoomScale, r\z + 292.0 * RoomScale, Null, r)
-			w2.waypoints = CreateWaypoint(r\x, r\y + 66.0 * RoomScale, r\z - 284.0 * RoomScale, Null, r)
+			w.WayPoints = CreateWaypoint(r\x, r\y + 66.0 * RoomScale, r\z + 292.0 * RoomScale, Null, r)
+			w2.WayPoints = CreateWaypoint(r\x, r\y + 66.0 * RoomScale, r\z - 284.0 * RoomScale, Null, r)
 			w\connected[0] = w2 : w\dist[0] = EntityDistance(w\obj, w2\obj)
 			w2\connected[0] = w : w2\dist[0] = w\dist[0]
 			
@@ -5031,7 +5031,7 @@ Function FillRoom(r.Rooms)
 			;[End Block]
 		Case "room2_3","room3_3"
 			;[Block]
-			w.waypoints = CreateWaypoint(r\x, r\y + 66.0 * RoomScale, r\z, Null, r)
+			w.WayPoints = CreateWaypoint(r\x, r\y + 66.0 * RoomScale, r\z, Null, r)
 			;[End Block]
 		;New rooms (in SCP:CB 1.3) - ENDSHN
 		Case "room1lifts"
@@ -5048,7 +5048,7 @@ Function FillRoom(r.Rooms)
 			TurnEntity(sc\CameraObj, 20, 0, 0)
 			EntityParent(sc\obj, r\obj)
 			
-			w.waypoints = CreateWaypoint(r\x, r\y + 66.0 * RoomScale, r\z, Null, r)
+			w.WayPoints = CreateWaypoint(r\x, r\y + 66.0 * RoomScale, r\z, Null, r)
 			;[End Block]
 		Case "room2servers2"
 			;[Block]
@@ -5849,7 +5849,7 @@ Type LightTemplates
 End Type 
 
 Function AddTempLight.LightTemplates(rt.RoomTemplates, x#, y#, z#, ltype%, range#, r%, g%, b%)
-	Local lt.lighttemplates = New LightTemplates
+	Local lt.LightTemplates = New LightTemplates
 	lt\roomtemplate = rt
 	lt\x = x
 	lt\y = y
@@ -5887,7 +5887,7 @@ End Type
 
 Function CreateWaypoint.WayPoints(x#,y#,z#,door.Doors, room.Rooms)
 	
-	Local w.waypoints = New WayPoints
+	Local w.WayPoints = New WayPoints
 	
 	If 1 Then
 		w\obj = CreatePivot()
@@ -6283,7 +6283,7 @@ Type TempScreens
 End Type
 
 Function CreateScreen.Screens(x#,y#,z#,imgpath$,r.Rooms)
-	Local s.screens = New Screens
+	Local s.Screens = New Screens
 	s\obj = CreatePivot()
 	EntityPickMode(s\obj, 1)	
 	EntityRadius s\obj, 0.1
@@ -7051,7 +7051,7 @@ End Function
 
 ;-------------------------------------------------------------------------------------------------------
 
-Include "OverlapResolver.bb"
+Include "Code\OverlapResolver.bb"
 
 Function CreateMapLayout()
 	Local x% = Floor(MapWidth / 2)
@@ -7957,7 +7957,7 @@ End Function
 
 
 
-Include "Skybox.bb"
+Include "Code\Skybox.bb"
 
 Global UpdateRoomLightsTimer# = 0.0
 
@@ -8672,8 +8672,3 @@ Function IsInRoom%(r.Rooms, x#, z#)
 	EndIf
 	Return x > MinX And x < MaxX And z > MinZ And z < MaxZ
 End Function
-
-
-
-
-

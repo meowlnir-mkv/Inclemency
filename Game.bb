@@ -12,4 +12,4 @@
 ;	See Credits.txt for credits to assets used in Inclemency and the original SCP – Containment Breach's list of contributors.
 ;--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-Include "Main.bb"
+Include "Code\Main.bb"

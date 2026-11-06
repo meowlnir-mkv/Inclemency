@@ -20,7 +20,7 @@ Function RuntimeErrorExt%(Message$)
 	MemoryAccessViolation()
 End Function
 
-Include "StrictLoads.bb"
+Include "Code\StrictLoads.bb"
 
 Global DataDir$ = InitDataDir()
 Global OptionFile$ = InitOptionsFile()
@@ -91,9 +91,9 @@ Function GetCLIString$(name$, def$="")
 	Return Trim(Mid(cmd, begin, End - begin))
 End Function
 
-Include "Blitz_File_FileName.bb"
+Include "Code\BlitzFileName.bb"
 
-Include "DevilParticleSystem.bb"
+Include "Code\DevilParticles.bb"
 
 Global IsRestart% = False
 .Start
@@ -204,7 +204,7 @@ Global ConsoleOpening% = GetOptionInt("console", "auto opening")
 Global SFXVolume# = GetOptionFloat("audio", "sound volume")
 
 Const StringsFile$ = "Data\strings.ini"
-Include "Localization.bb"
+Include "Code\Localization.bb"
 
 Global I_Loc.LocalizationTable
 If I_Loc <> Null Then Delete I_Loc ; Happens on reload
@@ -397,7 +397,7 @@ Global CreditsFont%,CreditsFont2%
 
 ConsoleFont% = Font1
 
-Include "Subtitles.bb"
+Include "Code\Subtitles.bb"
 LoadSubtitles()
 
 SetFont Font2
@@ -464,7 +464,7 @@ Global Injuries#, Bloodloss#, Infect#, HealTimer#
 
 Global RefinedItems%
 
-Include "Achievements.bb"
+Include "Code\Achievements.bb"
 
 ;player coordinates, angle, speed, movement etc ---------------------------------------------------------------------
 Global DropSpeed#, HeadDropSpeed#, CurrSpeed#
@@ -510,7 +510,7 @@ Dim DrawArrowIcon%(4)
 
 ;misc ---------------------------------------------------------------------------------------------------------------
 
-Include "Difficulty.bb"
+Include "Code\Difficulty.bb"
 
 Global MTFtimer#, MTFrooms.Rooms[10], MTFroomState%[10]
 
@@ -1975,7 +1975,7 @@ Global StoredCameraFogFar# = CameraFogFar
 
 Global MouseSens# = GetOptionFloat("controls", "mouse sensitivity")
 
-Include "dreamfilter.bb"
+Include "Code\dreamfilter.bb"
 
 Dim LightSpriteTex(10)
 
@@ -2275,11 +2275,11 @@ DrawLoading(35, True)
 
 ;----------------------------------------------  Items  -----------------------------------------------------
 
-Include "Items.bb"
+Include "Code\Items.bb"
 
 ;--------------------------------------- Particles ------------------------------------------------------------
 
-Include "Particles.bb"
+Include "Code\Particles.bb"
 
 ;-------------------------------------  Doors --------------------------------------------------------------
 
@@ -2915,11 +2915,11 @@ DrawLoading(40,True)
 Global DebugMapGen% = GetOptionInt("debug", "show map gen")
 Global DebugForestGen% = GetOptionInt("debug", "show forest gen")
 
-Include "MapSystem.bb"
+Include "Code\MapSystem.bb"
 
 DrawLoading(80,True)
 
-Include "NPCs.bb"
+Include "Code\NPCs.bb"
 
 ;-------------------------------------  Events --------------------------------------------------------------
 
@@ -3171,7 +3171,7 @@ Function InitEvents()
 	
 End Function
 
-Include "UpdateEvents.bb"
+Include "Code\UpdateEvents.bb"
 
 Function RemoveEvent(e.Events)
 	If e\Sound<>0 Then FreeSound_Strict e\Sound
@@ -3189,7 +3189,7 @@ Collisions HIT_DEAD, HIT_MAP, 2, 2
 DrawLoading(90, True)
 
 ;----------------------------------- meshes and textures ----------------------------------------------------------------
-Include "Effects.bb"
+Include "Code\Effects.bb"
 Global ResizeTexture%
 
 Function InitFastResize()
@@ -3238,7 +3238,7 @@ Global MTF_CameraCheckDetected% = False
 
 ;---------------------------------------------------------------------------------------------------
 
-Include "menu.bb"
+Include "Code\menu.bb"
 MainMenuOpen = True
 
 ;---------------------------------------------------------------------------------------------------
@@ -4877,7 +4877,7 @@ Function MovePlayer()
 				EndIf
 			EndIf
 
-			If moveZ > 0 And Playable Then
+			If MoveZ > 0 And Playable Then
 				temp = True
 				If MoveX = 0 Then angle = 180 Else angle = 135 * MoveX
 			ElseIf MoveZ < 0 And Playable Then
@@ -8669,7 +8669,7 @@ End Function
 
 ;----------------------------------------------------------------------------------------------
 
-Include "LoadAllSounds.bb"
+Include "Code\LoadAllSounds.bb"
 Function LoadEntities()
 	CatchErrors("Uncaught (LoadEntities)")
 	DrawLoading(0)
@@ -9787,7 +9787,7 @@ Function NullGame(playbuttonsfx%=True)
 	CatchErrors("NullGame")
 End Function
 
-Include "save.bb"
+Include "Code\save.bb"
 
 ;--------------------------------------- music & sounds ----------------------------------------------
 
@@ -12677,3 +12677,6 @@ Function Update096ElevatorEvent#(e.Events,EventState#,d.Doors,elevatorobj%)
 	
 End Function
 
+
+;~IDEal Editor Parameters:
+;~C#Blitz3D TSS
