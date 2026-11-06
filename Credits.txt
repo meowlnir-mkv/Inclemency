@@ -2,6 +2,7 @@
 *Containment Breach: Inclemency - Programming
 
 	meowlnir.mkv
+	Omnisix
 
 *Containment Breach: Inclemency - Audio/Visual Art
 
@@ -145,7 +146,7 @@
 
 *SCP - Containment Breach - Testers
 
-		Christian Rieﬂ
+		Christian Rie√ü
 		Emil215p
 		Flipsy
 		Inclination
