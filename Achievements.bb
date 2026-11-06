@@ -20,8 +20,8 @@ Function CreateAchievement.Achievements(name$, isSCP% = False)
 	Local a.Achievements = New Achievements
 	a\Name = name
 	a\IsSCP = isSCP
-	a\LocalName = GetModdedINIString(StringsFile, "Achievement", name)
-	a\Description = GetModdedINIString(StringsFile, "Achievement Desc", name)
+	a\LocalName = GetINIString(StringsFile, "Achievement", name)
+	a\Description = GetINIString(StringsFile, "Achievement Desc", name)
 	a\Img = LoadImage_Strict("GFX\menu\achievements\Achv"+name+".png")
 	ResizeImage(a\Img, 64*GraphicHeight/768.0, 64*GraphicHeight/768.0)
 	a\Unlocked = False
@@ -94,15 +94,11 @@ Function GiveAchievement(achv.Achievements, showMessage%=True)
 			CreateAchievementMsg(achv)
 			PlaySound_Strict LoadTempSound("SFX\General\AchvGet"+Rand(1,3)+".ogg")
 		EndIf
-		; The "Fair Play" achievement cannot be found on Steam because every achievement there requires the console to not be used.
-		;If SteamActive And (Not UsedConsole) And achv<>AchvConsole Then
-			;Steam_Achieve("Achv" + achv\Name)
-		;End If
 	EndIf
 End Function
 
 Function FakeOutAchv(achv.Achievements)
-	If Not achv\FakedOut and AchvMSGenabled Then
+	If Not achv\FakedOut And AchvMSGenabled Then
 		CreateAchievementMsg(achv)
 		PlaySound_Strict LoadTempSound("SFX\General\AchvGet"+Rand(1,3)+".ogg")
 		achv\FakedOut = True
@@ -218,8 +214,3 @@ Function UpdateAchievementMsg()
 End Function
 
 
-
-
-;~IDEal Editor Parameters:
-;~F#31#48
-;~C#Blitz3D

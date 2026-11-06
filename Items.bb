@@ -103,7 +103,7 @@ Function CreateItemTemplate.ItemTemplates(name$, group$, displayname$, desc$, ob
 	
 	it\group = group
 	it\name = name
-	it\displayname = GetModdedINIString(StringsFile, "Item", name)
+	it\displayname = GetINIString(StringsFile, "Item", name)
 	If it\displayname = "" Then
 		it\displayname = displayname
 		If it\displayname = "" Then
@@ -111,7 +111,7 @@ Function CreateItemTemplate.ItemTemplates(name$, group$, displayname$, desc$, ob
 		EndIf
 	EndIf
 	
-	it\desc = GetModdedINIString(StringsFile, "Desc", name)
+	it\desc = GetINIString(StringsFile, "Desc", name)
 	If it\desc = "" Then
 		it\desc = desc
 		If it\desc = "" Then
@@ -152,7 +152,7 @@ Function InitItemTemplatesFromFile(file$)
 				EndIf
 
 				name = Trim(Mid(l, 2, Len(l) - 2))
-				If name = "" then
+				If name = "" Then
 					RuntimeErrorExt("Empty item name.")
 				EndIf
 				group = ""
@@ -224,15 +224,7 @@ Const ITEMS_DATA_PATH$ = "Data\items.ini"
 
 Function InitItemTemplates()
 	Local hasOverride%
-	For m.ActiveMods = Each ActiveMods
-		Local modPath$ = m\Path + ITEMS_DATA_PATH
-		InitItemTemplatesFromFile(modPath)
-		If FileType(modPath + ".OVERRIDE") = 1 Then
-			hasOverride = True
-			Exit
-		EndIf
-	Next
-
+	
 	If Not hasOverride Then InitItemTemplatesFromFile(ITEMS_DATA_PATH)
 
 	Local it.ItemTemplates,it2.ItemTemplates
@@ -823,9 +815,3 @@ End Function
 
 
 
-
-
-
-;~IDEal Editor Parameters:
-;~F#B#1E
-;~C#Blitz3D

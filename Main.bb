@@ -24,7 +24,6 @@ Include "StrictLoads.bb"
 
 Global DataDir$ = InitDataDir()
 Global OptionFile$ = InitOptionsFile()
-Global ModsFile$ = DataDir + "\mods.ini"
 Const OptionDefaultFile$ = "defaults.ini"
 
 Function InitDataDir$()
@@ -73,7 +72,7 @@ End Function
 Function GetCLIInt%(name$, def%=0)
 	Local txt$ = GetCLIString(name)
 	If txt <> "" Then Return Int(txt)
-	return def
+	Return def
 End Function
 
 Function GetCLIString$(name$, def$="")
@@ -87,42 +86,21 @@ Function GetCLIString$(name$, def$="")
 		begin = begin + 1
 	EndIf
 	begin = begin + Len(name)
-	Local end% = Instr(cmd, " ", begin)
-	If end = 0 Then end = Len(cmd) + 1
-	Return Trim(Mid(cmd, begin, end - begin))
+	Local End% = Instr(cmd, " ", begin)
+	If End = 0 Then End = Len(cmd) + 1
+	Return Trim(Mid(cmd, begin, End - begin))
 End Function
 
 Include "Blitz_File_FileName.bb"
 
 Include "DevilParticleSystem.bb"
 
-;Global SteamLastStatus%
-;Global SteamActive% = GetOptionInt("general", "enable steam") And (Not HasCLIFlag("nosteam"))
-;Global SteamRichPresenceActive% = SteamActive And GetOptionInt("general", "enable steam rich presence") And (Not HasCLIFlag("nosteamrp"))
-;If SteamActive Then
-	;If Steam_RestartAppIfNecessary(2178380) Then Return
-	;If Steam_Init() <> 0 Then RuntimeErrorExt("Steam failed to initialize")
-;EndIf
-
-;Global DiscordLastStatus%, DiscordCooldown%
-;Global DiscordActive% = GetOptionInt("general", "enable discord rich presence") And (Not HasCLIFlag("nodiscord"))
-;If DiscordActive Then
-;	DiscordActive = (BlitzcordCreateCore("1465275739342377014") = 0)
-;	If DiscordActive Then BlitzcordSetLargeImage("logo")
-;EndIf
-
-; Used for rich presence
-;Global PlayerArea%
-
 Global IsRestart% = False
 .Start
 Global IsRunning% = True
 Global ShouldRestart% = False
 
-Include "ModManager.bb"
 Global HasDubbedAudio%
-Global ModsEnabled% = GetOptionInt("general", "enable mods") And (Not HasCLIFlag("nomods"))
-If ModsEnabled Then ReloadMods()
 
 Global Font1%, Font2%, Font3%, Font4%, Font5%, Font6%
 Global ConsoleFont%
@@ -231,10 +209,7 @@ Include "Localization.bb"
 Global I_Loc.LocalizationTable
 If I_Loc <> Null Then Delete I_Loc ; Happens on reload
 I_Loc = New LocalizationTable
-For m.ActiveMods = Each ActiveMods
-	Local modPath$ = m\Path + StringsFile
-	If FileType(modPath) = 1 Then LoadLocalization(I_Loc, modPath)
-Next
+
 LoadLocalization(I_Loc, StringsFile)
 
 
@@ -243,7 +218,7 @@ If (LauncherEnabled Lor HasCLIFlag("launcher")) And (Not IsRestart) And (Not Has
 	UpdateLauncher()
 EndIf
 
-Global GFXDriverName$ = GFXDriverName(1)
+Global GfxDriverName$ = GfxDriverName(1)
 
 ;New "fake fullscreen" - ENDSHN Psst, it's called borderless windowed mode --Love Mark,
 If BorderlessWindowed
@@ -351,7 +326,6 @@ End Function
 SetBuffer(BackBuffer())
 
 Global CurTime%, PrevTime%, LoopDelay%, AccumulatedLoopDelay#, FPSfactor#, FPSfactor2#, PrevFPSFactor#
-Local CheckFPS%, ElapsedLoops%, FPS%
 
 Global Framelimit% = GetOptionInt("graphics", "framelimit")
 Global Vsync% = GetOptionInt("graphics", "vsync")
@@ -2841,13 +2815,13 @@ Function UseDoor(d.Doors, showmsg%=True, playsfx%=True)
 						MsgTimer = 70 * 5
 					ElseIf (Msg<>I_Loc\MessageButton_ElevatorCall)
 						If (Msg=I_Loc\MessageButton_ElevatorAlready) Or (MsgTimer<70*3) Or (ElevatorButtonSpamCount > 20 And Msg <> I_Loc\MessageButton_ElevatorMav)
-							Local rnd%
+							Local Rnd%
 							If ElevatorButtonSpamCount > 20 Then
-								rnd = 3
+								Rnd = 3
 							Else
-								rnd = Rand(10)
+								Rnd = Rand(10)
 							EndIf
-							Select rnd
+							Select Rnd
 								Case 1
 									PlaySound2(ButtonSFX2, Camera, ClosestButton)
 									Msg = I_Loc\MessageButton_ElevatorStop
@@ -3308,7 +3282,7 @@ Global TotalVidMem = TotalVidMem()
 Global TotalPhysMem = TotalPhys()
 
 While IsRunning
-	SetErrorMsg(5, "GPU: " + GFXDriverName + " (" + (TotalVidMem - (AvailVidMem() / 1024)) + "MB/" + TotalVidMem + " MB)")
+	SetErrorMsg(5, "GPU: " + GfxDriverName + " (" + (TotalVidMem - (AvailVidMem() / 1024)) + "MB/" + TotalVidMem + " MB)")
 	SetErrorMsg(6, "Global memory status: (" + (TotalPhysMem - (AvailPhys() / 1024)) + "MB/" + TotalPhysMem + " MB)")
 
 	Cls
@@ -3337,14 +3311,6 @@ While IsRunning
 
 	If IsPaused() Then FPSfactor = 0
 	
-	;Counting the fps
-	If CheckFPS < CurTime Then
-		FPS = ElapsedLoops
-		ElapsedLoops = 0
-		CheckFPS = CurTime+1000
-	EndIf
-	ElapsedLoops = ElapsedLoops + 1
-	
 	If Input_ResetTime<=0.0
 		DoubleClick = False
 		MouseHit1 = MouseHit(1)
@@ -3371,7 +3337,7 @@ While IsRunning
 	
 	If MainMenuOpen Then
 		If ShouldPlay = 21 Then
-			EndBreathSFX = LoadSound(DetermineModdedSoundPath("SFX\Ending\MenuBreath.ogg"))
+			EndBreathSFX = LoadSound("SFX\Ending\MenuBreath.ogg")
 			EndBreathCHN = PlaySound(EndBreathSFX)
 			ShouldPlay = 66
 		ElseIf ShouldPlay = 66
@@ -3758,13 +3724,6 @@ While IsRunning
 		If KeyHit(KEY_CONSOLE) Then
 			If CanOpenConsole
 				ConsoleOpen = (Not ConsoleOpen)
-				;If SteamActive Then
-					;If ConsoleOpen Then
-						;Steam_OpenOnScreenKeyboard(0, GraphicWidth / 2, GraphicHeight / 2, GraphicWidth / 2, GraphicHeight / 2)
-					;Else
-						;Steam_CloseOnScreenKeyboard()
-					;EndIf
-				;EndIf
 				UpdateMenuState()
 			EndIf
 		EndIf
@@ -3812,7 +3771,7 @@ While IsRunning
 					ElseIf SelectedScreen <> Null Then
 						temp% = True
 					EndIf
-				ElseIf (InvOpen And OtherOpen = Null) then
+				ElseIf (InvOpen And OtherOpen = Null) Then
 					temp% = True
 				EndIf
 				
@@ -3836,7 +3795,7 @@ While IsRunning
 		End If
 		
 		Color 255, 255, 255
-		If ShowFPS Then SetFont ConsoleFont : Text 20, 20, Format(I_Loc\HUD_Fps, FPS) : SetFont Font1
+		If ShowFPS Then SetFont ConsoleFont : Text 20, 20, Format(I_Loc\HUD_Fps, GetFPS()) : SetFont Font1
 		
 		If EndingTimer < 0 Then
 			If SelectedEnding <> "" Then DrawEnding()
@@ -3853,87 +3812,7 @@ While IsRunning
 	ApplyBorderlessResizing()
 	
 	CatchErrors("Main loop / uncaught")
-
-	;If SteamRichPresenceActive Lor DiscordActive Then
-		;PlayerArea = GetCurrentPlayerArea()
-	;EndIf
 	
-	;If DiscordActive Then
-	;	PlayerArea = GetCurrentPlayerArea()
-	;EndIf
-
-	;Local newAreaStr$
-	;If SteamRichPresenceActive Then
-		;If SteamLastStatus <> PlayerArea Then
-			;Local displayBase$
-			;If PlayerArea = -1 Then
-				;Steam_SetRichPresence("steam_display", "#StatusMenus")
-			;Else If SteamLastStatus = -1 Then
-				;Steam_SetRichPresence("steam_display", "#StatusGame")
-				;Steam_SetRichPresence("difficulty", SelectedDifficulty\name)
-			;EndIf
-			;Select PlayerArea
-				;Case -1 newAreaStr = "Menu"
-				;Case 0 newAreaStr = "LCZ"
-				;Case 1 newAreaStr = "HCZ"
-				;Case 2 newAreaStr = "EZ"
-				;Case 3 newAreaStr = "jorge"
-				;Case 4 newAreaStr = "intro"
-				;Case 5 newAreaStr = "860"
-				;Case 100 newAreaStr = "1499"
-				;Case 101 newAreaStr = "PD"
-				;Case 102 newAreaStr = "GateA"
-				;Case 103 newAreaStr = "GateB"
-				;Case 104 newAreaStr = "MT"
-			;End Select
-			;Steam_SetRichPresence("gamestatus", newAreaStr)
-			;SteamLastStatus = PlayerArea
-		;EndIf
-
-		;Steam_Update()
-	;EndIf
-
-	;If DiscordActive Then
-	;	If PlayerArea <> DiscordLastStatus And MilliSecs() > DiscordCooldown Then
-	;		If PlayerArea = -1 Then
-	;			BlitzcordSetActivityDetails("Browsing the menus")
-	;			BlitzcordSetLargeText("")
-	;			BlitzcordSetSmallImage("")
-	;			BlitzcordSetTimestampStart(BlitzcordGetCurrentTimestamp())
-	;			BlitzcordUpdateActivity()
-	;			DiscordCooldown = MilliSecs() + 5000
-	;		Else
-	;			If DiscordLastStatus = -1 Then
-	;				BlitzcordSetLargeText(GetSeedString(False))
-	;				BlitzcordSetSmallImage(Lower(SelectedDifficulty\name))
-	;				BlitzcordSetSmallText("Difficulty: " + SelectedDifficulty\name)
-	;				BlitzcordSetTimestampStart(BlitzcordGetCurrentTimestamp())
-	;			EndIf
-	;
-	;			Select PlayerArea
-	;				Case 0 newAreaStr = "Roaming the Light Containment Zone"
-	;				Case 1 newAreaStr = "Roaming the Heavy Containment Zone"
-	;				Case 2 newAreaStr = "Roaming the Entrance Zone"
-	;				Case 3 newAreaStr = "jorge has been expecting you"
-	;				Case 4 newAreaStr = "Being tested on SCP-173"
-	;				Case 5 newAreaStr = "Traversing a blue-hued forest"
-	;				Case 6 newAreaStr = "Going crazy"
-	;				Case 100 newAreaStr = "Wearing a GP-5 Gas Mask"
-	;				Case 101 newAreaStr = "Trapped in the Pocket Dimension"
-	;				Case 102 newAreaStr = "Escaping through Gate A"
-	;				Case 103 newAreaStr = "Escaping through Gate B"
-	;				Case 104 newAreaStr = "Lost in the Maintenance Tunnels"
-	;			End Select
-	;			BlitzcordSetActivityDetails(newAreaStr)
-	;			BlitzcordUpdateActivity()
-	;			DiscordCooldown = MilliSecs() + 5000
-	;		EndIf
-	;		DiscordLastStatus = PlayerArea
-	;	EndIf
-	;
-	;	BlitzcordRunCallbacks()
-	;EndIf
-
 	Flip Vsync Lor MainMenuOpen
 Wend
 
@@ -3941,9 +3820,6 @@ If ShouldRestart Then
 	IsRestart = True
 	Goto Start
 EndIf
-
-;If SteamActive Then Steam_Shutdown()
-;If DiscordActive Then BlitzcordClearActivity()
 
 Function Restart()
 	Cls
@@ -3953,20 +3829,6 @@ Function Restart()
 	IsRunning = False
 	ShouldRestart = True
 End Function
-
-;Function GetCurrentPlayerArea%()
-;	If MainMenuOpen Then Return -1
-;	Select PlayerRoom\RoomTemplate\Name
-;		Case "173" Return 4
-;		Case "room860" If EntityY(Collider,True)>4.0 Then Return 5
-;		Case "dimension1499" Return 100
-;		Case "pocketdimension" Return 101
-;		Case "gatea" Return 102
-;		Case "exit1" Return 103
-;		Case "room2tunnel" If EntityY(Collider,True)>4.0 Then Return 104
-;		Default Return PlayerZone
-;	End Select
-;End Function
 
 ;----------------------------------------------------------------------------------------------------------------------------------------------------
 ;----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -4358,7 +4220,7 @@ Function UpdateSanity()
 	
 	If Active5131 = True Then DrainSanity = True
 	
-	If DrainSanity = True or Injuries > 1 or Scared = True Then
+	If DrainSanity = True Or Injuries > 1 Or Scared = True Then
 		tempsan% = False
 	Else
 		tempsan% = True
@@ -4393,7 +4255,7 @@ Function UpdateSanity()
 				PlayerZone = 7
 				
 				If Faked106% <> True Then
-					If Rand(10000)=1 and (Not PlayerRoom\RoomTemplate\DisableDecals) Then
+					If Rand(10000)=1 And (Not PlayerRoom\RoomTemplate\DisableDecals) Then
 						FakeOutAchv(Achv106)
 						de.Decals = CreateDecal(0, EntityX(Collider), 0.01, EntityZ(Collider), 90, Rand(360), 0)
 						de\Size = 0.05 : de\SizeChange = 0.001 : EntityAlpha(de\obj, 0.8) : UpdateDecals
@@ -4664,33 +4526,13 @@ Function InitCredits()
 	
 	Repeat
 		l = ReadLine(file)
-		If l = "-" Then
-			Local m.ActiveMods = Last ActiveMods
-			While m <> Null
-				InitCreditsFromFile(m\Path + "Credits.txt")
-				m = Before m
-			Wend
-		Else
-			cl = New CreditsLine
-			cl\txt = l
-		EndIf
+		cl = New CreditsLine
+		cl\txt = l
 	Until Eof(file)
 	CloseFile(file)
 	
 	Delete First CreditsLine
 	CreditsTimer = 0
-End Function
-
-Function InitCreditsFromFile(creditsPath$)
-	If FileType(creditsPath) <> 1 Then Return
-
-	Local f% = OpenFile(creditsPath)
-	Repeat
-		Local l$ = ReadLine(f)
-		Local cl.CreditsLine = New CreditsLine
-		cl\txt = l
-	Until Eof(f)
-	CloseFile(f)
 End Function
 
 Function DrawCredits()
@@ -4824,7 +4666,7 @@ Function MovePlayer()
 	If CurrSpeed > 0 Then
         Stamina = Min(Stamina + 0.15 * FPSfactor/1.25, 100.0)
     Else
-		If Crouch and CurrSpeed > 0 Then
+		If Crouch And CurrSpeed > 0 Then
 			Stamina = Min(Stamina + 0.15 * FPSfactor/1.125, 100.0)
 		ElseIf Crouch Then
 			Stamina = Min(Stamina + 0.15 * FPSfactor*1.5, 100.0)
@@ -6650,22 +6492,7 @@ Function DrawGUI()
 						Local iniStr$ = "DATA\SCP-294.ini"
 						Local loc% = -1
 						Local hasOverride%
-						For m.ActiveMods = Each ActiveMods
-							Local modIniStr$ = m\Path + iniStr
-							If FileType(modIniStr) = 1 Then
-								Local sectionLocation = GetINISectionLocation(modIniStr, strtemp)
-								If sectionLocation <> -1 Then
-									iniStr = modIniStr
-									loc = sectionLocation
-									Exit
-								EndIf
-								If FileType(modIniStr + ".OVERRIDE") Then
-									hasOverride = True
-									Exit
-								EndIf
-							EndIf
-						Next
-
+						
 						If loc = -1 And (Not hasOverride) Then
 							loc% = GetINISectionLocation(iniStr, strtemp)
 						EndIf
@@ -8025,8 +7852,6 @@ Function DrawTimer()
 	Text(x + 3 * MenuScale, y + 3 * MenuScale, durText)
 	If UsedConsole Then
 		Color 150, 150, 150
-	Else If First ActiveMods <> Null Then
-		Color 200, 200, 200
 	Else If PreMadeSaveLoaded Then
 		Color 175, 175, 175
 	Else
@@ -8071,14 +7896,12 @@ Function DrawMenu()
 	CatchErrors("Uncaught (DrawMenu)")
 	
 	Local x%, y%, width%, height%
-	;Local steamOverlayActive = SteamActive And Steam_GetOverlayState()
 	If (api_GetFocus() = 0) And EndingTimer=0 And SelectedEnding="" Then ;Game is out of focus -> pause the game
 		If (Not Using294) Then
 			MenuOpen = True
 			UpdateMenuState()
 		EndIf
 		;Reduce the CPU take while game is not in focus, unless Steam overlay is active
-		;If Not steamOverlayActive Then Delay 1000
 	EndIf
 	If MenuOpen Then
 		
@@ -8321,7 +8144,7 @@ Function DrawMenu()
 
 					If HasDubbedAudio Then
 						Color 100,100,100
-						Text x, y, I_Loc\OptionName_LocalAudio
+						Text x, y, I_Loc\OptionName_Localaudio
 						DubbedAudio = DrawTick(x + 270 * MenuScale, y + MenuScale, DubbedAudio, True)
 						If MouseOn(x+270*MenuScale,y+MenuScale,20*MenuScale,20*MenuScale) And OnSliderID=0
 							DrawOptionsTooltip(tx,ty,tw,th+220*MenuScale,"localaudio")
@@ -8877,16 +8700,16 @@ Function LoadEntities()
 	Load294()
 
 	
-	Brightness% = GetModdedINIFloat(MapOptions, "facility", "brightness")
-	CameraFogNear# = GetModdedINIFloat(MapOptions, "facility", "camera fog near")
-	CameraFogFar# = GetModdedINIFloat(MapOptions, "facility", "camera fog far")
+	Brightness% = GetINIFloat(MapOptions, "facility", "brightness")
+	CameraFogNear# = GetINIFloat(MapOptions, "facility", "camera fog near")
+	CameraFogFar# = GetINIFloat(MapOptions, "facility", "camera fog far")
 	StoredCameraFogFar# = CameraFogFar
 	
 	;TextureLodBias
 	
 	AmbientLightRoomTex% = CreateTexture(2,2,1+256+1024)
-	AmbientLight = GetModdedINIInt(MapOptions, "facility", "ambient light")
-	AmbientLightNVG = GetModdedINIInt(MapOptions, "facility", "ambient light nvg")
+	AmbientLight = GetINIInt(MapOptions, "facility", "ambient light")
+	AmbientLightNVG = GetINIInt(MapOptions, "facility", "ambient light nvg")
 
 	TextureBlend AmbientLightRoomTex,5
 	SetBuffer(TextureBuffer(AmbientLightRoomTex))
@@ -10287,7 +10110,7 @@ Function KillSounds()
 			If (Not n\SoundChn_IsStream)
 				StopChannel(n\SoundChn)
 			Else
-				StopStream_Strict(n\SoundChn) : n\SoundChn_isStream = False
+				StopStream_Strict(n\SoundChn) : n\SoundChn_IsStream = False
 			EndIf
 			n\SoundChn = 0
 		EndIf
@@ -10295,7 +10118,7 @@ Function KillSounds()
 			If (Not n\SoundChn2_IsStream)
 				StopChannel(n\SoundChn2)
 			Else
-				StopStream_Strict(n\SoundChn2) : n\SoundChn2_isStream = False
+				StopStream_Strict(n\SoundChn2) : n\SoundChn2_IsStream = False
 			EndIf
 			n\SoundChn2 = 0
 		EndIf
@@ -11106,7 +10929,7 @@ Dim Keyboard294$(0,0,0)
 
 Function Load294()
 	Dim Keyboard294(0, 0, 0)
-	Local f% = ReadFile(DetermineModdedPath("Data\SCP-294Keyboard.ini"))
+	Local f% = ReadFile("Data\SCP-294Keyboard.ini")
 	Local row% = -1
 	Local layer% = -1
 	Keyboard294ResetLayerOnInput = False
@@ -11125,10 +10948,10 @@ Function Load294()
 					row = Int(Trim(Left(section, layerSplitterPos - 1)))
 					layer = Int(Trim(Right(section, Len(section) - layerSplitterPos)))
 				EndIf
-				If row >= Keyboard294Height then
+				If row >= Keyboard294Height Then
 					RuntimeErrorExt("Row " + Str(row) + " out of range.")
 				EndIf
-				If layer >= Keyboard294Layers then
+				If layer >= Keyboard294Layers Then
 					RuntimeErrorExt("Layer " + Str(layer) + " out of range.")
 				EndIf
 			Else
@@ -11158,7 +10981,7 @@ Function Load294()
 					End Select
 				Else
 					Local column = Int(key)
-					If column >= Keyboard294Width then
+					If column >= Keyboard294Width Then
 						RuntimeErrorExt("Column " + Str(column) + " out of range.")
 					EndIf
 					If layer = -1 Then
@@ -11247,22 +11070,6 @@ Function Use294()
 				Local loc% = -1
 				Local hasOverride%
 				If Input294<>""
-					For m.ActiveMods = Each ActiveMods
-						Local modIniStr$ = m\Path + iniStr
-						If FileType(modIniStr) = 1 Then
-							Local sectionLocation = GetINISectionLocation(modIniStr, Input294)
-							If sectionLocation <> -1 Then
-								iniStr = modIniStr
-								loc = sectionLocation
-								Exit
-							EndIf
-							If FileType(modIniStr + ".OVERRIDE") Then
-								hasOverride = True
-								Exit
-							EndIf
-						EndIf
-					Next
-
 					If loc = -1 And (Not hasOverride) Then
 						loc = GetINISectionLocation(iniStr, Input294)
 					EndIf
@@ -11297,7 +11104,7 @@ Function Use294()
 					;If alpha = 0 Then alpha = 1.0
 					If glow Then alpha = -alpha
 					
-					Local it.items = CreateCup(Input294, EntityX(PlayerRoom\Objects[1],True),EntityY(PlayerRoom\Objects[1],True),EntityZ(PlayerRoom\Objects[1],True), r,g,b,alpha)
+					Local it.Items = CreateCup(Input294, EntityX(PlayerRoom\Objects[1],True),EntityY(PlayerRoom\Objects[1],True),EntityZ(PlayerRoom\Objects[1],True), r,g,b,alpha)
 					
 				Else
 					;out of range
@@ -11745,7 +11552,7 @@ Function SmoothMouseValue#(target#, current#, tau#)
 End Function
 
 Function WrapAngle#(angle#)
-	If angle = INFINITY Then Return 0.0
+	If angle = Infinity Then Return 0.0
 	While angle < 0
 		angle = angle + 360
 	Wend 
@@ -12180,6 +11987,18 @@ Function INI_CreateKey%(INI_lFileHandle%, INI_sKey$, INI_sValue$)
 	
 End Function
 
+Function Format$(txt$, arg1$)
+    Return Replace(txt, "{0}", arg1)
+End Function
+
+Function Format$(txt$, arg1$, arg2$)
+    Return Replace(Format(txt, arg1), "{1}", arg2)
+End Function
+
+Function Format$(txt$, arg1$, arg2$, arg3$)
+    Return Replace(Format(txt, arg1, arg2), "{2}", arg3)
+End Function
+
 ;Save options to .ini.
 Function SaveOptionsINI()
 	
@@ -12211,7 +12030,7 @@ Function SaveOptionsINI()
 	PutINIValue(OptionFile, "audio", "user track setting", UserTrackMode%)
 	PutINIValue(OptionFile, "audio", "dubbed audio", DubbedAudio)
 	PutINIValue(OptionFile, "audio", "subtitles", SubtitlesEnabled)
-	PutIniValue(OptionFile, "audio", "closed captions", ClosedCaptionsEnabled)
+	PutINIValue(OptionFile, "audio", "closed captions", ClosedCaptionsEnabled)
 	
 	PutINIValue(OptionFile, "binds", "Right key", KEY_RIGHT)
 	PutINIValue(OptionFile, "binds", "Left key", KEY_LEFT)
@@ -12242,12 +12061,12 @@ End Function
 ; Find mesh extents
 Function GetMeshExtents(Mesh%)
 	Local s%, surf%, surfs%, v%, verts%, x#, y#, z#
-	Local minx# = INFINITY
-	Local miny# = INFINITY
-	Local minz# = INFINITY
-	Local maxx# = -INFINITY
-	Local maxy# = -INFINITY
-	Local maxz# = -INFINITY
+	Local minx# = Infinity
+	Local miny# = Infinity
+	Local minz# = Infinity
+	Local maxx# = -Infinity
+	Local maxy# = -Infinity
+	Local maxz# = -Infinity
 	
 	surfs = CountSurfaces(Mesh)
 	
@@ -12287,7 +12106,7 @@ Global SMALLEST_POWER_TWO#
 Function Graphics3DExt%(width%,height%,depth%=32,mode%=2)
 	Graphics3D width,height,depth,mode
 	SMALLEST_POWER_TWO = 512.0
-	While SMALLEST_POWER_TWO < Width Lor SMALLEST_POWER_TWO < Height
+	While SMALLEST_POWER_TWO < width Lor SMALLEST_POWER_TWO < height
 		SMALLEST_POWER_TWO = SMALLEST_POWER_TWO * 2.0
 	Wend
 	InitFastResize()
@@ -12857,11 +12676,3 @@ Function Update096ElevatorEvent#(e.Events,EventState#,d.Doors,elevatorobj%)
 	
 End Function
 
-
-
-
-
-;~IDEal Editor Parameters:
-;~F#39#D8#DCD#162D#242C#2B2A
-;~B#11E0#145E#1C07
-;~C#Blitz3D

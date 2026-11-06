@@ -37,45 +37,25 @@ Function LoadImage_Strict%(file$, scale#=0, flags%=0)
 
 	Local ext$ = File_GetExtension(file)
 	Local fileNoExt$ = Left(file, Len(file) - Len(ext))
-	Local tmp%
-
-	For m.ActiveMods = Each ActiveMods
-		For i = 0 To ImageExtensionCount
-			Local usedExtension$
-			If i = ImageExtensionCount Then
-				usedExtension = ext
-			Else
-				usedExtension = ImageExtensions[i]
-			EndIf
-			Local modPath$ = m\Path + fileNoExt + usedExtension
-			If FileType(modPath) = 1 Then
-				tmp = LoadImage(modPath, flags)
-				If tmp <> 0 Then
-					If scale <> 0 Then ScaleImageFromFile(tmp, m\Path + fileNoExt, scale)
-					Return tmp
-				Else
-					RuntimeErrorExt("Failed to load image " + Chr(34) + modPath + Chr(34) + ".")
-				EndIf
-			EndIf
-		Next
-	Next
+	Local tmp%, i%
 
 	If FileType(file$) = 1 Then
-		tmp = LoadImage(file$, flags)
+		tmp = LoadImageFlag(file$, flags)
 		If scale <> 0 Then ScaleImageFromFile(tmp, fileNoExt, scale)
 		Return tmp
 	Else
 		For i = 0 To ImageExtensionCount-1
+			Local usedExtension$
 			usedExtension$ = ImageExtensions[i]
 			Local path$ = fileNoExt + usedExtension
 			If FileType(path) = 1 Then
-				tmp = LoadImage(path, flags)
+				tmp = LoadImageFlag(path, flags)
 				If scale <> 0 Then ScaleImageFromFile(tmp, fileNoExt, scale)
 				Return tmp
 			EndIf
 		Next
 	EndIf
-
+	
 	RuntimeErrorExt "Image " + Chr(34) + file$ + Chr(34) + " missing."
 End Function
 
@@ -132,7 +112,7 @@ Function PlaySound_Strict%(sndHandle%)
 		For i = 0 To 31
 			If snd\channels[i] = 0 Lor (Not ChannelPlaying(snd\channels[i])) Then
 				If snd\internalHandle = 0 Then
-					Local usedPath$ = DetermineModdedSoundPath(snd\name)
+					Local usedPath$ = snd\name
 					If FileType(usedPath) <> 1 Then
 						CreateConsoleMsg("Sound " + Chr(34) + snd\name + Chr(34) + " not found.")
 						If ConsoleOpening
@@ -165,39 +145,14 @@ Function PlaySound_Strict%(sndHandle%)
 	Return 0
 End Function
 
-Function DetermineModdedSoundPath$(File$)
-	Local ext$ = File_GetExtension(File)
-	Local fileNoExt$ = Left(File, Len(File) - Len(ext))
-	Local tmp%
-
-	For m.ActiveMods = Each ActiveMods
-		If (Not m\IsLocale) Lor UsesDubbedAudio Then
-			For i = 0 To SoundExtensionCount
-				Local usedExtension$
-				If i = SoundExtensionCount Then
-					usedExtension = ext
-				Else
-					usedExtension = SoundExtensions[i]
-				EndIf
-				Local modPath$ = m\Path + fileNoExt + usedExtension
-				If FileType(modPath) = 1 Then
-					Return modPath
-				EndIf
-			Next
-		EndIf
-	Next
-
-	Return File
-End Function
-
 Function LoadSound_Strict(file$)
 	Local snd.Sound = New Sound
 	snd\name = file
 	snd\internalHandle = 0
 	snd\releaseTime = 0
 	If (Not EnableSFXRelease) Then
-		If snd\internalHandle = 0 Then 
-			snd\internalHandle = LoadSound(DetermineModdedSoundPath(snd\name))
+		If snd\internalHandle = 0 Then
+			snd\internalHandle = LoadSound(snd\name)
 		EndIf
 	EndIf
 	
@@ -222,7 +177,6 @@ End Type
 
 Function StreamSound_Strict(file$,volume#=1.0,custommode=2)
 	Local vanillaFile$ = file
-	file = DetermineModdedSoundPath(file)
 	If FileType(file$)<>1
 		CreateConsoleMsg("Sound " + Chr(34) + file$ + Chr(34) + " not found.")
 		If ConsoleOpening
@@ -362,9 +316,9 @@ Function UpdateStreamSoundOrigin(streamHandle%,cam%,entity%,range#=10,volume#=1.
 End Function
 
 Function LoadMesh_Strict(File$,parent=0)
-	Local tmp% = LoadModdedMeshNonStrict(File, parent)
+	Local tmp% = LoadMesh(File, parent)
 	If tmp <> 0 Then Return tmp
-
+	
 	Local err$
 	If FileType(File$) <> 1 Then err = "3D Mesh " + File$ + " not found." Else err = "Failed to load 3D Mesh: " + File$ + "."
 	RuntimeErrorExt(err)
@@ -374,27 +328,7 @@ Function LoadAnimMesh_Strict(File$,parent=0)
 	Local ext$ = File_GetExtension(File)
 	Local fileNoExt$ = Left(File, Len(File) - Len(ext))
 	Local tmp%
-
-	For m.ActiveMods = Each ActiveMods
-		For i = 0 To ModelExtensionCount
-			Local usedExtension$
-			If i = ModelExtensionCount Then
-				usedExtension = ext
-			Else
-				usedExtension = ModelExtensions[i]
-			EndIf
-			Local modPath$ = m\Path + fileNoExt + usedExtension
-			If FileType(modPath) = 1 Then
-				tmp = LoadAnimMesh(modPath, parent)
-				If tmp <> 0 Then
-					Return tmp
-				Else
-					RuntimeErrorExt("Failed to load 3D Animated Mesh " + Chr(34) + modPath + Chr(34) + ".")
-				EndIf
-			EndIf
-		Next
-	Next
-
+	
 	If FileType(File$) <> 1 Then RuntimeErrorExt "3D Animated Mesh " + File$ + " not found."
 	tmp = LoadAnimMesh(File$, parent)
 	If tmp = 0 Then RuntimeErrorExt "Failed to load 3D Animated Mesh: " + File$ 
@@ -415,32 +349,11 @@ Function LoadAnimTexture_Strict(File$,flags%,columns%,rows%,start%,count%)
 	Local ext$ = File_GetExtension(File)
 	Local fileNoExt$ = Left(File, Len(File) - Len(ext))
 	Local tmp%
-
-	For m.ActiveMods = Each ActiveMods
-		For i = 0 To ImageExtensionCount
-			Local usedExtension$
-			If i = ImageExtensionCount Then
-				usedExtension = ext
-			Else
-				usedExtension = ImageExtensions[i]
-			EndIf
-			Local modPath$ = m\Path + fileNoExt + usedExtension
-			If FileType(modPath) = 1 Then
-				tmp = LoadAnimTextureGrid(modPath, flags, columns, rows, start, count)
-				If tmp <> 0 Then
-					Return tmp
-				Else If DebugResourcePacks Then
-					RuntimeErrorExt("Failed to load animated texture " + Chr(34) + modPath + Chr(34) + ".")
-				EndIf
-			EndIf
-		Next
-	Next
-
-	Return LoadAnimTextureGrid(file, flags, columns, rows, start, count)
+	
+	Return LoadAnimTextureGrid(File, flags, columns, rows, start, count)
 End Function
 
 Function LoadBrush_Strict(file$,flags,u#=1.0,v#=1.0)
-	File = DetermineModdedPath(File)
 	If FileType(file$)<>1 Then RuntimeErrorExt "Brush Texture " + file$ + "not found."
 	Local tmp = LoadBrush(file$, flags, u, v)
 	If tmp = 0 Then RuntimeErrorExt "Failed to load Brush: " + file$ 
@@ -448,7 +361,6 @@ Function LoadBrush_Strict(file$,flags,u#=1.0,v#=1.0)
 End Function 
 
 Function LoadFont_Strict(file$, height, bold%=False, italic%=False)
-	File = DetermineModdedPath(File)
 	If FileType(file$)<>1 Then RuntimeErrorExt "Font " + file$ + " not found."
 	Local tmp = LoadFont(file, height, bold, italic)
 	If tmp = 0 Then RuntimeErrorExt "Failed to load Font: " + file$ 
@@ -456,20 +368,8 @@ Function LoadFont_Strict(file$, height, bold%=False, italic%=False)
 End Function
 
 Function LoadEffect_Strict%(file$)
-	file = DetermineModdedPath(file)
 	If FileType(file$)<>1 Then RuntimeErrorExt "Shader " + file$ + " not found."
 	Local tmp = LoadEffect(file)
 	If tmp = 0 Then RuntimeErrorExt "Failed to load Shader: " + file$ + ". Error: " + GetEffectError() + Chr(10)
 	Return tmp
 End Function
-
-
-
-
-
-
-
-
-;~IDEal Editor Parameters:
-;~F#F#34#3B
-;~C#Blitz3D

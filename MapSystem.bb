@@ -10,16 +10,6 @@ Const MATERIALS_DATA_PATH$ = "Data\materials.ini"
 
 Function InitMaterials()
 	Local hasOverride%
-	For m.ActiveMods = Each ActiveMods
-		Local modMatPath$ = m\Path + MATERIALS_DATA_PATH
-		If FileType(modMatPath) = 1 Then
-			LoadMaterials(modMatPath)
-			If FileType(modMatPath + ".OVERRIDE") = 1 Then
-				hasOverride = True
-				Exit
-			EndIf
-		EndIf
-	Next
 	If Not hasOverride Then LoadMaterials(MATERIALS_DATA_PATH)
 End Function
 
@@ -116,16 +106,6 @@ Function AddTextureToCache(texture%, nameOverride$="")
 		If BumpEnabled Then
 			Local temp$=""
 			Local hasOverride%
-			For m.ActiveMods = Each ActiveMods
-				Local modMatPath$ = m\Path + MATERIALS_DATA_PATH
-				If FileType(modMatPath) = 1 Then
-					temp = GetINIString(modMatPath,tc\name,"bump")
-					If temp <> "" Lor FileType(modMatPath + ".OVERRIDE") = 1 Then
-						hasOverride = True
-						Exit
-					EndIf
-				EndIf
-			Next
 			If (Not hasOverride) And temp="" Then temp=GetINIString(MATERIALS_DATA_PATH,tc\name,"bump")
 			If temp<>"" Then
 				tc\Bump=LoadTexture_Strict(temp)
@@ -163,8 +143,7 @@ End Function
 
 Function LoadRMesh(file$,rt.RoomTemplates)
 	Local path$ = StripFilename(file)
-	file = DetermineModdedPath(file)
-
+	
 	CatchErrors("Uncaught (LoadRMesh " + Chr(34) + file + Chr(34) + ")")
 	;generate a texture made of white
 	Local blankTexture%
@@ -1548,7 +1527,7 @@ End Function
 Const MaxRoomLights% = 32
 Const MaxRoomEmitters% = 8
 Const MaxRoomObjects% = 30
-COnst MaxRoomItems% = 32
+Const MaxRoomItems% = 32
 
 
 Const ROOM1% = 1, ROOM2% = 2, ROOM2C% = 3, ROOM3% = 4, ROOM4% = 5
@@ -1721,28 +1700,12 @@ Function InitRoomTemplates()
 
 	Local modRooms$
 	Local hasOverride%
-	Local lowest.ActiveMods = Last ActiveMods
-	For m.ActiveMods = Each ActiveMods
-		modRooms$ = m\Path + ROOMS_DATA_PATH
-		If FileType(m\Path + ROOMS_DATA_PATH) = 1 And FileType(m\Path + ROOMS_DATA_PATH + ".OVERRIDE") = 1 Then
-			hasOverride = True
-			lowest = m
-			Exit
-		EndIf
-	Next
 	; We load the vanilla templates first, so that they will also be placed within the map first (to be potentially overriden with mod rooms).
 	If Not hasOverride Then LoadRoomTemplates(ROOMS_DATA_PATH)
-	While lowest<>Null
-		modRooms$ = lowest\Path + ROOMS_DATA_PATH
-		If FileType(modRooms) = 1 Then
-			LoadRoomTemplates(modRooms)
-		EndIf
-		lowest = Before lowest
-	Wend
-
+	
 	Local sorted%
 	Repeat
-		Sorted = True
+		sorted = True
 		For rt.RoomTemplates = Each RoomTemplates
 			Local rtt.RoomTemplates = After rt
 			While rtt <> Null And rtt\SetRoomPriority > rt\SetRoomPriority
@@ -6569,7 +6532,6 @@ Function UpdateSecurityCams()
 						If BlinkTimer > - 5 And EntityInView(sc\ScrObj, Camera)Then
 							If EntityVisible(Camera,sc\ScrObj) Then
 								;sc\InSight = True
-								SetBuffer(TextureBuffer(ScreenTexs[sc\ScrTexture]), TextureBuffer(ScreenTexs[2]))
 								If CoffinCam = Null Or Rand(5)=5 Or sc\CoffinEffect <> 3 Then
 									HideEntity(Camera)
 									ShowEntity(sc\Cam)
@@ -6577,7 +6539,9 @@ Function UpdateSecurityCams()
 									
 									UpdateRoomLights(sc\Cam)
 									
+									SetBuffer BackBuffer()
 									RenderWorld
+									CopyRect 0,0,512,512,0,0,BackBuffer(),TextureBuffer(ScreenTexs[sc\ScrTexture])
 									
 									HideEntity(sc\Cam)
 									ShowEntity(Camera)										
@@ -6590,7 +6554,9 @@ Function UpdateSecurityCams()
 									
 									UpdateRoomLights(CoffinCam\Cam)
 									
+									SetBuffer BackBuffer()
 									RenderWorld
+									CopyRect 0,0,512,512,0,0,BackBuffer(),TextureBuffer(ScreenTexs[sc\ScrTexture])
 									
 									HideEntity (CoffinCam\room\obj)
 									HideEntity(CoffinCam\Cam)
@@ -7077,8 +7043,8 @@ Function CreatePropObj(file$)
 	
 	p.Props = New Props
 	p\file = file
-	p\obj = LoadModdedMeshNonStrict("GFX\Map\Props\"+file)
-	If p\obj = 0 Then p\obj = LoadModdedMeshNonStrict("GFX\Map\"+file)
+	p\obj = LoadMesh("GFX\Map\Props\"+file)
+	If p\obj = 0 Then p\obj = LoadMesh("GFX\Map\"+file)
 	If p\obj = 0 Then RuntimeErrorExt("Failed to load prop " + file + ".")
 	Return p\obj
 End Function
@@ -7198,7 +7164,7 @@ End Function
 Function ForceRooms()
 	Local y_min%, y_max%, x_min%, x_max%
 
-	Local forceRoom1 = GetModdedINIInt(MapOptions, "facility", "force room1")
+	Local forceRoom1 = GetINIInt(MapOptions, "facility", "force room1")
 
 	;force more room1s (if needed)
 	For i = 0 To 2
@@ -7267,8 +7233,8 @@ Function ForceRooms()
 		EndIf
 	Next
 	
-	Local forceRoom4 = GetModdedINIInt(MapOptions, "facility", "force room4")
-	Local forceRoom2c = GetModdedINIInt(MapOptions, "facility", "force room2c")
+	Local forceRoom4 = GetINIInt(MapOptions, "facility", "force room4")
+	Local forceRoom2c = GetINIInt(MapOptions, "facility", "force room2c")
 
 	;force more room4s and room2Cs
 	For i = 0 To 2
@@ -7786,8 +7752,8 @@ End Function
 Function CreateMap(loadingstart,loadingcount#)
 	DebugLog ("Generating a map using the seed "+GetRandomSeed())
 	
-	MapWidth% = GetModdedINIInt(MapOptions, "facility", "width")
-	MapHeight% = GetModdedINIInt(MapOptions, "facility", "height")
+	MapWidth% = GetINIInt(MapOptions, "facility", "width")
+	MapHeight% = GetINIInt(MapOptions, "facility", "height")
 
 	I_Zone\Transition[0] = Floor(MapHeight * (2.0 / 3.0)) + 1
 	I_Zone\Transition[1] = Floor(MapHeight * (1.0 / 3.0)) + 1
@@ -8711,11 +8677,3 @@ End Function
 
 
 
-
-
-
-
-;~IDEal Editor Parameters:
-;~F#2#A#35#102#111#118#11F#126#13F#147#14F#143E#145F
-;~B#1231
-;~C#Blitz3D

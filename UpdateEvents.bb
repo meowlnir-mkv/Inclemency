@@ -6533,12 +6533,6 @@ Function UpdateEvents()
 						CanSave = False
 					EndIf
 					If e\EventState = 1 Then
-						;If e\SoundCHN = 0 Then
-						;	e\SoundCHN = 
-						;Else
-						;	If Not ChannelPlaying(e\SoundCHN) Then e\SoundCHN = PlaySound_Strict(moddedambience)
-						;End If
-						
 						;Saving Injuries and Bloodloss, so that the player won't be healed automatically
 						PrevInjuries = Injuries
 						PrevBloodloss = Bloodloss
@@ -8679,7 +8673,7 @@ Function UpdateDimension1499()
 										Exit
 									EndIf
 								Next
-								scale# = (GetModdedINIFloat("DATA\NPCs.ini", "SCP-1499-1", "scale") / 4.0) * Rnd(0.8,1.0)
+								scale# = (GetINIFloat("DATA\NPCs.ini", "SCP-1499-1", "scale") / 4.0) * Rnd(0.8,1.0)
 								ScaleEntity du\obj, scale#,scale#,scale#
 								EntityFX du\obj,1
 								du\anim = Rand(0,1)
@@ -8700,7 +8694,7 @@ Function UpdateDimension1499()
 										Exit
 									EndIf
 								Next
-								scale# = (GetModdedINIFloat("DATA\NPCs.ini", "SCP-1499-1", "scale") / 4.0) * Rnd(0.8,1.0)
+								scale# = (GetINIFloat("DATA\NPCs.ini", "SCP-1499-1", "scale") / 4.0) * Rnd(0.8,1.0)
 								ScaleEntity du\obj, scale#,scale#,scale#
 								EntityFX du\obj,1
 								du\anim = Rand(0,1)
@@ -9973,8 +9967,3 @@ Function IsIn914Input(r.Rooms, x#, y#, z#)
 		Return tx > -926 And tx < -497 And ty > 0 And ty < 322 And tz > 521 And tz < 767
 	EndIf
 End Function
-
-;~IDEal Editor Parameters:
-;~F#A13
-;~B#10D6#1DD5
-;~C#Blitz3D

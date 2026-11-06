@@ -19,21 +19,21 @@ Dim SubtitleCacheToken%(SubtitleCacheSize)
 Global SubtitleCacheNext% = 0
 
 Type SubtitleBox
-	field screenWidth#
-	field screenLeft#
-	field screenTop#
+	Field screenWidth#
+	Field screenLeft#
+	Field screenTop#
 
-	field curTop#
-	field curHeight#
+	Field curTop#
+	Field curHeight#
 
-	field targetTop#
-	field targetHeight#
-	field alpha#
+	Field targetTop#
+	Field targetHeight#
+	Field alpha#
 
-	field lines%
+	Field lines%
 
-	field cam%
-	field sprite%
+	Field cam%
+	Field sprite%
 End Type
 Global SubBox.SubtitleBox
 
@@ -43,10 +43,10 @@ Const TOKEN_TYPE_DUBBED% = 1
 Const TOKEN_TYPE_CAPTION% = 2
 
 Type SubtitleToken ; ~ A subtitle definition, contains the beginning of a linked list of SubtitleEntry.
-	field soundPath$
-	field fromFile% ; Bitmask of bits in TOKEN_TYPE_* constants above.
+	Field soundPath$
+	Field fromFile% ; Bitmask of bits in TOKEN_TYPE_* constants above.
 
-	field entry.SubtitleEntry
+	Field entry.SubtitleEntry
 End Type
 
 ; First bit determines whether it is dubbed or not.
@@ -59,46 +59,46 @@ Const ENTRY_TYPE_CAPTION_DUBBED% = 3
 Const ENTRY_TYPE_CAPTION_AGNOSTIC% = 4
 
 Type SubtitleEntry ; ~ A single subtitle line. Contains a timing and duration.
-	field nextEntry.SubtitleEntry
+	Field nextEntry.SubtitleEntry
 
-	field txt$
+	Field txt$
 
-	field col.SubtitleColor
+	Field col.SubtitleColor
 
-	field entryType%
-	field time#, length# 
+	Field entryType%
+	Field time#, length# 
 
-	field cooldown#
+	Field cooldown#
 End Type
 
 Type SubtitleColor ; ~ Settings for subtitle lines. Creates instances for voice definitions and inline settings. Duplicates removed.
-	field voiceKey$
+	Field voiceKey$
 
-	field name$
-	field r%, g%, b%
-	field isItalic%, isBold%
-	field cooldownLength#
-	field minVolume#
+	Field name$
+	Field r%, g%, b%
+	Field isItalic%, isBold%
+	Field cooldownLength#
+	Field minVolume#
 End Type
 
 Type QueuedSubtitleMsg ; ~ Queued up subtitle. Uses a millisecond timestamp to prevent desync.
-	field token.SubtitleToken
-	field entry.SubtitleEntry
+	Field token.SubtitleToken
+	Field entry.SubtitleEntry
 
-	field sndHandle%, chn%, isStream%
-	field volume#
-	field paused%
+	Field sndHandle%, chn%, isStream%
+	Field volume#
+	Field paused%
 
-	field timeStart#
+	Field timeStart#
 End Type
 
 Type SubtitleMsg ; ~ Subtitle that is rendered on screen.
-	field entry.SubtitleEntry
+	Field entry.SubtitleEntry
 
-	field txt$
+	Field txt$
 
-	field curYPos#
-	field timeLeft#
+	Field curYPos#
+	Field timeLeft#
 End Type
 
 
@@ -122,7 +122,7 @@ End Function
 Function LoadSubtitleVoices(path$)
 	Local f% = OpenFile(path)
 
-	local section$ = ""
+	Local section$ = ""
 	Local v.SubtitleColor
 	While Not Eof(f)
 		Local linestr$ = ReadLine(f)
@@ -142,7 +142,7 @@ Function LoadSubtitleVoices(path$)
 			Next
 
 			If section <> "" Then
-				v.SubtitleColor = new SubtitleColor
+				v.SubtitleColor = New SubtitleColor
 				v\voiceKey = section
 				v\r = 255
 				v\g = 255
@@ -188,7 +188,7 @@ Function LoadSubtitleTokens(path$, tokenType)
 			If Not used Then Delete c
 
 			used = False
-			c = new SubtitleColor
+			c = New SubtitleColor
 			CopySubtitleColor(FindOrAddSubtitleVoice("default"), c)
 
 		ElseIf section<>"" And equal<>0 Then
@@ -218,7 +218,7 @@ End Function
 
 
 Function CreateSubtitleEntry.SubtitleEntry(key$, value$, clr.SubtitleColor, tokenType%, isCaptionDefault%)
-	Local e.SubtitleEntry = new SubtitleEntry
+	Local e.SubtitleEntry = New SubtitleEntry
 
 	e\time = Float(key)
 	e\length = (5.0+1.0) * 70.0
@@ -304,7 +304,7 @@ Function ParseSubtitleSettings$(e.SubtitleEntry, txt$)
 		Return txt
 	EndIf
 
-	Local c.SubtitleColor = new SubtitleColor
+	Local c.SubtitleColor = New SubtitleColor
 	CopySubtitleColor(e\col, c, True)
 
 	Local parsingKey% = True 
@@ -422,7 +422,7 @@ Function FindOrAddSubtitleVoice.SubtitleColor(voice$)
 		EndIf
 	Next
 
-	Local c.SubtitleColor = new SubtitleColor
+	Local c.SubtitleColor = New SubtitleColor
 	c\voiceKey = voice
 	c\r = 255
 	c\g = 255
@@ -508,37 +508,12 @@ Function LoadSubtitles()
 	DebugLog "Loading Subtitles"
 
 	; Load all voices first so entries can reference them
-	Local voicesUnlocked% = True
-	For m.ActiveMods = Each ActiveMods
-		If voicesUnlocked And FileType(m\Path + VoiceFilePath) = 1 Then
-			LoadSubtitleVoices(m\Path + VoiceFilePath)
-			If FileType(m\Path + VoiceFilePath + ".OVERRIDE") = 1 Then voicesUnlocked = False : Exit
-		EndIf
-	Next
-	If voicesUnlocked Then LoadSubtitleVoices(VoiceFilePath)
+	LoadSubtitleVoices(VoiceFilePath)
 
 	Local subtitlesUnlocked% = True
 	Local captionsUnlocked% = True
 	Local dubbedSubtitlesUnlocked% = True
-	For m.ActiveMods = Each ActiveMods
-		If subtitlesUnlocked And FileType(m\Path + SubtitleFilePath) = 1 Then
-			LoadSubtitleTokens(m\Path + SubtitleFilePath, TOKEN_TYPE_REGULAR)
-			If FileType(m\Path + SubtitleFilePath + ".OVERRIDE") = 1 Then subtitlesUnlocked = False
-		EndIf
-
-		If dubbedSubtitlesUnlocked And FileType(m\Path + DubbedSubtitleFilePath) = 1 Then
-			LoadSubtitleTokens(m\Path + DubbedSubtitleFilePath, TOKEN_TYPE_DUBBED)
-			If FileType(m\Path + DubbedSubtitleFilePath + ".OVERRIDE") = 1 Then dubbedSubtitlesUnlocked = False
-		EndIf
-
-		If captionsUnlocked And FileType(m\Path + ClosedCaptionFilePath) = 1 Then
-			LoadSubtitleTokens(m\Path + ClosedCaptionFilePath, TOKEN_TYPE_CAPTION)
-			If FileType(m\Path + ClosedCaptionFilePath + ".OVERRIDE") = 1 Then captionsUnlocked = False
-		EndIf
-
-		If (Not subtitlesUnlocked) And (Not captionsUnlocked) And (Not dubbedSubtitlesUnlocked) Then Exit
-	Next
-
+	
 	If subtitlesUnlocked Then LoadSubtitleTokens(SubtitleFilePath, TOKEN_TYPE_REGULAR)
 	; Dubbed subtitles don't exist for the base game.
 	If captionsUnlocked Then LoadSubtitleTokens(ClosedCaptionFilePath, TOKEN_TYPE_CAPTION)
@@ -565,7 +540,7 @@ Function LoadSubtitleEntities()
 	Delete Each SubtitleMsg
 
 	Delete SubBox
-	SubBox = new SubtitleBox
+	SubBox = New SubtitleBox
 
 	SubBox\cam = CreateCamera()
 	CameraViewport(SubBox\cam, 0, 0, 10, 10)
@@ -636,7 +611,7 @@ Function QueueSubtitle(soundPath$, soundHandle%, soundChannel%, isStream%=False)
 	Local e.SubtitleEntry = found\entry
 	While e <> Null
 		If ShouldShowSubtitle(e) Then
-			Local queue.QueuedSubtitleMsg = new QueuedSubtitleMsg
+			Local queue.QueuedSubtitleMsg = New QueuedSubtitleMsg
 
 			queue\sndHandle = soundHandle
 			queue\chn = soundChannel
@@ -645,7 +620,7 @@ Function QueueSubtitle(soundPath$, soundHandle%, soundChannel%, isStream%=False)
 
 			queue\token = found
 			queue\entry = e
-			queue\timeStart = Millisecs() + e\time*1000
+			queue\timeStart = MilliSecs() + e\time*1000
 		EndIf
 		e = e\nextEntry
 	Wend
@@ -680,7 +655,7 @@ Function RemoveQueuedSubtitleByChannel(soundChannel%, isStream%=False)
 	EndIf
 
 	For queue.QueuedSubtitleMsg = Each QueuedSubtitleMsg
-		If queue\chn = soundChannel and queue\isStream = isStream Then
+		If queue\chn = soundChannel And queue\isStream = isStream Then
 			Delete queue
 		EndIf
 	Next
@@ -723,9 +698,9 @@ Function SetQueuedSubtitlePause(soundChannel%, paused%)
 	For queue.QueuedSubtitleMsg = Each QueuedSubtitleMsg
 		If queue\chn = soundChannel Then
 			If paused And queue\paused = 0 Then
-				queue\paused = Millisecs()
+				queue\paused = MilliSecs()
 			ElseIf (Not paused) And queue\paused <> 0 Then
-				queue\timeStart = queue\timeStart + (Millisecs() - queue\paused)
+				queue\timeStart = queue\timeStart + (MilliSecs() - queue\paused)
 				queue\paused = 0
 			EndIf
 		EndIf
@@ -747,10 +722,10 @@ Function TryCreateSubtitleMsg.SubtitleMsg(queue.QueuedSubtitleMsg, txt$="")
 
 	; Check if cooldown active
 	If queue\entry\col\cooldownLength > 0.0 Then
-		If Millisecs() < queue\entry\cooldown Then Return Null
+		If MilliSecs() < queue\entry\cooldown Then Return Null
 	EndIf
 
-	if queue\chn <> 0 Then
+	If queue\chn <> 0 Then
 		If queue\volume < queue\entry\col\minVolume Then
 			Return Null
 		EndIf
@@ -760,7 +735,7 @@ Function TryCreateSubtitleMsg.SubtitleMsg(queue.QueuedSubtitleMsg, txt$="")
 		EndIf
 	EndIf
 
-	Local c.SubtitleMsg = new SubtitleMsg
+	Local c.SubtitleMsg = New SubtitleMsg
 
 	c\entry = queue\entry
 	c\txt = txt 
@@ -777,7 +752,7 @@ Function TryCreateSubtitleMsg.SubtitleMsg(queue.QueuedSubtitleMsg, txt$="")
 
 	; Add cooldown
 	If queue\entry\col\cooldownLength > 0.0 Then
-		queue\entry\cooldown = Millisecs() + queue\entry\col\cooldownLength*1000.0
+		queue\entry\cooldown = MilliSecs() + queue\entry\col\cooldownLength*1000.0
 	EndIf
 
 	Return c
@@ -825,7 +800,7 @@ Function TryCreateSplitSubtitleMsg(queue.QueuedSubtitleMsg, txtLine$, padding%)
 	If Trim(w)<>"" Then
 		sub.SubtitleMsg = TryCreateSubtitleMsg(queue, Trim(tstr)+w)
 		If sub<>Null Then
-			For j = 1 to splits
+			For j = 1 To splits
 				sub = Before sub
 				BumpSubtitleUp(sub)
 			Next
@@ -856,7 +831,7 @@ Function UpdateSubtitles(factor#)
 	SetFont Font1
 
 	For queue.QueuedSubtitleMsg = Each QueuedSubtitleMsg
-		If queue\paused = 0 And Millisecs() > (queue\timeStart-SubtitleEarlyDelay*1000) Then
+		If queue\paused = 0 And MilliSecs() > (queue\timeStart-SubtitleEarlyDelay*1000) Then
 			Local txtLine$ = queue\entry\txt
 			If queue\entry\col\name<>"" Then
 				txtLine = queue\entry\col\name+": "+txtLine
@@ -924,7 +899,7 @@ Function DrawSubtitles()
 	; Draw text
 	For c.SubtitleMsg = Each SubtitleMsg
 		Local alpha# = 0.0
-		local t# = Max(c\entry\length-c\timeLeft, 0)
+		Local t# = Max(c\entry\length-c\timeLeft, 0)
 		If c\timeLeft < SubtitleEarlyDelay*70.0 Then
 			alpha = c\timeLeft/(SubtitleFadeLength*70.0)
 		ElseIf t > 0 Then

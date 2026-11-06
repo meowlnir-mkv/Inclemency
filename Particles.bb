@@ -281,9 +281,3 @@ End Function
 
 
 
-
-
-
-;~IDEal Editor Parameters:
-;~F#4#10#2E#4A#54#66#A0#C5#D0#E0#112
-;~C#Blitz3D

@@ -305,14 +305,3 @@ Next
 End Function
 
 
-
-
-
-
-
-
-
-
-;~IDEal Editor Parameters:
-;~F#0
-;~C#Blitz3D

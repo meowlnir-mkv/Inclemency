@@ -2139,21 +2139,13 @@ Function LoadSavedMaps()
 	Next
 
 	SavedMapsAmount = CountSavedMapsFrom("Map Creator\Maps\")
-	For m.ActiveMods = Each ActiveMods
-		mapDir = m\Path + "Maps\"
-		If FileType(mapDir) = 2 Then SavedMapsAmount = SavedMapsAmount + CountSavedMapsFrom(mapDir)
-	Next
 	
 	Dim SavedMaps(SavedMapsAmount+1)
 	Dim SavedMapsPath(SavedMapsAmount+1)
 	Dim SavedMapsAuthor$(SavedMapsAmount+1)
 	
 	i = LoadSavedMapsFrom("Map Creator\Maps\", 0)
-	For m.ActiveMods = Each ActiveMods
-		mapDir = m\Path + "Maps\"
-		If FileType(mapDir) = 2 Then i = LoadSavedMapsFrom(mapDir, i)
-	Next
-
+	
 	CatchErrors("LoadSavedMaps")
 End Function
 
@@ -2624,9 +2616,3 @@ End Function
 
 
 
-
-
-
-
-;~IDEal Editor Parameters:
-;~C#Blitz3D

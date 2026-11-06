@@ -40,7 +40,3 @@ Function UpdateBlur(power#)
 	EntityAlpha ark_blur_image, power#
 	CopyRect 0, 0, GraphicWidth, GraphicHeight, (SMALLEST_POWER_TWO - GraphicWidth)/2, (SMALLEST_POWER_TWO - GraphicHeight)/2, BackBuffer(), TextureBuffer(ark_blur_texture)
 End Function
-
-;~IDEal Editor Parameters:
-;~F#3#26
-;~C#Blitz3D
