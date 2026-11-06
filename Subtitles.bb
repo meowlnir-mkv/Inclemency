@@ -107,6 +107,8 @@ End Type
 
 Function SubtitleStripComments$(linestr$)
 	Local strtemp$ = ""
+	Local i%
+	
 	For i = 1 To Len(linestr)
 		If Mid(linestr, i, 1)=";" Or Mid(linestr, i, 1)="#" Then ; Really hacky escape codes but I figure add these since some characters might be part of subtitle text
 			If i = 1 Or (i > 1 And Mid(linestr, i-1, 1)<>"\") Exit
@@ -121,7 +123,8 @@ End Function
 
 Function LoadSubtitleVoices(path$)
 	Local f% = OpenFile(path)
-
+	Local clr.SubtitleColor
+	
 	Local section$ = ""
 	Local v.SubtitleColor
 	While Not Eof(f)
@@ -287,6 +290,8 @@ End Function
 
 
 Function GetSubtitleToken.SubtitleToken(soundPath$)
+	Local token.SubtitleToken
+	
 	For token.SubtitleToken = Each SubtitleToken
 		If token\soundPath = soundPath Then
 			Return token
@@ -373,6 +378,8 @@ Function ApplySubtitleDataSetting%(key$, value$, e.SubtitleEntry)
 End Function
 
 Function ApplySubtitleColorSetting%(key$, value$, c.SubtitleColor)
+	Local clr.SubtitleColor
+	
 	If key = "voice" Then
 		For clr.SubtitleColor = Each SubtitleColor
 			If clr\voiceKey = value And clr <> c Then
@@ -416,6 +423,8 @@ End Function
 
 
 Function FindOrAddSubtitleVoice.SubtitleColor(voice$)
+	Local clr.SubtitleColor
+	
 	For clr.SubtitleColor = Each SubtitleColor
 		If clr\voiceKey = voice Then
 			Return clr
@@ -456,6 +465,8 @@ Function SubtitleColorsMatch%(firstColor.SubtitleColor, secondColor.SubtitleColo
 End Function
 
 Function InternSubtitleColor.SubtitleColor(c.SubtitleColor)
+	Local clr.SubtitleColor
+	
 	If c = Null Then
 		Return Null
 	EndIf
@@ -471,6 +482,9 @@ Function InternSubtitleColor.SubtitleColor(c.SubtitleColor)
 End Function
 
 Function CleanupColors()
+	Local clr.SubtitleColor
+	Local e.SubtitleEntry
+	
 	Local c% = 0
 
 	For clr.SubtitleColor = Each SubtitleColor
@@ -496,6 +510,8 @@ End Function
 
 
 Function LoadSubtitles()
+	Local t.SubtitleToken, e.SubtitleEntry, c.SubtitleColor
+	
 	SubtitlesInitialized = False
 
 	Delete Each SubtitleToken
@@ -508,7 +524,9 @@ Function LoadSubtitles()
 	DebugLog "Loading Subtitles"
 
 	; Load all voices first so entries can reference them
-	LoadSubtitleVoices(VoiceFilePath)
+	Local voicesUnlocked% = True
+	
+	If voicesUnlocked Then LoadSubtitleVoices(VoiceFilePath)
 
 	Local subtitlesUnlocked% = True
 	Local captionsUnlocked% = True
@@ -581,7 +599,9 @@ Function QueueSubtitle(soundPath$, soundHandle%, soundChannel%, isStream%=False)
 	If (Not SubtitlesEnabled) Or (Not SubtitlesInitialized) Then
 		Return 
 	EndIf
-
+	
+	Local t.SubtitleToken, i%
+	
 	Local lowerPath$ = Lower(soundPath)
 	Local found.SubtitleToken = Null
 
@@ -638,6 +658,8 @@ Function ShouldShowSubtitle%(e.SubtitleEntry)
 End Function
 
 Function RemoveQueuedSubtitle(soundHandle%)
+	Local queue.QueuedSubtitleMsg
+	
 	If Not SubtitlesEnabled Then
 		Return 
 	EndIf
@@ -650,6 +672,8 @@ Function RemoveQueuedSubtitle(soundHandle%)
 End Function
 
 Function RemoveQueuedSubtitleByChannel(soundChannel%, isStream%=False)
+	Local queue.QueuedSubtitleMsg
+	
 	If Not SubtitlesEnabled Then
 		Return 
 	EndIf
@@ -669,6 +693,8 @@ Function UpdateChannelVolumeWithSubtitles(chn%, volume#, isStream%=False, isSFX%
 End Function
 
 Function UpdateQueuedSubtitleVolume(soundChannel%, volume#, isStream%=False)
+	Local queue.QueuedSubtitleMsg
+	
 	If Not SubtitlesEnabled Then
 		Return 
 	EndIf
@@ -691,6 +717,8 @@ Function PauseChannelWithSubtitles(chn%)
 End Function
 
 Function SetQueuedSubtitlePause(soundChannel%, paused%)
+	Local queue.QueuedSubtitleMsg
+	
 	If Not SubtitlesEnabled Then
 		Return 
 	EndIf
@@ -762,7 +790,9 @@ Function TryCreateSplitSubtitleMsg(queue.QueuedSubtitleMsg, txtLine$, padding%)
 	If Not SubtitlesEnabled Then
 		Return 
 	EndIf
-
+	
+	Local i%, j%
+	
 	Local tstr$ = ""
 	Local offset% = 1
 	Local chars% = 0
@@ -827,7 +857,10 @@ Function UpdateSubtitles(factor#)
 		Return 
 	EndIf
 	CatchErrors("Uncaught (UpdateSubtitles)")
-
+	
+	Local queue.QueuedSubtitleMsg
+	Local c.SubtitleMsg
+	
 	SetFont Font1
 
 	For queue.QueuedSubtitleMsg = Each QueuedSubtitleMsg
@@ -895,7 +928,9 @@ Function DrawSubtitles()
 		Return 
 	EndIf
 	CatchErrors("Uncaught (DrawSubtitles)")
-
+	
+	Local c.SubtitleMsg
+	
 	; Draw text
 	For c.SubtitleMsg = Each SubtitleMsg
 		Local alpha# = 0.0
