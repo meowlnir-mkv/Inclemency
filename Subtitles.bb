@@ -3,9 +3,9 @@ Const DubbedSubtitleFilePath$ = "Data\subtitles_dub.ini"
 Const ClosedCaptionFilePath$ = "Data\subtitles_captions.ini"
 Const VoiceFilePath$ = "Data\voices.ini"
 
-Global Font1Bold% = LoadFont_Strict("GFX\font\cour\Courier New.ttf", Int(19 * MenuScale), True, False)
-Global Font1Italic% = LoadFont_Strict("GFX\font\cour\Courier New.ttf", Int(19 * MenuScale), False, True)
-Global Font1BoldItalic% = LoadFont_Strict("GFX\font\cour\Courier New.ttf", Int(19 * MenuScale), True, True)
+Global Font1Bold% = LoadFont_Strict("GFX\font\Courier New.ttf", Int(19 * MenuScale), True, False)
+Global Font1Italic% = LoadFont_Strict("GFX\font\Courier New.ttf", Int(19 * MenuScale), False, True)
+Global Font1BoldItalic% = LoadFont_Strict("GFX\font\Courier New.ttf", Int(19 * MenuScale), True, True)
 
 Global SubtitleTextHeight# = Int(19 * MenuScale)*1.5
 Global SubtitleEarlyDelay# = 0.15

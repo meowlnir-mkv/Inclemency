@@ -1818,7 +1818,7 @@ Function UpdateEvents()
 						dist = EntityDistance(e\room\NPC[0]\Collider, e\room\obj)
 						If dist<1.5 Then
 							de.Decals = CreateDecal(0, EntityX(e\room\obj), 0.01, EntityZ(e\room\obj), 90, Rand(360), 0)
-							de\Size = 0.05 : de\SizeChange = 0.008 : de\timer=10000 : UpdateDecals
+							de\Size = 0.05 : de\SizeChange = 0.008 : de\Timer=10000 : UpdateDecals
 							e\EventState = 3
 							
 							;PlaySound_Strict(DecaySFX(1))
@@ -2262,7 +2262,7 @@ Function UpdateEvents()
 													Curr106\State = 10000
 													Curr106\Idle = False
 													
-													de.decals = CreateDecal(0, EntityX(r\Objects[0],True),EntityY(r\Objects[0],True),EntityZ(r\Objects[0],True), 270, Rand(360), 0)
+													de.Decals = CreateDecal(0, EntityX(r\Objects[0],True),EntityY(r\Objects[0],True),EntityZ(r\Objects[0],True), 270, Rand(360), 0)
 													TeleportEntity(de\obj,EntityX(r\Objects[0],True),EntityY(r\Objects[0],True)+0.6,EntityZ(r\Objects[0],True),0.0,True,4,1)
 													
 													For e2.Events = Each Events
@@ -2741,10 +2741,10 @@ Function UpdateEvents()
 								de.Decals = CreateDecal(3, EntityX(e\room\Objects[0],True), 0.0005, EntityZ(e\room\Objects[0],True),90,Rnd(360),0)
 								
 								de.Decals = CreateDecal(17, EntityX(e\room\Objects[0],True), 0.002, EntityZ(e\room\Objects[0],True),90,Rnd(360),0)
-								de\size = 0.5
+								de\Size = 0.5
 								
 								de.Decals = CreateDecal(3, EntityX(e\room\Objects[1],True), EntityY(e\room\Objects[1],True), EntityZ(e\room\Objects[1],True),0,e\room\angle+270,0)
-								de\size = 0.9
+								de\Size = 0.9
 							EndIf
 							e\room\RoomDoors[0]\locked = False
 						EndIf
@@ -4390,7 +4390,7 @@ Function UpdateEvents()
 							
 							Curr096\State=5
 							If Curr096\SoundChn <> 0 Then
-								StopStream_Strict(Curr096\SoundChn) : Curr096\SoundChn=0 : Curr096\SoundChn_isStream = False
+								StopStream_Strict(Curr096\SoundChn) : Curr096\SoundChn=0 : Curr096\SoundChn_IsStream = False
 							EndIf
 							
 							RemoveNPC(e\room\NPC[0])
@@ -4682,11 +4682,11 @@ Function UpdateEvents()
 								If it\Dropped=1 Then
 									For i = - 1 To 1 Step 2
 										TFormPoint x+1024*i,y,z,e\room\obj,0
-										it2.items = CreateItem(it\itemtemplate\name, TFormedX(), EntityY(it\collider), TFormedZ())
+										it2.Items = CreateItem(it\itemtemplate\name, TFormedX(), EntityY(it\collider), TFormedZ())
 										RotateEntity(it2\collider, EntityPitch(it\collider),EntityYaw(it\collider),0)
 									Next
 								Else
-									For it2.items = Each Items
+									For it2.Items = Each Items
 										If it2<>it And it2\dist < 15.0 Then
 											
 											TFormPoint EntityX(it2\collider),EntityY(it2\collider),EntityZ(it2\collider),0,e\room\obj
@@ -5052,7 +5052,7 @@ Function UpdateEvents()
 										Crouch = True
 										
 										de.Decals = CreateDecal(17,  EntityX(Collider), -768*RoomScale+0.01, EntityZ(Collider),90,Rnd(360),0)
-										de\Size = 0.1 : de\maxsize = 0.45 : de\sizechange = 0.0002 : UpdateDecals()
+										de\Size = 0.1 : de\MaxSize = 0.45 : de\SizeChange = 0.0002 : UpdateDecals()
 									ElseIf e\EventState3>85*70 And e\EventState3-FPSfactor=<85*70	
 										DeathMSG = I_Loc\DeathMessage_012
 										Kill(False)
@@ -6987,7 +6987,7 @@ Function UpdateEvents()
 						If e\EventState2=0
 							;Y=0.01
 							de.Decals = CreateDecal(3,  EntityX(e\room\Objects[2],True), EntityY(e\room\Objects[2],True), EntityZ(e\room\Objects[2],True),0,e\room\angle+270,0)
-							de\Size = 0.3 : ScaleSprite (de\obj, de\size, de\size)
+							de\Size = 0.3 : ScaleSprite (de\obj, de\Size, de\Size)
 							
 							;de.Decals = CreateDecal(17,  EntityX(e\room\Objects[2],True), 0.01, EntityZ(e\room\Objects[2],True),90,Rnd(360),0)
 							;de\Size = 0.1 : de\maxsize = 0.45 : de\sizechange = 0.0002 : UpdateDecals()
@@ -7394,7 +7394,7 @@ Function UpdateEvents()
 						If e\EventState > (12 * 70) Then							
 							For it.Items = Each Items
 								If it\collider <> 0 And it\Picked = False Then
-									If IsIn914Input(PlayerRoom, EntityX(it\Collider), EntityY(it\Collider), EntityZ(it\Collider)) Then
+									If IsIn914Input(PlayerRoom, EntityX(it\collider), EntityY(it\collider), EntityZ(it\collider)) Then
 										Use914(it, setting, EntityX(e\room\Objects[3], True), EntityY(e\room\Objects[3], True), EntityZ(e\room\Objects[3], True))
 									End If
 								End If
@@ -7450,8 +7450,8 @@ Function UpdateEvents()
 							EntityTexture e\Room\Objects[4], tex
 							FreeTexture tex
 						EndIf
-						PositionEntity(e\Room\Objects[4], EntityX(e\room\Objects[3], True), 8*RoomScale, EntityZ(e\room\Objects[3], True))
-						RotateEntity(e\Room\Objects[4], 0, e\Room\angle + 210, 0)
+						PositionEntity(e\room\Objects[4], EntityX(e\room\Objects[3], True), 8*RoomScale, EntityZ(e\room\Objects[3], True))
+						RotateEntity(e\room\Objects[4], 0, e\room\angle + 210, 0)
 					EndIf
 					
 				EndIf
@@ -7743,8 +7743,8 @@ Function UpdateEvents()
 							PositionEntity pvt, EntityX(Collider),EntityY(Collider)-0.05,EntityZ(Collider)
 							TurnEntity pvt, 90, 0, 0
 							EntityPick(pvt,0.3)
-							de.decals = CreateDecal(3, PickedX(), PickedY()+0.005, PickedZ(), 90, Rand(360), 0)
-							de\size = 0.75 : ScaleSprite de\obj, de\size, de\size
+							de.Decals = CreateDecal(3, PickedX(), PickedY()+0.005, PickedZ(), 90, Rand(360), 0)
+							de\Size = 0.75 : ScaleSprite de\obj, de\Size, de\Size
 							FreeEntity pvt
 							If Injuries > 15
 								DeathMSG = I_Loc\DeathMessage_1162
@@ -9257,7 +9257,7 @@ Function UpdateEndings()
 													EndIf
 												Next
 											ElseIf e\EventState3 > 500.0
-												Local ent% = LoadSprite("GFX\blooddrop1.png",1+2)
+												Local ent% = LoadSprite("GFX\decals\blooddrop1.png",1+2)
 												EntityFX ent%,1+2+8
 												ScaleSprite ent%,1.5,1.5
 												ShouldPlay = 0
@@ -9597,7 +9597,7 @@ Function UpdateEndings()
 											If FPSfactor > 0 Then ;decals under 106
 												If ((e\EventState-FPSfactor) Mod 100.0)=<50.0 And (e\EventState Mod 100.0)>50.0 Then
 													de.Decals = CreateDecal(0, EntityX(Curr106\Collider,True),EntityY(e\room\Objects[3],True)+0.01,EntityZ(Curr106\Collider,True), 90, Rand(360), 0)
-													de\Size = 0.2 : de\SizeChange = 0.004 : de\timer = 90000 : EntityAlpha(de\obj, 0.8) : UpdateDecals() 											
+													de\Size = 0.2 : de\SizeChange = 0.004 : de\Timer = 90000 : EntityAlpha(de\obj, 0.8) : UpdateDecals() 											
 												EndIf
 											EndIf
 										EndIf
@@ -9624,7 +9624,7 @@ Function UpdateEndings()
 											If FPSfactor > 0 Then ;106:n alle ilmestyy decaleita
 												If ((e\EventState-FPSfactor) Mod 160.0)=<50.0 And (e\EventState Mod 160.0)>50.0 Then
 													de.Decals = CreateDecal(0, EntityX(Curr106\Collider,True),EntityY(e\room\Objects[3],True)+0.01,EntityZ(Curr106\Collider,True), 90, Rand(360), 0)
-													de\Size = 0.05 : de\SizeChange = 0.004 : de\timer = 90000 : EntityAlpha(de\obj, 0.8) : UpdateDecals() 											
+													de\Size = 0.05 : de\SizeChange = 0.004 : de\Timer = 90000 : EntityAlpha(de\obj, 0.8) : UpdateDecals() 											
 												EndIf
 											EndIf
 											

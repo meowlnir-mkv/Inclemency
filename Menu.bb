@@ -1199,7 +1199,7 @@ Function UpdateLauncher()
 	Dim GfxModeCountPerAspectRatio%(TotalGfxModes)
 	Dim GfxModeWidthsByAspectRatio%(TotalGfxModes, TotalGfxModes), GfxModeHeightsByAspectRatio%(TotalGfxModes, TotalGfxModes)
 
-	Font1 = LoadFont_Strict("GFX\font\cour\Courier New.ttf", 18)
+	Font1 = LoadFont_Strict("GFX\font\Courier New.ttf", 18)
 	SetFont Font1
 	MenuWhite = LoadImage_Strict("GFX\menu\menuwhite.jpg")
 	MenuBlack = LoadImage_Strict("GFX\menu\menublack.jpg")	
@@ -1448,7 +1448,7 @@ Type LoadingScreens
 	Field txtDelay%[5], totalTxtDelay%
 End Type
 
-Const LOADING_SCREENS_DATA_PATH$ = "Loadingscreens\loadingscreens.ini"
+Const LOADING_SCREENS_DATA_PATH$ = "Data\loadingscreens.ini"
 Global LoadingScreenTimePerCharacter%, LoadingScreenStartTime%
 
 Function InitLoadingScreens()
@@ -1523,7 +1523,7 @@ Function DrawLoading(percent%, shortloading=False)
 		For ls.loadingscreens = Each LoadingScreens
 			If ls\id = temp Then
 				If ls\img=0 Then
-					ls\img = LoadImage_Strict("Loadingscreens\"+ls\imgpath, MenuScale)
+					ls\img = LoadImage_Strict("GFX\loadingscreens\"+ls\imgpath, MenuScale)
 					MaskImage(ls\img, 0, 0, 0)
 				EndIf
 				SelectedLoadingScreen = ls 

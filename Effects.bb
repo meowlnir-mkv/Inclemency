@@ -4,6 +4,10 @@ Global PostEffectQuad%, QuadCamera%, PostEffect%
 
 Global ScreenTexture%
 
+Global PixelWidth# = 0, PixelHeight# = 0
+PixelWidth# = 0.5 / GraphicWidth
+PixelHeight# = 0.5 / GraphicHeight
+
 Function InitPostProcess()
     ScreenTexture = CreateTexture(GraphicWidth, GraphicHeight, 1 + 1024)
 	

@@ -119,7 +119,7 @@ Function CreateNPC.NPCs(NPCtype%, x#, y#, z#)
 			
 			n\Speed = (GetINIFloat("DATA\NPCs.ini", "SCP-173", "speed") / 100.0)
 			
-			n\obj2 = LoadMesh_Strict("GFX\173box.b3d")
+			n\obj2 = LoadMesh_Strict("GFX\npcs\173box.b3d")
 			ScaleEntity n\obj2, RoomScale, RoomScale, RoomScale
 			HideEntity n\obj2
 			
@@ -334,9 +334,9 @@ Function CreateNPC.NPCs(NPCtype%, x#, y#, z#)
 			n\MaxGravity = 0.0
 			n\Collider = CreatePivot()
 			EntityRadius n\Collider, 0.2
-			n\obj = CopyEntity(ApacheObj);LoadAnimMesh_Strict("GFX\apache.b3d")
+			n\obj = CopyEntity(ApacheObj)
 			
-			n\obj2 = CopyEntity(ApacheRotorObj);LoadAnimMesh_Strict("GFX\apacherotor.b3d",n\obj)
+			n\obj2 = CopyEntity(ApacheRotorObj)
 			EntityParent n\obj2,n\obj
 			
 			For i = -1 To 1 Step 2
@@ -345,7 +345,7 @@ Function CreateNPC.NPCs(NPCtype%, x#, y#, z#)
 				EntityAlpha rotor2, 0.5
 			Next
 			
-			n\obj3 = LoadAnimMesh_Strict("GFX\apacherotor2.b3d",n\obj)
+			n\obj3 = LoadAnimMesh_Strict("GFX\npcs\apacherotor2.b3d",n\obj)
 			PositionEntity n\obj3, 0.0, 2.15, -5.48
 			
 			EntityType n\Collider, HIT_APACHE
@@ -7225,7 +7225,7 @@ Function Console_SpawnNPC(c_input$, c_state$ = "")
 			n.NPCs = CreateNPC(npcType, EntityX(Collider), EntityY(Collider) + 0.2, EntityZ(Collider))
 			Curr173 = n
 			If (Curr173\Idle = 3) Then Curr173\Idle = False
-		Case NPCType860, NPCtype939
+		Case NPCtype860, NPCtype939
 			CreateConsoleMsg(Console_NPCTypeToName(npcType, True) + " cannot be spawned with the console. Sorry!", 255, 0, 0) : Return
 		Case NPCtypeTentacle
 			n.NPCs = CreateNPC(npcType, EntityX(Collider), EntityY(Collider), EntityZ(Collider))

@@ -307,13 +307,13 @@ Function UpdateHUDScaleFactor(newFactor#)
 	HUDScaleFactor = newFactor
 	HUDScale = HUDScaleScalar * HUDScaleFactor
 	For h.HUDScaledImage = Each HUDScaledImage
-		ResizeImage(h\Img, h\BaseWidth * HUDScale, h\BaseHeight * HUDScale)
+		ResizeImageFast(h\Img, h\BaseWidth * HUDScale, h\BaseHeight * HUDScale)
 	Next
 
 	; Hardcoding because I'm LAME!
 	FreeFont Font3 : FreeFont Font4
-	Font3% = LoadFont_Strict("GFX\font\DS-DIGI\DS-Digital.ttf", Int(15 * HUDScale))
-	Font4% = LoadFont_Strict("GFX\font\DS-DIGI\DS-Digital.ttf", Int(42 * HUDScale))
+	Font3% = LoadFont_Strict("GFX\font\DS-Digital.ttf", Int(15 * HUDScale))
+	Font4% = LoadFont_Strict("GFX\font\DS-Digital.ttf", Int(42 * HUDScale))
 End Function
 
 Function CalculateMenuScale#()
@@ -376,18 +376,22 @@ PlayStartupVideos()
 
 ;[Block]
 
-Global CursorIMG% = LoadImage_Strict("GFX\cursor.png", 1.0)
+Global CursorIMG%
+If Fullscreen Then CursorIMG = LoadImage_Strict("GFX\menu\cursor.png", 1.0)
+
+; - -Viewport.
+Global viewport_center_x% = RealGraphicWidth / 2, viewport_center_y% = RealGraphicHeight / 2
 
 Global SelectedLoadingScreen.LoadingScreens, LoadingScreenAmount% = 0, LoadingScreenText%
-Global LoadingBack% = LoadImage_Strict("Loadingscreens\loadingback.jpg", MenuScale)
+Global LoadingBack% = LoadImage_Strict("GFX\loadingscreens\loadingback.jpg", MenuScale)
 InitLoadingScreens()
 
-Font1% = LoadFont_Strict("GFX\font\cour\Courier New.ttf", Int(19 * MenuScale))
-Font2% = LoadFont_Strict("GFX\font\cour\Courier New.ttf", Int(52 * MenuScale))
-Font3% = LoadFont_Strict("GFX\font\DS-DIGI\DS-Digital.ttf", Int(15 * HUDScale))
-Font4% = LoadFont_Strict("GFX\font\DS-DIGI\DS-Digital.ttf", Int(42 * HUDScale))
-Font5% = LoadFont_Strict("GFX\font\Journal\Journal.ttf", Int(58 * MenuScale))
-Font6% = LoadFont_Strict("GFX\font\DS-DIGI\DS-Digital.ttf", Int(25 * MenuScale))
+Font1% = LoadFont_Strict("GFX\font\Courier New.ttf", Int(19 * MenuScale))
+Font2% = LoadFont_Strict("GFX\font\Courier New.ttf", Int(52 * MenuScale))
+Font3% = LoadFont_Strict("GFX\font\DS-Digital.ttf", Int(15 * HUDScale))
+Font4% = LoadFont_Strict("GFX\font\DS-Digital.ttf", Int(42 * HUDScale))
+Font5% = LoadFont_Strict("GFX\font\Journal.ttf", Int(58 * MenuScale))
+Font6% = LoadFont_Strict("GFX\font\DS-Digital.ttf", Int(25 * MenuScale))
 
 Global CreditsFont%,CreditsFont2%
 
@@ -398,13 +402,10 @@ LoadSubtitles()
 
 SetFont Font2
 
-Global BlinkMeterIMG% = LoadImageHUDScaled("GFX\blinkmeter.png")
-Global MenuMeterIMG% = LoadImage_Strict("GFX\blinkmeter.png", MenuScale)
+Global BlinkMeterIMG% = LoadImageHUDScaled("GFX\HUD\blinkmeter.png")
+Global MenuMeterIMG% = LoadImage_Strict("GFX\HUD\blinkmeter.png", MenuScale)
 
 DrawLoading(0, True)
-
-; - -Viewport.
-Global viewport_center_x% = RealGraphicWidth / 2, viewport_center_y% = RealGraphicHeight / 2
 
 ; -- Mouselook.
 Global mouselook_x_inc# = 0.3 ; This sets both the sensitivity and direction (+/-) of the mouse on the X axis.
@@ -2183,8 +2184,8 @@ Global NoTarget% = False
 Global GuaranteedOmni% = False
 
 Global NVGImages[2]
-NVGImages[0] = LoadImageHUDScaled("GFX\battery_green.png")
-NVGImages[1] = LoadImageHUDScaled("GFX\battery_blue.png")
+NVGImages[0] = LoadImageHUDScaled("GFX\HUD\battery_green.png")
+NVGImages[1] = LoadImageHUDScaled("GFX\HUD\battery_blue.png")
 
 Global Wearing1499% = False
 Global AmbientLight%, AmbientLightNVG%
@@ -2226,10 +2227,10 @@ Global ParticleAmount% = GetOptionInt("graphics","particle amount")
 
 Dim NavImages(5)
 For i = 0 To 3
-	NavImages(i) = LoadImageHUDScaled("GFX\navigator\roomborder"+i+".png")
+	NavImages(i) = LoadImageHUDScaled("GFX\HUD\navigator\roomborder"+i+".png")
 Next
 Global NavSize% = ImageWidth(NavImages(0))
-NavImages(4) = LoadImageHUDScaled("GFX\navigator\batterymeter.png")
+NavImages(4) = LoadImageHUDScaled("GFX\HUD\navigator\batterymeter.png")
 
 Global NavBG%
 
@@ -2470,7 +2471,7 @@ Function CreateDoor.Doors(lvl, x#, y#, z#, angle#, room.Rooms, dopen% = False,  
 			EndIf
 		Next
 		If d\DoorHitOBJ=0 Then
-			d\DoorHitOBJ = LoadMesh_Strict("GFX\doorhit.b3d",d\frameobj)
+			d\DoorHitOBJ = LoadMesh_Strict("GFX\map\doorhit.b3d",d\frameobj)
 			EntityAlpha d\DoorHitOBJ,0.0
 			EntityFX d\DoorHitOBJ,1
 			EntityType d\DoorHitOBJ,HIT_MAP
@@ -4291,8 +4292,8 @@ Function DrawEnding()
 	GiveAchievement(AchvEscape)
 	If (Not UsedConsole) Then GiveAchievement(AchvConsole)
 	If PlayTime < 1200000 Then GiveAchievement(AchvSpeedrun)
-	If SelectedDifficulty = difficulties[EUCLID] Then GiveAchievement(AchvEuclid)
-	If SelectedDifficulty = difficulties[KETER] Then
+	If SelectedDifficulty = Difficulties[EUCLID] Then GiveAchievement(AchvEuclid)
+	If SelectedDifficulty = Difficulties[KETER] Then
 		GiveAchievement(AchvKeter)
 		GiveAchievement(AchvEuclid)
 	EndIf
@@ -4324,7 +4325,7 @@ Function DrawEnding()
 			SubBox\screenTop = GraphicHeight * 0.9
 			RecalculateSubtitleBoxTarget()
 
-			EndingScreen = LoadImage_Strict("GFX\endingscreen.png", MenuScale)
+			EndingScreen = LoadImage_Strict("GFX\menu\endingscreen.png", MenuScale)
 			
 			ShouldPlay = 23
 			CurrMusicVolume = MusicVolume
@@ -4438,7 +4439,7 @@ Function DrawEnding()
 ;						FlushKeys()
 ;					EndIf
 					
-					If DrawButton(x-145*MenuScale,y-100*MenuScale,390*MenuScale,60*MenuScale,I_Loc\Menu_MainMenuUpper, True)
+					If DrawButton(x-145*MenuScale,y-100*MenuScale,390*MenuScale,60*MenuScale,I_Loc\Menu_MainmenuUpper, True)
 						ShouldPlay = 24
 						NowPlaying = ShouldPlay
 						For i=0 To 9
@@ -4517,11 +4518,11 @@ Function InitCredits()
 	Local file% = OpenFile("Credits.txt")
 	Local l$
 	
-	CreditsFont% = LoadFont_Strict("GFX\font\cour\Courier New.ttf", Int(21 * MenuScale))
-	CreditsFont2% = LoadFont_Strict("GFX\font\cour\Courier New.ttf", Int(35 * MenuScale))
+	CreditsFont% = LoadFont_Strict("GFX\font\Courier New.ttf", Int(21 * MenuScale))
+	CreditsFont2% = LoadFont_Strict("GFX\font\Courier New.ttf", Int(35 * MenuScale))
 	
 	If CreditsScreen = 0
-		CreditsScreen = LoadImage_Strict("GFX\creditsscreen.png", MenuScale)
+		CreditsScreen = LoadImage_Strict("GFX\menu\creditsscreen.png", MenuScale)
 	EndIf
 	
 	Repeat
@@ -4878,16 +4879,16 @@ Function MovePlayer()
 
 			If moveZ > 0 And Playable Then
 				temp = True
-				If moveX = 0 Then angle = 180 Else angle = 135 * moveX
-			ElseIf moveZ < 0 And Playable Then
+				If MoveX = 0 Then angle = 180 Else angle = 135 * MoveX
+			ElseIf MoveZ < 0 And Playable Then
 				temp = True
-				If moveX = 0 Then angle = 0 Else angle = 45 * moveX
+				If MoveX = 0 Then angle = 0 Else angle = 45 * MoveX
 			ElseIf ForceMove>0 Then
 				temp=True
 				angle = ForceAngle
-			Else If Playable And moveX <> 0 Then
+			Else If Playable And MoveX <> 0 Then
 				temp = True
-				angle = 90 * moveX
+				angle = 90 * MoveX
 			EndIf
 		Else
 			temp=True
@@ -4964,8 +4965,8 @@ Function MovePlayer()
 			PositionEntity pvt, EntityX(Collider)+Rnd(-0.05,0.05),EntityY(Collider)-0.05,EntityZ(Collider)+Rnd(-0.05,0.05)
 			TurnEntity pvt, 90, 0, 0
 			EntityPick(pvt,0.3)
-			Local de.decals = CreateDecal(Rand(15,16), PickedX(), PickedY()+0.005, PickedZ(), 90, Rand(360), 0)
-			de\size = Rnd(0.03,0.08)*Min(Injuries,3.0) : EntityAlpha(de\obj, 1.0) : ScaleSprite de\obj, de\size, de\size
+			Local de.Decals = CreateDecal(Rand(15,16), PickedX(), PickedY()+0.005, PickedZ(), 90, Rand(360), 0)
+			de\Size = Rnd(0.03,0.08)*Min(Injuries,3.0) : EntityAlpha(de\obj, 1.0) : ScaleSprite de\obj, de\Size, de\Size
 			tempchn% = PlaySound_Strict (DripSFX(Rand(0,2)))
 			ChannelVolume tempchn, Rnd(0.0,0.8)*SFXVolume
 			ChannelPitch tempchn, Rand(20000,30000)
@@ -5299,7 +5300,7 @@ Function DrawGUI()
 						If e\img = 0 Then
 							If BlinkTimer > -5 Then
 								If e\img = 0 Then
-									e\img = LoadImage_Strict("GFX\kneelmortal.pd")
+									e\img = LoadImage_Strict("GFX\overlays\kneelmortal.pd")
 									If (ChannelPlaying(e\SoundCHN)) Then
 										StopChannel(e\SoundCHN)
 									EndIf
@@ -5426,7 +5427,7 @@ Function DrawGUI()
 			CameraProject(Camera, EntityX(ClosestButton,True),EntityY(ClosestButton,True)+MeshHeight(ButtonOBJ)*0.015,EntityZ(ClosestButton,True))
 			Local projY# = ProjectedY()
 			CameraProject(Camera, EntityX(ClosestButton,True),EntityY(ClosestButton,True)-MeshHeight(ButtonOBJ)*0.015,EntityZ(ClosestButton,True))
-			Local scale# = (ProjectedY()-projy)/462.0
+			Local scale# = (ProjectedY()-projY)/462.0
 			
 			x = GraphicWidth/2-317*scale/2
 			y = GraphicHeight/2-462*scale/2
@@ -6249,7 +6250,7 @@ Function DrawGUI()
 					If CanUseItem(False, False, True) Then
 						If Wearing714 = 0 And IsBirthday Then
 							Injuries = 0
-							BloodLoss = 0
+							Bloodloss = 0
 							ResetDiseases()
 
 							If SelectedItem\state = 0 Then
@@ -8109,7 +8110,7 @@ Function DrawMenu()
 					SlideBarFOV = SlideBar(x + 270*MenuScale, y+6*MenuScale,100*MenuScale, SlideBarFOV*2.0, 4)/2.0
 					FOV = Int(SlideBarFOV+40)
 					Color 255,255,255
-					Text(x, y, I_Loc\OptionName_fov)
+					Text(x, y, I_Loc\OptionName_Fov)
 					Color 255,255,0
 					Text(x + 5 * MenuScale, y + 25 * MenuScale, FOV+"°")
 					Color 255,255,255
@@ -8681,21 +8682,21 @@ Function LoadEntities()
 	
 	If PauseMenuIMG = 0 Then PauseMenuIMG% = LoadImage_Strict("GFX\menu\pausemenu.jpg", MenuScale)
 	
-	If SprintIcon = 0 Then SprintIcon% = LoadImageHUDScaled("GFX\sprinticon.png")
-	If WalkIcon = 0 Then WalkIcon% = LoadImageHUDScaled("GFX\walkicon.png")
-	If StandIcon = 0 Then StandIcon% = LoadImageHUDScaled("GFX\standicon.png")
-	If BlinkIcon = 0 Then BlinkIcon% = LoadImageHUDScaled("GFX\blinkicon.png")
-	If BlinkIcon2 = 0 Then BlinkIcon2% = LoadImageHUDScaled("GFX\blinkicon2.png")
-	If CrouchIcon = 0 Then CrouchIcon% = LoadImageHUDScaled("GFX\sneakicon.png")
-	If CrouchStillIcon = 0 Then CrouchStillIcon% = LoadImageHUDScaled("GFX\crouchstillicon.png")
-	If HandIcon = 0 Then HandIcon% = LoadImageHUDScaled("GFX\handsymbol.png")
-	If HandIcon2 = 0 Then HandIcon2% = LoadImageHUDScaled("GFX\handsymbol2.png")
-	If HandIcon3 = 0 Then HandIcon3% = LoadImageHUDScaled("GFX\handsymbol3.png")
-	If HandIcon4 = 0 Then HandIcon4% = LoadImageHUDScaled("GFX\handsymbol4.png")
+	If SprintIcon = 0 Then SprintIcon% = LoadImageHUDScaled("GFX\HUD\sprinticon.png")
+	If WalkIcon = 0 Then WalkIcon% = LoadImageHUDScaled("GFX\HUD\walkicon.png")
+	If StandIcon = 0 Then StandIcon% = LoadImageHUDScaled("GFX\HUD\standicon.png")
+	If BlinkIcon = 0 Then BlinkIcon% = LoadImageHUDScaled("GFX\HUD\blinkicon.png")
+	If BlinkIcon2 = 0 Then BlinkIcon2% = LoadImageHUDScaled("GFX\HUD\blinkicon2.png")
+	If CrouchIcon = 0 Then CrouchIcon% = LoadImageHUDScaled("GFX\HUD\sneakicon.png")
+	If CrouchStillIcon = 0 Then CrouchStillIcon% = LoadImageHUDScaled("GFX\HUD\crouchstillicon.png")
+	If HandIcon = 0 Then HandIcon% = LoadImageHUDScaled("GFX\HUD\handsymbol.png")
+	If HandIcon2 = 0 Then HandIcon2% = LoadImageHUDScaled("GFX\HUD\handsymbol2.png")
+	If HandIcon3 = 0 Then HandIcon3% = LoadImageHUDScaled("GFX\HUD\handsymbol3.png")
+	If HandIcon4 = 0 Then HandIcon4% = LoadImageHUDScaled("GFX\HUD\handsymbol4.png")
 
-	If StaminaMeterIMG = 0 Then StaminaMeterIMG% = LoadImageHUDScaled("GFX\staminameter.png")
+	If StaminaMeterIMG = 0 Then StaminaMeterIMG% = LoadImageHUDScaled("GFX\HUD\staminameter.png")
 
-	If Panel294 = 0 Then Panel294 = LoadImageHUDScaled("GFX\294panel.jpg")
+	If Panel294 = 0 Then Panel294 = LoadImageHUDScaled("GFX\overlays\294panel.jpg")
 
 	Load294()
 
@@ -8735,7 +8736,7 @@ Function LoadEntities()
 	CameraProjMode ark_blur_cam,0
 	;Listener = CreateListener(Camera)
 	
-	FogTexture = LoadTexture_Strict("GFX\fog.jpg", 1)
+	FogTexture = LoadTexture_Strict("GFX\overlays\fog.jpg", 1)
 	
 	Fog = CreateSprite(ark_blur_cam)
 	ScaleSprite(Fog, 1.0, Max(Float(GraphicHeight) / Float(GraphicWidth), 0.8))
@@ -8744,7 +8745,7 @@ Function LoadEntities()
 	EntityOrder Fog, -1000
 	MoveEntity(Fog, -PixelWidth, PixelHeight, 1.0)
 	
-	GasMaskTexture = LoadTexture_Strict("GFX\GasmaskOverlay.jpg", 1)
+	GasMaskTexture = LoadTexture_Strict("GFX\overlays\GasmaskOverlay.jpg", 1)
 	GasMaskOverlay = CreateSprite(ark_blur_cam)
 	ScaleSprite(GasMaskOverlay, 1.0, Max(Float(GraphicHeight) / Float(GraphicWidth), 0.8))
 	EntityTexture(GasMaskOverlay, GasMaskTexture)
@@ -8754,7 +8755,7 @@ Function LoadEntities()
 	MoveEntity(GasMaskOverlay, -PixelWidth, PixelHeight, 1.0)
 	HideEntity(GasMaskOverlay)
 	
-	InfectTexture = LoadTexture_Strict("GFX\InfectOverlay.jpg", 1)
+	InfectTexture = LoadTexture_Strict("GFX\overlays\InfectOverlay.jpg", 1)
 	InfectOverlay = CreateSprite(ark_blur_cam)
 	ScaleSprite(InfectOverlay, 1.0, Max(Float(GraphicHeight) / Float(GraphicWidth), 0.8))
 	EntityTexture(InfectOverlay, InfectTexture)
@@ -8765,7 +8766,7 @@ Function LoadEntities()
 	;EntityAlpha (InfectOverlay, 255.0)
 	HideEntity(InfectOverlay)
 	
-	NVTexture = LoadTexture_Strict("GFX\NightVisionOverlay.jpg", 1)
+	NVTexture = LoadTexture_Strict("GFX\overlays\NightVisionOverlay.jpg", 1)
 	NVOverlay = CreateSprite(ark_blur_cam)
 	ScaleSprite(NVOverlay, 1.0, Max(Float(GraphicHeight) / Float(GraphicWidth), 0.8))
 	EntityTexture(NVOverlay, NVTexture)
@@ -8782,7 +8783,7 @@ Function LoadEntities()
 	MoveEntity(NVBlink, -PixelWidth, PixelHeight, 1.0)
 	HideEntity(NVBlink)
 	
-	FogNVTexture = LoadTexture_Strict("GFX\fogNV.jpg", 1)
+	FogNVTexture = LoadTexture_Strict("GFX\overlays\fogNV.jpg", 1)
 
 	LoadSubtitleEntities()
 	
@@ -8860,8 +8861,8 @@ Function LoadEntities()
 	
 	
 	ClassDObj = LoadAnimMesh_Strict("GFX\npcs\classd.b3d") ;optimized Class-D's and scientists/researchers
-	ApacheObj = LoadAnimMesh_Strict("GFX\apache.b3d") ;optimized Apaches (helicopters)
-	ApacheRotorObj = LoadAnimMesh_Strict("GFX\apacherotor.b3d") ;optimized the Apaches even more
+	ApacheObj = LoadAnimMesh_Strict("GFX\npcs\apache.b3d") ;optimized Apaches (helicopters)
+	ApacheRotorObj = LoadAnimMesh_Strict("GFX\npcs\apacherotor.b3d") ;optimized the Apaches even more
 	
 	HideEntity MTFObj
 	HideEntity GuardObj
@@ -8907,9 +8908,9 @@ Function LoadEntities()
 ;	OBJTunnel(6)=LoadRMesh("GFX\map\mt_generator.rmesh",Null)
 ;	HideEntity OBJTunnel(6)
 	
-	LightSpriteTex(0) = LoadTexture_Strict("GFX\light1.jpg", 1)
-	LightSpriteTex(1) = LoadTexture_Strict("GFX\light2.jpg", 1)
-	LightSpriteTex(2) = LoadTexture_Strict("GFX\lightsprite.jpg",1)
+	LightSpriteTex(0) = LoadTexture_Strict("GFX\particles\light1.jpg", 1)
+	LightSpriteTex(1) = LoadTexture_Strict("GFX\particles\light2.jpg", 1)
+	LightSpriteTex(2) = LoadTexture_Strict("GFX\particles\lightsprite.jpg",1)
 	
 	DrawLoading(10)
 	
@@ -8966,39 +8967,39 @@ Function LoadEntities()
 	DrawLoading(15)
 	
 	For i = 0 To 5
-		GorePics(i) = LoadTexture_Strict("GFX\895pics\pic" + (i + 1) + ".jpg")
+		GorePics(i) = LoadTexture_Strict("GFX\overlays\895pics\pic" + (i + 1) + ".jpg")
 	Next
 	
-	OldAiPics(0) = LoadTexture_Strict("GFX\AIface.jpg")
-	OldAiPics(1) = LoadTexture_Strict("GFX\AIface2.jpg")	
+	OldAiPics(0) = LoadTexture_Strict("GFX\overlays\AIface.jpg")
+	OldAiPics(1) = LoadTexture_Strict("GFX\overlays\AIface2.jpg")	
 	
 	DrawLoading(20)
 	
 	For i = 0 To 6
-		DecalTextures(i) = LoadTexture_Strict("GFX\decal" + (i + 1) + ".png", 1 + 2)
+		DecalTextures(i) = LoadTexture_Strict("GFX\decals\decal" + (i + 1) + ".png", 1 + 2)
 	Next
 	DecalTextures(7) = LoadTexture_Strict("GFX\items\INVpaperstrips.png", 1 + 2)
 	For i = 8 To 12
-		DecalTextures(i) = LoadTexture_Strict("GFX\decalpd"+(i-7)+".jpg", 1 + 2)	
+		DecalTextures(i) = LoadTexture_Strict("GFX\decals\decalpd"+(i-7)+".jpg", 1 + 2)	
 	Next
 	For i = 13 To 14
-		DecalTextures(i) = LoadTexture_Strict("GFX\bullethole"+(i-12)+".jpg", 1 + 2)	
+		DecalTextures(i) = LoadTexture_Strict("GFX\decals\bullethole"+(i-12)+".jpg", 1 + 2)	
 	Next	
 	For i = 15 To 16
-		DecalTextures(i) = LoadTexture_Strict("GFX\blooddrop"+(i-14)+".png", 1 + 2)	
+		DecalTextures(i) = LoadTexture_Strict("GFX\decals\blooddrop"+(i-14)+".png", 1 + 2)	
 	Next
-	DecalTextures(17) = LoadTexture_Strict("GFX\decal8.png", 1 + 2)	
-	DecalTextures(18) = LoadTexture_Strict("GFX\decalpd6.dc", 1 + 2)	
-	DecalTextures(19) = LoadTexture_Strict("GFX\decal19.png", 1 + 2)
-	DecalTextures(20) = LoadTexture_Strict("GFX\decal427.png", 1 + 2)
-	DecalTextures(21) = LoadTexture_Strict("GFX\smoke2.png", 1 + 2)
+	DecalTextures(17) = LoadTexture_Strict("GFX\decals\decal8.png", 1 + 2)	
+	DecalTextures(18) = LoadTexture_Strict("GFX\decals\decalpd6.dc", 1 + 2)	
+	DecalTextures(19) = LoadTexture_Strict("GFX\decals\decal19.png", 1 + 2)
+	DecalTextures(20) = LoadTexture_Strict("GFX\decals\decal427.png", 1 + 2)
+	DecalTextures(21) = LoadTexture_Strict("GFX\particles\smoke2.png", 1 + 2)
 	DecalTextures(22) = LoadTexture_Strict("GFX\bd\Confetti.png", 1 + 2)
 	
 	DrawLoading(24)
 	
 	Monitor = LoadMesh_Strict("GFX\map\monitor.b3d")
 	HideEntity Monitor
-	MonitorTexture = LoadTexture_Strict("GFX\monitortexture.jpg")
+	MonitorTexture = LoadTexture_Strict("GFX\overlays\monitortexture.jpg")
 	
 	CamBaseOBJ = LoadMesh_Strict("GFX\map\cambase.x")
 	HideEntity(CamBaseOBJ)
@@ -9017,7 +9018,7 @@ Function LoadEntities()
 	ClsColor 0,0,0
 	Cls
 	SetBuffer BackBuffer()
-	LightConeModel = LoadMesh_Strict("GFX\lightcone.b3d")
+	LightConeModel = LoadMesh_Strict("GFX\particles\lightcone.b3d")
 	HideEntity LightConeModel
 	
 	Local name$
@@ -9089,15 +9090,15 @@ Function LoadEntities()
 	
 	DrawLoading(35)
 
-	ParticleTextures(0) = LoadTexture_Strict("GFX\smoke.png", 1 + 2)
-	ParticleTextures(1) = LoadTexture_Strict("GFX\flash.jpg", 1 + 2)
-	ParticleTextures(2) = LoadTexture_Strict("GFX\dust.png", 1 + 2)
+	ParticleTextures(0) = LoadTexture_Strict("GFX\particles\smoke.png", 1 + 2)
+	ParticleTextures(1) = LoadTexture_Strict("GFX\particles\flash.jpg", 1 + 2)
+	ParticleTextures(2) = LoadTexture_Strict("GFX\particles\dust.png", 1 + 2)
 	ParticleTextures(3) = LoadTexture_Strict("GFX\npcs\hg.pt", 1 + 2)
 	ParticleTextures(4) = LoadTexture_Strict("GFX\map\sun.jpg", 1 + 2)
-	ParticleTextures(5) = LoadTexture_Strict("GFX\bloodsprite.png", 1 + 2)
-	ParticleTextures(6) = LoadTexture_Strict("GFX\smoke2.png", 1 + 2)
-	ParticleTextures(7) = LoadTexture_Strict("GFX\spark.jpg", 1 + 2)
-	ParticleTextures(8) = LoadTexture_Strict("GFX\particle.png", 1 + 2)
+	ParticleTextures(5) = LoadTexture_Strict("GFX\particles\bloodsprite.png", 1 + 2)
+	ParticleTextures(6) = LoadTexture_Strict("GFX\particles\smoke2.png", 1 + 2)
+	ParticleTextures(7) = LoadTexture_Strict("GFX\particles\spark.jpg", 1 + 2)
+	ParticleTextures(8) = LoadTexture_Strict("GFX\particles\particle.png", 1 + 2)
 	
 	SetChunkDataValues()
 	
@@ -9187,7 +9188,7 @@ Function LoadEntities()
 	SetTemplateParticlesPerInterval(ParticleEffect[0], 6)
 	SetTemplateEmitterLifeTime(ParticleEffect[0], 6)
 	SetTemplateParticleLifeTime(ParticleEffect[0], 20, 30)
-	SetTemplateTexture(ParticleEffect[0], "GFX\Spark.png", 2, 3)
+	SetTemplateTexture(ParticleEffect[0], "GFX\particles\Spark.png", 2, 3)
 	SetTemplateOffset(ParticleEffect[0], -0.1, 0.1, -0.1, 0.1, -0.1, 0.1)
 	SetTemplateVelocity(ParticleEffect[0], -0.0375, 0.0375, -0.0375, 0.0375, -0.0375, 0.0375)
 	SetTemplateAlignToFall(ParticleEffect[0], True, 45)
@@ -9204,7 +9205,7 @@ Function LoadEntities()
 	SetTemplateInterval(ParticleEffect[1], 1)
 	SetTemplateEmitterLifeTime(ParticleEffect[1], 3)
 	SetTemplateParticleLifeTime(ParticleEffect[1], 30, 45)
-	SetTemplateTexture(ParticleEffect[1], "GFX\smoke2.png", 2, 1)
+	SetTemplateTexture(ParticleEffect[1], "GFX\particles\smoke2.png", 2, 1)
 	;SetTemplateOffset(ParticleEffect[1], -.3, .3, -.3, .3, -.3, .3)
 	SetTemplateOffset(ParticleEffect[1], 0.0, 0.0, 0.0, 0.0, 0.0, 0.0)
 	;SetTemplateVelocity(ParticleEffect[1], -.04, .04, .1, .2, -.04, .04)
@@ -9220,7 +9221,7 @@ Function LoadEntities()
 	SetTemplateEmitterLifeTime(ParticleEffect[2], 0)
 	SetTemplateParticlesPerInterval(ParticleEffect[2], 80)
 	SetTemplateParticleLifeTime(ParticleEffect[2], 90, 100)
-	SetTemplateTexture(ParticleEffect[2], "GFX\dust.png", 2, 1)
+	SetTemplateTexture(ParticleEffect[2], "GFX\particles\dust.png", 2, 1)
 	SetTemplateOffset(ParticleEffect[2], -0.2, 0.2, 0.0, 1.2, -0.2, 0.2)
 	SetTemplateVelocity(ParticleEffect[2], -0.005, 0.005, -0.0017, 0.0017, -0.005, 0.005)
 	SetTemplateSizeVel(ParticleEffect[2], -0.000005, 1)
@@ -10713,8 +10714,8 @@ Function Use914(item.Items, setting$, x#, y#, z#)
 			Select setting
 				Case "rough", "coarse"
 					PlaySound_Strict LoadTempSound("SFX\SCP\513\914Refine.ogg")
-					For n.npcs = Each NPCs
-						If n\npctype = NPCtype5131 Then RemoveNPC(n)
+					For n.NPCs = Each NPCs
+						If n\NPCtype = NPCtype5131 Then RemoveNPC(n)
 					Next
 					d.Decals = CreateDecal(0, x, 8*RoomScale+0.010, z, 90, Rand(360), 0)
 					d\Size = 0.2 : EntityAlpha(d\obj, 0.8) : ScaleSprite(d\obj, d\Size, d\Size)
@@ -10736,7 +10737,7 @@ Function Use914(item.Items, setting$, x#, y#, z#)
 					PlaySound_Strict LoadTempSound("SFX\General\Event\BD\Sad.ogg")
 				Case "1:1"
 					it2 = CreateItem("bdc", x, y, z)
-					it2\State = 1 - item\State
+					it2\state = 1 - item\state
 				Case "fine"
 					it2 = CreateItem("origami", x, y, z)
 				Case "very fine"
@@ -11485,9 +11486,9 @@ Function UpdateInfect()
 				ElseIf PlayerRoom\RoomTemplate\Name = "gatea" Or PlayerRoom\RoomTemplate\Name = "exit1" Then
 					Local deathGate$
 					If PlayerRoom\RoomTemplate\Name = "gatea" Then
-						deathGate = I_Loc\DeathMessage_008Gatea
+						deathGate = I_Loc\DeathMessage_008GateA
 					Else
-						deathGate = I_Loc\DeathMessage_008Gateb
+						deathGate = I_Loc\DeathMessage_008GateB
 					EndIf
 					DeathMSG = Format(I_Loc\DeathMessage_008Gate, deathGate)
 				Else
