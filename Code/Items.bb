@@ -583,9 +583,7 @@ Function PickItem(item.Items)
 						DeathMSG = I_Loc\DeathMessage_Killbat
 						Kill(False)
 					Case "scp148"
-						GiveAchievement(Achv148)	
-					Case "scp513"
-						GiveAchievement(Achv513)
+						GiveAchievement(Achv148)
 					Case "scp860"
 						GiveAchievement(Achv860)
 					Case "key6"

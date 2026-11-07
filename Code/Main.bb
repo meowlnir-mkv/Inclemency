@@ -6238,6 +6238,7 @@ Function DrawGUI()
 				Case "scp513"
 					;[Block]
 					PlaySound_Strict LoadTempSound("SFX\SCP\513\Bell1.ogg")
+					GiveAchievement(Achv513)
 					If Active5131% <> True Then Active5131% = True
 					
 					If Curr5131 = Null
