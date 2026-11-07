@@ -6478,7 +6478,7 @@ Function DrawGUI()
 					GiveAchievement(Achv1025) 
 					If SelectedItem\itemtemplate\img=0 Then
 						SelectedItem\state = Rand(0,5)
-						SelectedItem\itemtemplate\img=LoadImage_Strict("GFX\items\1025\1025_"+Int(SelectedItem\state)+".jpg")	
+						SelectedItem\itemtemplate\img=LoadImage_Strict("GFX\items\GUI\1025\1025_"+Int(SelectedItem\state)+".jpg")	
 						ScaleImage(SelectedItem\itemtemplate\img, MenuScale, MenuScale)
 					EndIf
 					
@@ -8979,7 +8979,7 @@ Function LoadEntities()
 	For i = 0 To 6
 		DecalTextures(i) = LoadTexture_Strict("GFX\decals\decal" + (i + 1) + ".png", 1 + 2)
 	Next
-	DecalTextures(7) = LoadTexture_Strict("GFX\items\INVpaperstrips.png", 1 + 2)
+	DecalTextures(7) = LoadTexture_Strict("GFX\items\INV\INVpaperstrips.png", 1 + 2)
 	For i = 8 To 12
 		DecalTextures(i) = LoadTexture_Strict("GFX\decals\decalpd"+(i-7)+".jpg", 1 + 2)	
 	Next
@@ -12397,7 +12397,7 @@ Function IsItemGoodFor1162(itt.ItemTemplates)
 			Return True
 		Case "drawing"
 			If itt\img<>0 Then FreeImage itt\img	
-			itt\img = LoadImage_Strict("GFX\items\1048\1048_"+Rand(1,20)+".jpg") ;Gives a random drawing.
+			itt\img = LoadImage_Strict("GFX\items\GUI\1048\1048_"+Rand(1,20)+".jpg") ;Gives a random drawing.
 			Return True
 	End Select
 	Return False

@@ -4060,7 +4060,7 @@ Function UpdateEvents()
 						ScaleEntity e\room\Objects[2], 0.05,0.05,0.05
 						SetAnimTime(e\room\Objects[2], 414)
 						
-						Local imgPath$ = "GFX\items\1048\1048_"+Rand(1,20)+".jpg"
+						Local imgPath$ = "GFX\items\GUI\1048\1048_"+Rand(1,20)+".jpg"
 						
 						Local itt.ItemTemplates
 						For itt.ItemTemplates = Each ItemTemplates
