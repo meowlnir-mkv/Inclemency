@@ -4833,13 +4833,13 @@ Function UpdateEvents()
 								If UpdateLever(e\room\Levers[0])
 									e\room\RoomDoors[4]\open = True
 									If e\Sound2 <> 0 Then FreeSound_Strict e\Sound2 : e\Sound2=0
-									e\Sound2 = LoadSound_Strict("SFX\Door\Heavy\Door2Open1_dist.ogg")
+									e\Sound2 = LoadSound_Strict("SFX\Door\DoorDistHeavy.ogg")
 									e\SoundCHN2 = PlaySound2(e\Sound2,Camera,e\room\RoomDoors[4]\obj,400)
 								EndIf
 								If UpdateLever(e\room\Levers[1])
 									e\room\RoomDoors[4]\open = True
 									If e\Sound2 <> 0 Then FreeSound_Strict e\Sound2 : e\Sound2=0
-									e\Sound2 = LoadSound_Strict("SFX\Door\Heavy\Door2Open1_dist.ogg")
+									e\Sound2 = LoadSound_Strict("SFX\Door\DoorDistHeavy.ogg")
 									e\SoundCHN2 = PlaySound2(e\Sound2,Camera,e\room\RoomDoors[4]\obj,400)
 								EndIf
 							EndIf

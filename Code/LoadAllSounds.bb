@@ -1,14 +1,14 @@
 Function LoadAllSounds()
 ;Dim OpenDoorSFX%(3,3), CloseDoorSFX%(3,3)
 For i = 0 To 2
-	OpenDoorSFX(0,i) = LoadSound_Strict("SFX\Door\Normal\DoorOpen" + (i + 1) + ".ogg")
-	CloseDoorSFX(0,i) = LoadSound_Strict("SFX\Door\Normal\DoorClose" + (i + 1) + ".ogg")
-	OpenDoorSFX(1,i) = LoadSound_Strict("SFX\Door\Blast\BigDoorOpen" + (i + 1) + ".ogg")
-	CloseDoorSFX(1,i) = LoadSound_Strict("SFX\Door\Blast\BigDoorClose" + (i + 1) + ".ogg")
-	OpenDoorSFX(2,i) = LoadSound_Strict("SFX\Door\Heavy\Door2Open" + (i + 1) + ".ogg")
-	CloseDoorSFX(2,i) = LoadSound_Strict("SFX\Door\Heavy\Door2Close" + (i + 1) + ".ogg")
-	OpenDoorSFX(3,i) = LoadSound_Strict("SFX\General\Elevator\ElevatorOpen" + (i + 1) + ".ogg")
-	CloseDoorSFX(3,i) = LoadSound_Strict("SFX\General\Elevator\ElevatorClose" + (i + 1) + ".ogg")
+	OpenDoorSFX(0,i) = LoadSound_Strict("SFX\Door\Normal\Open" + (i + 1) + ".ogg")
+	CloseDoorSFX(0,i) = LoadSound_Strict("SFX\Door\Normal\Close" + (i + 1) + ".ogg")
+	OpenDoorSFX(1,i) = LoadSound_Strict("SFX\Door\Blast\Open" + (i + 1) + ".ogg")
+	CloseDoorSFX(1,i) = LoadSound_Strict("SFX\Door\Blast\Close" + (i + 1) + ".ogg")
+	OpenDoorSFX(2,i) = LoadSound_Strict("SFX\Door\Heavy\Open" + (i + 1) + ".ogg")
+	CloseDoorSFX(2,i) = LoadSound_Strict("SFX\Door\Heavy\Close" + (i + 1) + ".ogg")
+	OpenDoorSFX(3,i) = LoadSound_Strict("SFX\General\Elevator\Open" + (i + 1) + ".ogg")
+	CloseDoorSFX(3,i) = LoadSound_Strict("SFX\General\Elevator\Close" + (i + 1) + ".ogg")
 Next
 
 KeyCardSFX1 = LoadSound_Strict("SFX\Player\Interact\KeyCardUse1.ogg")
