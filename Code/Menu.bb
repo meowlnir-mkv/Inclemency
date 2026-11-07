@@ -1738,12 +1738,12 @@ Function DrawButton%(x%, y%, width%, height%, txt$, bigfont% = True, waitForMous
 	
 	DrawFrame (x, y, width, height)
 	If (Not disabled) And MouseOn(x, y, width, height) Then
-		;Color(30, 30, 30)
+		Color(30, 30, 30)
 		If (MouseHit1 And (Not waitForMouseUp)) Or (MouseUp1 And waitForMouseUp) Then 
 			clicked = True
 			PlaySound_Strict(ClickSFX[Rand(0, 3)])
 		EndIf
-		;Rect(x + 4, y + 4, width - 8, height - 8)
+		Rect(x + 4, y + 4, width - 8, height - 8)
 	EndIf
 	
 	If disabled Then
@@ -1763,9 +1763,9 @@ Function DrawButton2%(x%, y%, width%, height%, txt$, bigfont% = True)
 	DrawFrame (x, y, width, height)
 	Local hit% = MouseHit(1)
 	If MouseOn(x, y, width, height) Then
-		;Color(30, 30, 30)
+		Color(30, 30, 30)
 		If hit Then clicked = True : PlaySound_Strict(ClickSFX[Rand(0, 3)])
-		;Rect(x + 4, y + 4, width - 8, height - 8)	
+		Rect(x + 4, y + 4, width - 8, height - 8)	
 	EndIf
 	;Else
 		;Color(0, 0, 0)
@@ -1788,8 +1788,7 @@ Function DrawTick%(x%, y%, selected%, locked% = False)
 	Local Highlight% = MouseOn(x, y, width, height) And (Not locked)
 	
 	If Highlight Then
-		;Color(50, 50, 50)
-		Color(0, 0, 0)
+		Color(30, 30, 30)
 		If MouseHit1 Then
 			If selected Then
 				PlaySound_Strict LoadTempSound("SFX\Menu\ClickNo.ogg")
