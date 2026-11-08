@@ -3,7 +3,6 @@ Global MenuText% = LoadImage_Strict("GFX\menu\scptext.png")
 Global Menu173% = LoadImage_Strict("GFX\menu\173back.png")
 MenuWhite = LoadImage_Strict("GFX\menu\menuwhite.jpg")
 MenuBlack = LoadImage_Strict("GFX\menu\menublack.jpg")
-MenuTrans = LoadImage_Strict("GFX\menu\menutrans.png")
 
 ScaleImage(MenuBack, MenuScale, MenuScale)
 ScaleImage(MenuText, MenuScale, MenuScale)
@@ -1202,7 +1201,6 @@ Function UpdateLauncher()
 	SetFont Font1
 	MenuWhite = LoadImage_Strict("GFX\menu\menuwhite.jpg")
 	MenuBlack = LoadImage_Strict("GFX\menu\menublack.jpg")	
-	MenuTrans = LoadImage_Strict("GFX\menu\menutrans.png")
 	Local LauncherIMG% = LoadImage_Strict("GFX\menu\launcher.png")
 	Local i%	
 	
@@ -1728,9 +1726,9 @@ Function DrawFrame(x%, y%, width%, height%, xoffset%=0, yoffset%=0, scrollY%=Tru
 	Local srcY%
 	If scrollY Then srcY = y Mod 256
 	Color 255, 255, 255
-	DrawTiledImageRect(MenuWhite, xoffset, srcY, 512, 512, x, y, width, height)
+	DrawTiledImageRect(MenuWhite, xoffset, srcY, 1024, 1024, x, y, width, height)
 	
-	DrawTiledImageRect(MenuBlack, yoffset, srcY, 512, 512, x+3*MenuScale, y+3*MenuScale, width-6*MenuScale, height-6*MenuScale)	
+	DrawTiledImageRect(MenuBlack, yoffset, srcY, 1024, 1024, x+3*MenuScale, y+3*MenuScale, width-6*MenuScale, height-6*MenuScale)	
 End Function
 
 Function DrawButton%(x%, y%, width%, height%, txt$, bigfont% = True, waitForMouseUp%=False, disabled%=False)

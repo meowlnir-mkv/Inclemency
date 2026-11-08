@@ -105,7 +105,7 @@ Global HasDubbedAudio%
 Global Font1%, Font2%, Font3%, Font4%, Font5%, Font6%
 Global ConsoleFont%
 
-Global MenuWhite%, MenuBlack%, MenuTrans%
+Global MenuWhite%, MenuBlack%
 Global ButtonSFX% = LoadSound_Strict("SFX\Player\Interact\Button.ogg")
 Global ScreenSFX% = LoadSound_Strict("SFX\Player\Interact\Screen.ogg")
 Global TapSFX% = LoadSound_Strict("SFX\Player\Interact\TapMetal.ogg")
@@ -2000,7 +2000,7 @@ Music(6) = "GateB2"
 Music(7) = "Room3Storage"
 Music(8) = "Room049"
 Music(9) = "8601"
-Music(10) = "106"
+Music(10) = "..\Music\Panic\106"
 Music(11) = "Menu"
 Music(12) = "8601Cancer"
 Music(13) = "Intro"
@@ -2021,6 +2021,7 @@ Music(28) = "..\Music\Scared\173"
 Music(29) = "..\Music\Panic\173"
 Music(30) = "..\Music\Scared\939"
 Music(31) = "..\Music\Panic\939"
+Music(32) = "..\Music\Scared\106"
 
 Global MusicVolume# = GetOptionFloat("audio", "music volume")
 ;Global MusicCHN% = StreamSound_Strict("SFX\Music\"+Music(2)+".ogg", MusicVolume, CurrMusicStream)
@@ -4440,7 +4441,7 @@ Function DrawEnding()
 ;					EndIf
 					
 					If DrawButton(x-145*MenuScale,y-100*MenuScale,390*MenuScale,60*MenuScale,I_Loc\Menu_MainmenuUpper, True)
-						ShouldPlay = 24
+						If SelectedDifficulty = Difficulties[KETER] Then ShouldPlay = 11 Else ShouldPlay = 24
 						NowPlaying = ShouldPlay
 						For i=0 To 9
 							If TempSounds[i]<>0 Then FreeSound_Strict TempSounds[i] : TempSounds[i]=0
@@ -4459,7 +4460,7 @@ Function DrawEnding()
 				EndIf
 			;Credits
 			ElseIf EndingTimer<=-2000
-				ShouldPlay = 24
+				If SelectedDifficulty = Difficulties[KETER] Then ShouldPlay = 11 Else ShouldPlay = 24
 				DrawCredits()
 			EndIf
 		EndIf
@@ -4620,6 +4621,7 @@ Function DrawCredits()
 		Delete Each CreditsLine
         NullGame(False)
         StopStream_Strict(MusicCHN)
+		PlaySound_Strict LoadTempSound(("SFX\Menu\FinishLoading.ogg"))
         ShouldPlay = 21
         MenuOpen = False
         MainMenuOpen = True
@@ -8681,7 +8683,7 @@ Function LoadEntities()
 		TempSounds[i]=0
 	Next
 	
-	If PauseMenuIMG = 0 Then PauseMenuIMG% = LoadImage_Strict("GFX\menu\pausemenu.jpg", MenuScale)
+	If PauseMenuIMG = 0 Then PauseMenuIMG% = LoadImage_Strict("GFX\menu\pausemenu.png", MenuScale)
 	
 	If SprintIcon = 0 Then SprintIcon% = LoadImageHUDScaled("GFX\HUD\sprinticon.png")
 	If WalkIcon = 0 Then WalkIcon% = LoadImageHUDScaled("GFX\HUD\walkicon.png")

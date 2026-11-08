@@ -1014,7 +1014,8 @@ Function UpdateNPCs()
 							n\SoundChn = LoopSound2(OldManSFX(4), n\SoundChn, Camera, n\Collider, 8.0, 0.8)
 							
 							If n\State > - 10 Then
-								ShouldPlay = 66
+								Scared = True
+								ScareMusic = 32
 								If n\Frame<259 Then
 									PositionEntity n\Collider, EntityX(n\Collider), n\PrevY-0.15, EntityZ(n\Collider)
 									PointEntity n\obj, Collider
@@ -1025,7 +1026,10 @@ Function UpdateNPCs()
 									n\State = -10
 								EndIf
 							Else
-								If PlayerRoom\RoomTemplate\Name <> "gatea" Then ShouldPlay = 10
+								If PlayerRoom\RoomTemplate\Name <> "gatea" Then
+									Scared = True
+									ScareMusic = 10
+								EndIf
 								
 								Local Visible% = False
 								If dist < 8.0 Then
