@@ -7906,6 +7906,7 @@ Function DrawMenu()
 			UpdateMenuState()
 		EndIf
 		;Reduce the CPU take while game is not in focus, unless Steam overlay is active
+		Delay
 	EndIf
 	If MenuOpen Then
 		
