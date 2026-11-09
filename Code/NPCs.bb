@@ -763,15 +763,12 @@ Function UpdateNPCs()
 								If dist < 1.5 And Rand(700/FPSfactor) = 1 Then PlaySound2(Scp173SFX(Rand(0, 2)), Camera, n\obj)
 								
 								If dist < 1.5 And n\LastDist > 2.0 And temp Then
-									If MilliSecs() - n\LastSeen > 60000 Then
-										GiveAchievement(AchvJumpscare)
-										Jumpscare(True)
-										Scared = True
-										ScareTimer = ScareTimer + 200
-										ScareMusic = 29
-									EndIf
-									n\LastSeen = MilliSecs()
-								EndIf									
+									GiveAchievement(AchvJumpscare)
+									Jumpscare(True)
+									Scared = True
+									ScareTimer = ScareTimer + 200
+									ScareMusic = 29
+								EndIf
 									
 								n\LastDist = dist
 								
