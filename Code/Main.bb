@@ -9889,7 +9889,7 @@ Function UpdateMusic()
 		If Not ChannelPlaying(ConsoleMusPlay) Then ConsoleMusPlay = PlaySound(ConsoleMusFlush)
 	ElseIf (Not PlayCustomMusic)
 		If NowPlaying <> ShouldPlay ; playing the wrong clip, fade out
-			If Scared = True Then CurrMusicVolume = 0 Else CurrMusicVolume# = Max(CurrMusicVolume - (FPSfactor / 250.0), 0)
+			If Scared = True or MainMenuOpen = True Then CurrMusicVolume = 0 Else CurrMusicVolume# = Max(CurrMusicVolume - (FPSfactor / 250.0), 0)
 			If CurrMusicVolume = 0
 				If NowPlaying<66
 					StopStream_Strict(MusicCHN)
@@ -9899,7 +9899,7 @@ Function UpdateMusic()
 				CurrMusic=0
 			EndIf
 		Else ; playing the right clip
-			If Scared = True Then CurrMusicVolume = MusicVolume Else CurrMusicVolume = CurrMusicVolume + (MusicVolume - CurrMusicVolume) * (0.1*FPSfactor)
+			If Scared = True Or MainMenuOpen = True Then CurrMusicVolume = MusicVolume Else CurrMusicVolume = CurrMusicVolume + (MusicVolume - CurrMusicVolume) * (0.1*FPSfactor)
 		EndIf
 		
 		If NowPlaying < 66

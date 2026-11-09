@@ -1,12 +1,16 @@
+Global MenuLogo% = LoadImage_Strict("GFX\menu\logo.png")
 Global MenuBack% = LoadImage_Strict("GFX\menu\back.png")
 Global MenuText% = LoadImage_Strict("GFX\menu\scptext.png")
 Global Menu173% = LoadImage_Strict("GFX\menu\173back.png")
+Global MenuInc% = LoadImage_Strict("GFX\menu\inc.png")
 MenuWhite = LoadImage_Strict("GFX\menu\menuwhite.jpg")
 MenuBlack = LoadImage_Strict("GFX\menu\menublack.jpg")
 
+ScaleImage(MenuLogo, MenuScale, MenuScale)
 ScaleImage(MenuBack, MenuScale, MenuScale)
 ScaleImage(MenuText, MenuScale, MenuScale)
 ScaleImage(Menu173, MenuScale, MenuScale)
+ScaleImage(MenuInc, MenuScale, MenuScale)
 
 For i = 0 To 3
 	ArrowIMG(i) = LoadImage_Strict("GFX\menu\arrow.png", HUDScale)
@@ -20,11 +24,13 @@ Function GetRandomSeed%()
 	If HasNumericSeed Then Return RandomSeedNumeric Else Return GenerateSeedNumber(RandomSeed)
 End Function
 
-Dim MenuBlinkTimer%(2), MenuBlinkDuration%(2)
+Dim MenuBlinkTimer%(3), MenuBlinkDuration%(3)
 MenuBlinkTimer%(0) = 1
 MenuBlinkTimer%(1) = 1
+MenuBlinkTimer%(2) = 1
 
 Global MenuStr$, MenuStrX%, MenuStrY%
+Global MenuIncX%, MenuIncY%
 
 Global MainMenuTab%
 
@@ -82,14 +88,14 @@ Function UpdateMainMenu()
 	
 	ShowPointer()
 	
-	DrawImage(MenuBack, 0, 0)
-	
 	If (MilliSecs() Mod MenuBlinkTimer(0)) >= Rand(MenuBlinkDuration(0)) Then
+		If GraphicWidth > 1240 * MenuScale Then DrawImage(MenuBack, GraphicWidth / 2 - ImageWidth(MenuBack) / 2, 0)
 		DrawImage(Menu173, GraphicWidth - ImageWidth(Menu173), GraphicHeight - ImageHeight(Menu173))
+		DrawImage(MenuText, GraphicWidth / 2 - ImageWidth(MenuText) / 2, GraphicHeight - 20 * MenuScale - ImageHeight(MenuText))
 	EndIf
 	
 	If Rand(300) = 1 Then
-		MenuBlinkTimer(0) = Rand(4000, 8000)
+		MenuBlinkTimer(0) = Rand(3000, 6000)
 		MenuBlinkDuration(0) = Rand(200, 500)
 	End If
 	
@@ -100,9 +106,9 @@ Function UpdateMainMenu()
 		Color(50, 50, 50)
 		Text(MenuStrX + Rand(-5, 5), MenuStrY + Rand(-5, 5), MenuStr, True)
 		If MenuBlinkTimer(1) < 0 Then
-			MenuBlinkTimer(1) = Rand(700, 800)
+			MenuBlinkTimer(1) = Rand(350, 400)
 			MenuBlinkDuration(1) = Rand(10, 35)
-			MenuStrX = Rand(700, 1000) * MenuScale
+			MenuStrX = GraphicWidth/2 + Rand(700, 1000) * MenuScale
 			MenuStrY = Rand(100, 600) * MenuScale
 			
 			Select Rand(0, 22)
@@ -138,9 +144,20 @@ Function UpdateMainMenu()
 		EndIf
 	EndIf
 	
-	SetFont Font2
+	MenuBlinkTimer(2)=MenuBlinkTimer(2)-FPSfactor
+	If MenuBlinkTimer(2) < MenuBlinkDuration(2) Then
+		DrawImage(MenuInc, MenuIncX + Rand(-5, 5), MenuIncY + Rand(-5, 5))
+		If MenuBlinkTimer(2) < 0 Then
+			MenuBlinkTimer(2) = Rand(175, 200)
+			MenuBlinkDuration(2) = Rand(5, 17.5)
+			MenuIncX = GraphicWidth/2 + Rand(700, 1000) * MenuScale
+			MenuIncY = GraphicHeight/2 + Rand(100, 600) * MenuScale
+		EndIf
+	EndIf
 	
-	DrawImage(MenuText, GraphicWidth / 2 - ImageWidth(MenuText) / 2, GraphicHeight - 20 * MenuScale - ImageHeight(MenuText))
+	DrawImage(MenuLogo, GraphicWidth / 2 - ImageWidth(MenuLogo) / 2, 0)
+	
+	SetFont Font2
 	
 	;If GraphicWidth > 1240 * MenuScale Then
 		;DrawTiledImageRect(MenuWhite, 0, 5, 512, 7 * MenuScale, 985.0 * MenuScale, 407.0 * MenuScale, (GraphicWidth - 1240 * MenuScale) + 300, 7 * MenuScale)
@@ -151,13 +168,13 @@ Function UpdateMainMenu()
 	EndIf
 	
 	If MainMenuTab = 0 Then
-		x = 159 * MenuScale
+		x = (GraphicWidth/2 - 200*MenuScale)
 		y = 286 * MenuScale
 
 		width = 400 * MenuScale
 		height = 70 * MenuScale
 
-		Local spacing% = height + 20 * MenuScale
+		Local spacing% = height + 10 * MenuScale
 
 		If DrawButton(x, y, width, height, I_Loc\Menu_NewUpper) Then
 			HasNumericSeed = UseNumericSeeds
@@ -210,10 +227,14 @@ Function UpdateMainMenu()
 		EndIf
 
 		y = y + spacing
-
-		If DrawButton(x, y, width, height, I_Loc\Menu_LoadUpper) Then
-			LoadSaveGames()
-			MainMenuTab = 2
+		
+		If SaveGameAmount > 0 Then
+			If DrawButton(x, y, width, height, I_Loc\Menu_LoadUpper) Then
+				LoadSaveGames()
+				MainMenuTab = 2
+			EndIf
+		Else
+			DrawButton(x, y, width, height, I_Loc\Menu_LoadUpper, True, False, True)
 		EndIf
 
 		y = y + spacing
@@ -231,7 +252,7 @@ Function UpdateMainMenu()
 		
 	Else
 		
-		x = 159 * MenuScale
+		x = (GraphicWidth/2 - 290*MenuScale)
 		y = 286 * MenuScale
 		
 		width = 400 * MenuScale
@@ -268,7 +289,7 @@ Function UpdateMainMenu()
 			Case 1 ; New game
 				;[Block]
 				
-				x = 159 * MenuScale
+				x = (GraphicWidth/2 - 290*MenuScale)
 				y = 286 * MenuScale
 				
 				width = 400 * MenuScale
@@ -452,7 +473,7 @@ Function UpdateMainMenu()
 				
 				DrawFrame(x, y, width, height)
 				
-				x = 159 * MenuScale
+				x = (GraphicWidth/2 - 290*MenuScale)
 				y = 286 * MenuScale
 				
 				width = 400 * MenuScale
@@ -586,7 +607,7 @@ Function UpdateMainMenu()
 			Case 3,5,6,7 ;options
 				;[Block]
 				
-				x = 159 * MenuScale
+				x = (GraphicWidth/2 - 290*MenuScale)
 				y = 286 * MenuScale
 				
 				width = 400 * MenuScale
@@ -1056,7 +1077,7 @@ Function UpdateMainMenu()
 				
 				DrawFrame(x, y, width, PagingFrameHeight)
 				
-				x = 159 * MenuScale
+				x = (GraphicWidth/2 - 290*MenuScale)
 				y = 286 * MenuScale
 				
 				width = 400 * MenuScale
