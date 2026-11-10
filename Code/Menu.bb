@@ -1172,11 +1172,11 @@ Function UpdateMainMenu()
 
 	Color 255,255,255
 	SetFont ConsoleFont
-	Text 20,GraphicHeight-35,"Containment Breach: Inclemency - " + VersionNumber
+	Text 20,GraphicHeight-29.5,"Containment Breach: Inclemency - " + VersionNumber
 	
 	Color 255,0,0
 	SetFont ConsoleFont
-	Text 20,GraphicHeight-60,"IN DEVELOPMENT, CONTENT SUBJECT TO CHANGE"
+	Text 20,GraphicHeight-54.5,"IN DEVELOPMENT, CONTENT SUBJECT TO CHANGE"
 	
 	;DrawTiledImageRect(MenuBack, 985 * MenuScale, 860 * MenuScale, 200 * MenuScale, 20 * MenuScale, 1200 * MenuScale, 866 * MenuScale, 300, 20 * MenuScale)
 	
@@ -1678,6 +1678,14 @@ Function DrawLoading(percent%, shortloading=False)
 		Text(GraphicWidth / 2 + Max(1, MenuScale), GraphicHeight / 2 - 100 * MenuScale + Max(1, MenuScale), Format(I_Loc\Menu_Loading, percent), True, True)
 		Color 255,255,255
 		Text(GraphicWidth / 2, GraphicHeight / 2 - 100 * MenuScale, Format(I_Loc\Menu_Loading, percent), True, True)
+		
+		
+		; Once whoever gets around to implemeneting the tips does so,
+		; here's exactly where I want the text to be. Thanks! <3
+		Color 0,0,0
+		Text(20*MenuScale+Max(1, MenuScale), GraphicHeight-29.5*MenuScale+Max(1, MenuScale),"Pretend this is a tip")
+		Color 255,255,255
+		Text(20*MenuScale, GraphicHeight-29.5*MenuScale, "Pretend this is a tip")
 		
 		If percent = 100 Then 
 			If firstloop And SelectedLoadingScreen\title <> "CWM" Then PlaySound_Strict LoadTempSound(("SFX\Menu\FinishLoading.ogg"))

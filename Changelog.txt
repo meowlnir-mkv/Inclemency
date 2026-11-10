@@ -6,6 +6,7 @@ Alpha v2 - IN DEVELOPMENT, ADDITIONS AND CHANGELOG NOT FINALIZED
 - Changed version naming scheme from "Indev Update X" to Alpha vX.Y.Z
 - Changed credits to only include studio names/usernames for simplicity
 - Heavily re-organized the SFX folder and its subfolders
+- Re-organized the GFX folder
 
 Gameplay:
 - Added four new rooms to the Light Containment Zone

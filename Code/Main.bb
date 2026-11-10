@@ -7942,11 +7942,11 @@ Function DrawMenu()
 		y = GraphicHeight / 2 - height / 2
 		
 		SetFont ConsoleFont
-		Text((GraphicWidth / 2)+1, GraphicHeight-35, "Containment Breach: Inclemency - " + VersionNumber, True, False)
+		Text(GraphicWidth / 2, GraphicHeight-29.5, "Containment Breach: Inclemency - " + VersionNumber, True, False)
 	
 		Color 255,0,0
 		SetFont ConsoleFont
-		Text((GraphicWidth / 2)+1, GraphicHeight-60, "IN DEVELOPMENT, CONTENT SUBJECT TO CHANGE", True, False)
+		Text(GraphicWidth / 2, GraphicHeight-54.5, "IN DEVELOPMENT, CONTENT SUBJECT TO CHANGE", True, False)
 		
 		DrawImage PauseMenuIMG, x, y
 		

@@ -435,6 +435,7 @@ Type LocalizationTable
     Field Cup_OfPrefix$[2]
     Field Cup_Coffee$
     Field Cup_Oj$
+    Field Loading_Random$[14]
 End Type
 
 Function LoadLocalization(loc.LocalizationTable, file$)
@@ -1003,6 +1004,23 @@ Function LoadLocalization(loc.LocalizationTable, file$)
                             Case "coffee" If loc\Cup_Coffee = "" Then loc\Cup_Coffee = value
                             Case "oj" If loc\Cup_Oj = "" Then loc\Cup_Oj = value
                         End Select
+					Case "Loading Tips"
+						Select key
+							Case "loadingrandom_1" If loc\Loading_Random[1] = "" Then loc\Loading_Random[1] = value
+							Case "loadingrandom_2" If loc\Loading_Random[2] = "" Then loc\Loading_Random[2] = value
+							Case "loadingrandom_3" If loc\Loading_Random[3] = "" Then loc\Loading_Random[3] = value
+							Case "loadingrandom_4" If loc\Loading_Random[4] = "" Then loc\Loading_Random[4] = value
+							Case "loadingrandom_5" If loc\Loading_Random[5] = "" Then loc\Loading_Random[5] = value
+							Case "loadingrandom_6" If loc\Loading_Random[6] = "" Then loc\Loading_Random[6] = value
+							Case "loadingrandom_7" If loc\Loading_Random[7] = "" Then loc\Loading_Random[7] = value
+							Case "loadingrandom_8" If loc\Loading_Random[8] = "" Then loc\Loading_Random[8] = value
+							Case "loadingrandom_9" If loc\Loading_Random[9] = "" Then loc\Loading_Random[9] = value
+							Case "loadingrandom_10" If loc\Loading_Random[10] = "" Then loc\Loading_Random[10] = value
+							Case "loadingrandom_11" If loc\Loading_Random[11] = "" Then loc\Loading_Random[11] = value
+							Case "loadingrandom_12" If loc\Loading_Random[12] = "" Then loc\Loading_Random[12] = value
+							Case "loadingrandom_13" If loc\Loading_Random[13] = "" Then loc\Loading_Random[13] = value
+							Case "loadingrandom_14" If loc\Loading_Random[14] = "" Then loc\Loading_Random[14] = value
+						End Select
                 End Select
             EndIf
         EndIf
