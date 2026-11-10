@@ -435,7 +435,7 @@ Type LocalizationTable
     Field Cup_OfPrefix$[2]
     Field Cup_Coffee$
     Field Cup_Oj$
-    Field Loading_Random$[14]
+    Field Loading_Random$[20]
 End Type
 
 Function LoadLocalization(loc.LocalizationTable, file$)
@@ -1020,6 +1020,12 @@ Function LoadLocalization(loc.LocalizationTable, file$)
 							Case "loadingrandom_12" If loc\Loading_Random[12] = "" Then loc\Loading_Random[12] = value
 							Case "loadingrandom_13" If loc\Loading_Random[13] = "" Then loc\Loading_Random[13] = value
 							Case "loadingrandom_14" If loc\Loading_Random[14] = "" Then loc\Loading_Random[14] = value
+							Case "loadingrandom_15" If loc\Loading_Random[15] = "" Then loc\Loading_Random[15] = value
+							Case "loadingrandom_16" If loc\Loading_Random[16] = "" Then loc\Loading_Random[16] = value
+							Case "loadingrandom_17" If loc\Loading_Random[17] = "" Then loc\Loading_Random[17] = value
+							Case "loadingrandom_18" If loc\Loading_Random[18] = "" Then loc\Loading_Random[18] = value
+							Case "loadingrandom_19" If loc\Loading_Random[19] = "" Then loc\Loading_Random[19] = value
+							Case "loadingrandom_20" If loc\Loading_Random[20] = "" Then loc\Loading_Random[20] = value
 						End Select
                 End Select
             EndIf

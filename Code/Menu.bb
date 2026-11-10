@@ -1682,10 +1682,10 @@ Function DrawLoading(percent%, shortloading=False)
 		
 		; Once whoever gets around to implemeneting the tips does so,
 		; here's exactly where I want the text to be. Thanks! <3
-		Color 0,0,0
-		Text(20*MenuScale+Max(1, MenuScale), GraphicHeight-29.5*MenuScale+Max(1, MenuScale),"Pretend this is a tip")
-		Color 255,255,255
-		Text(20*MenuScale, GraphicHeight-29.5*MenuScale, "Pretend this is a tip")
+		If Percent < 100 Then
+			Color 255,255,255
+			Text(GraphicWidth / 2, GraphicHeight - 50 * MenuScale, "Pretend this is a tip", True, True)
+		EndIf
 		
 		If percent = 100 Then 
 			If firstloop And SelectedLoadingScreen\title <> "CWM" Then PlaySound_Strict LoadTempSound(("SFX\Menu\FinishLoading.ogg"))
