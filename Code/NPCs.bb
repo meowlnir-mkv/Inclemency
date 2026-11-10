@@ -730,7 +730,12 @@ Function UpdateNPCs()
 										n\EnemyY = EntityY(Collider, True)
 										n\EnemyZ = EntityZ(Collider, True)
 									EndIf
-								EndIf										
+								EndIf
+								
+								If dist <= 5 Then
+									RestoreSanity = False
+									Sanity = Max(Sanity - ((5-Dist)/100)/FPSfactor, -1000)
+								EndIf
 								
 								Local SoundVol# = Max(Min((Distance(EntityX(n\Collider), EntityZ(n\Collider), n\PrevX, n\PrevZ) * 2.5), 1.0), 0.0)
 								n\SoundChn = LoopSound2(StoneDragSFX, n\SoundChn, Camera, n\Collider, 10.0, n\State)
@@ -747,27 +752,24 @@ Function UpdateNPCs()
 							
 							;player is looking at it -> doesn't move
 							If move=False Then
-								If dist < 3.5 And temp Then
+								If dist <= 3.5 And temp Then
 									If MilliSecs() - n\LastSeen > 60000 Then
 										SightScare(True, True)
 										Scared = True
 										If ScareTimer < 200 Then ScareTimer = 200
-										ScareMusic = 28
-									ElseIf ScareTimer > 0 And ScareTimer < 200 Then
-										ScareTimer = 200
-										Scared = True
+										If ScareMusic = 66 Then ScareMusic = 28
 									EndIf
 									n\LastSeen = MilliSecs()
 								EndIf
 								
-								If dist < 1.5 And Rand(700/FPSfactor) = 1 Then PlaySound2(Scp173SFX(Rand(0, 2)), Camera, n\obj)
+								If dist <= 1.5 And Rand(700/FPSfactor) = 1 Then PlaySound2(Scp173SFX(Rand(0, 2)), Camera, n\obj)
 								
-								If dist < 1.5 And n\LastDist > 2.0 And temp Then
+								If dist <= 1.5 And n\LastDist > 2.0 And temp Then
 									GiveAchievement(AchvJumpscare)
 									Jumpscare(True)
 									Scared = True
 									ScareTimer = ScareTimer + 200
-									ScareMusic = 29
+									If ScareMusic = 66 Then ScareMusic = 29
 								EndIf
 									
 								n\LastDist = dist
@@ -1012,7 +1014,7 @@ Function UpdateNPCs()
 							
 							If n\State > - 10 Then
 								Scared = True
-								ScareMusic = 32
+								If ScareMusic = 66 Then ScareMusic = 32
 								If n\Frame<259 Then
 									PositionEntity n\Collider, EntityX(n\Collider), n\PrevY-0.15, EntityZ(n\Collider)
 									PointEntity n\obj, Collider
@@ -1025,7 +1027,7 @@ Function UpdateNPCs()
 							Else
 								If PlayerRoom\RoomTemplate\Name <> "gatea" Then
 									Scared = True
-									ScareMusic = 10
+									If ScareMusic = 66 Then ScareMusic = 10
 								EndIf
 								
 								Local Visible% = False
@@ -1732,6 +1734,11 @@ Function UpdateNPCs()
 									
 									PointEntity n\obj,Collider
 									RotateEntity n\Collider,0,CurveAngle(EntityYaw(n\obj),EntityYaw(n\Collider),10.0),0
+									
+									If dist <= (HideDistance*2) Then
+										RestoreSanity = False
+										Sanity = Max(Sanity - (((HideDistance*2)-Dist)/1000)/FPSfactor, -1000)
+									EndIf
 									
 									If dist < 0.6 And (MoveX <> 0 Or MoveZ <> 0) Then
 										GiveAchievement(AchvJuked)
@@ -3839,7 +3846,7 @@ Function UpdateNPCs()
 								Jumpscare(True)
 								Scared = True
 								ScareTimer = ScareTimer + 250
-								ScareMusic = 31
+								If ScareMusic = 66 Then ScareMusic = 31
 								n\State3 = 1
 							EndIf
 							

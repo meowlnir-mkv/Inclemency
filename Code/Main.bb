@@ -2263,6 +2263,7 @@ Global BlinkIcon% = 0
 Global BlinkIcon2% = 0
 Global CrouchIcon% = 0
 Global CrouchStillIcon% = 0
+;Global InsIcon% = 0
 Global HandIcon% = 0
 Global HandIcon2% = 0
 Global HandIcon3% = 0
@@ -4222,7 +4223,7 @@ Function UpdateSanity()
 	
 	If Active5131 = True Then DrainSanity = True
 	
-	If DrainSanity = True Or Injuries > 1 Or Scared = True Then
+	If DrainSanity = True Or Injuries > 1 Then
 		tempsan% = False
 	Else
 		tempsan% = True
@@ -4233,7 +4234,11 @@ Function UpdateSanity()
 	If Injuries > 1.0 Then Sanity = Max(Sanity - Bloodloss*4, -1000)
 	
 	If Sanity < 0 Then
-		If RestoreSanity Then Sanity = Min(Sanity + FPSfactor / 16, 0.0)
+		If RestoreSanity and Scared = True Then
+			Sanity = Min(Sanity + FPSfactor / 32, 0.0)
+		ElseIf RestoreSanity Then
+			Sanity = Min(Sanity + FPSfactor / 16, 0.0)
+		EndIf
 		BlurTimer = Abs(Sanity/2)
 		
 		If Sanity < (-250) Then
@@ -4253,7 +4258,11 @@ Function UpdateSanity()
 			EndIf
 			
 			If Sanity < (-500) Then
-				If RestoreSanity Then Sanity = Min(Sanity + FPSfactor / 32, -500)
+				If RestoreSanity and Scared = True Then
+					Sanity = Min(Sanity + FPSfactor / 64, 0.0)
+				ElseIf RestoreSanity Then
+					Sanity = Min(Sanity + FPSfactor / 32, 0.0)
+				EndIf
 				PlayerZone = 7
 				
 				If Faked106% <> True Then
@@ -4266,7 +4275,8 @@ Function UpdateSanity()
 					EndIf
 				EndIf
 				
-				If Sanity < (-750) Then 
+				If Sanity < (-750) Then
+					RestoreSanity = False
 					If Rand(10000)=1 Then SightScare(True,False)
 					If Rand(5000000)=1 Then Jumpscare(False)
 				EndIf
@@ -7514,7 +7524,7 @@ Function DrawGUI()
 						Msg = I_Loc\MessageItem_LitCigUse[Rand(1,5)]
 						MsgTimer = 70 * 5
 						SelectedItem\state = SelectedItem\state+1
-						If SelectedItem\state = 3 Then RemoveItem(SelectedItem)
+						If SelectedItem\state = 4 Then RemoveItem(SelectedItem)
 						SelectedItem = Null
 					EndIf
 					;[End Block]
@@ -7745,6 +7755,15 @@ Function DrawHUD()
 			EndIf
 		EndIf
 	EndIf
+	
+	;y = HUDEndY - 135 * HUDScale
+	;DrawBar(StaminaMeterIMG, x, y, width, Abs(Sanity) / 1000.0)
+	
+	;Color 0, 0, 0
+	;Rect(x - 50 * HUDScale, y, 30 * HUDScale, 30 * HUDScale)
+	;Color 255, 255, 255
+	;Rect(x - 50 * HUDScale - 1, y - 1, 30 * HUDScale + 2, 30 * HUDScale + 2, False)
+	;DrawImage InsIcon, x - 50 * HUDScale, y
 
 	If DebugHUD Then
 		Color 255, 255, 255
@@ -8693,6 +8712,7 @@ Function LoadEntities()
 	If BlinkIcon2 = 0 Then BlinkIcon2% = LoadImageHUDScaled("GFX\HUD\blinkicon2.png")
 	If CrouchIcon = 0 Then CrouchIcon% = LoadImageHUDScaled("GFX\HUD\sneakicon.png")
 	If CrouchStillIcon = 0 Then CrouchStillIcon% = LoadImageHUDScaled("GFX\HUD\crouchstillicon.png")
+	;If InsIcon = 0 Then InsIcon% = LoadImageHUDScaled("GFX\HUD\isnan.png")
 	If HandIcon = 0 Then HandIcon% = LoadImageHUDScaled("GFX\HUD\handsymbol.png")
 	If HandIcon2 = 0 Then HandIcon2% = LoadImageHUDScaled("GFX\HUD\handsymbol2.png")
 	If HandIcon3 = 0 Then HandIcon3% = LoadImageHUDScaled("GFX\HUD\handsymbol3.png")

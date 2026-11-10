@@ -1973,6 +1973,9 @@ Function UpdateEvents()
 					Injuries = Injuries+FPSfactor*0.00005
 					PrevSecondaryLightOn = SecondaryLightOn : SecondaryLightOn = True
 					
+					RestoreSanity = False
+					Sanity = Max(Sanity - (FPSfactor*0.00005), -1000)
+					
 					If (EntityY(Collider)<2000*RoomScale Or EntityY(Collider)>2608*RoomScale) Then CurrStepSFX = 1
 					
 					If e\Sound = 0 Then LoadEventSound(e,"SFX\SCP\106\PocketDimension\Rumble.ogg")
