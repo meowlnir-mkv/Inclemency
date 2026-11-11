@@ -2,6 +2,8 @@ Const VersionNumber$ = "Alpha v2"
 ;Only change this if the version given isn't working with the current build version - ENDSHN
 Const CompatibleNumber$ = "Alpha v2"
 
+SetDarkMode(True)
+
 InitErrorMsgs(11, True)
 SetErrorMsg(0, "An error occured in Containment Breach: Inclemency " + VersionNumber)
 SetErrorMsg(1, "Please send us the generated minidump along with a screenshot of this window!")
@@ -277,13 +279,13 @@ Function LoadImageHUDScaled(file$, fixedSizeX% = 0, fixedSizeY% = 0)
 	Local img%
 	Local h.HUDScaledImage = New HUDScaledImage
 	If fixedSizeX = 0 Then
-		img = LoadImage_Strict(file, HUDScale)
+		img = LoadImage_Strict(file, HUDScale, 8)
 		h\BaseWidth = ImageWidthUnscaled(img) * LoadImageScaleResult
 		h\BaseHeight = ImageHeightUnscaled(img) * LoadImageScaleResult
 	Else
 		If fixedSizeY = 0 Then fixedSizeY = fixedSizeX
-		img = LoadImage_Strict(file)
-		ResizeImage(img, fixedSizeX * HUDScale, fixedSizeY * HUDScale)
+		img = LoadImage_Strict(file, 0, 8)
+		ResizeImageFast(img, fixedSizeX * HUDScale, fixedSizeY * HUDScale)
 		h\BaseWidth = fixedSizeX
 		h\BaseHeight = fixedSizeY
 	EndIf
@@ -1629,7 +1631,7 @@ Function UpdateConsole()
 					;[End Block]
 				Case "kill","suicide"
 					;[Block]
-					KillTimer = -1
+					Kill(False)
 					DeathMSG = I_Loc\DeathMessage_Suicide[Rand(4)]
 					;[End Block]
 				Case "playmusic"

@@ -14,8 +14,8 @@ ScaleImage(MenuInc, MenuScale, MenuScale)
 
 For i = 0 To 3
 	ArrowIMG(i) = LoadImage_Strict("GFX\menu\arrow.png", HUDScale)
-	HandleImage(ArrowIMG(i), 0, 0)
 	RotateImage(ArrowIMG(i), 90 * i)
+	HandleImage(ArrowIMG(i), 0, 0)
 Next
 
 Global RandomSeed$, RandomSeedNumeric%, HasNumericSeed%

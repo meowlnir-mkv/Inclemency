@@ -41,7 +41,7 @@ End Function
 
 Function UpdatePostProcess()
 	If ScreenGamma <> 1.0 Then ProcessGammaEffect((ScreenGamma/1.4)+NoClip)
-	AntiAlias(Opt_AntiAlias)
+	AntiAlias Opt_AntiAlias <> 0
 End Function
 
 Function ProcessGammaEffect(gamma#)
