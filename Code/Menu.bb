@@ -18,6 +18,7 @@ For i = 0 To 3
 	HandleImage(ArrowIMG(i), 0, 0)
 Next
 
+Global RandomTipIndex%, RandomTipTime%
 Global RandomSeed$, RandomSeedNumeric%, HasNumericSeed%
 
 Function GetRandomSeed%()
@@ -1682,9 +1683,15 @@ Function DrawLoading(percent%, shortloading=False)
 		
 		; Once whoever gets around to implemeneting the tips does so,
 		; here's exactly where I want the text to be. Thanks! <3
-		If Percent < 100 Then
+		
+		; sure.
+		If percent < 100 Then
 			Color 255,255,255
-			Text(GraphicWidth / 2, GraphicHeight - 50 * MenuScale, "Pretend this is a tip", True, True)
+			If RandomTipTime < MilliSecs() Then
+				RandomTipIndex = Rand(20); can you actually get the size of an array??
+				RandomTipTime = MilliSecs() + 5000; 5 seconds
+			EndIf
+			Text(GraphicWidth / 2, GraphicHeight - 50 * MenuScale, I_Loc\Loading_Random[RandomTipIndex], True, True)
 		EndIf
 		
 		If percent = 100 Then 
