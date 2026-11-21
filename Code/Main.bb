@@ -3,6 +3,7 @@ Const VersionNumber$ = "Alpha v2"
 Const CompatibleNumber$ = "Alpha v2"
 
 SetDarkMode(True)
+BumpNormalize(True)
 
 InitErrorMsgs(11, True)
 SetErrorMsg(0, "An error occured in Containment Breach: Inclemency " + VersionNumber)
@@ -6968,14 +6969,12 @@ Function DrawGUI()
 									Msg = I_Loc\MessageItem_CigaretteUseUnable
 								Case 3
 									Msg = I_Loc\MessageItem_CigaretteUse[2]
-									RemoveItem(SelectedItem)
 								Case 4
 									Msg = I_Loc\MessageItem_CigaretteUse[3]
 								Case 5
 									Msg = I_Loc\MessageItem_CigaretteUse[4]
 								Case 6
 									Msg = I_Loc\MessageItem_CigaretteUse[5]
-									RemoveItem(SelectedItem)
 							End Select
 						Else
 							Msg = I_Loc\MessageItem_CigaretteUseUnable
@@ -7518,7 +7517,7 @@ Function DrawGUI()
 				Case "litcig"
 					;[Block]
 					If CanUseItem(False,False,True)
-						Sanity = Sanity+250
+						Sanity = Min(Sanity+250,0)
 						BlurTimer = 500
 						StaminaEffect = 1.5
 						StaminaEffectTimer = StaminaEffectTimer+30

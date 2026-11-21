@@ -90,7 +90,7 @@ Function UpdateMainMenu()
 	ShowPointer()
 	
 	If (MilliSecs() Mod MenuBlinkTimer(0)) >= Rand(MenuBlinkDuration(0)) Then
-		If GraphicWidth > 1240 * MenuScale Then DrawImage(MenuBack, GraphicWidth / 2 - ImageWidth(MenuBack) / 2, 0)
+		DrawImage(MenuBack, 0, 0)
 		DrawImage(Menu173, GraphicWidth - ImageWidth(Menu173), GraphicHeight - ImageHeight(Menu173))
 		DrawImage(MenuText, GraphicWidth / 2 - ImageWidth(MenuText) / 2, GraphicHeight - 20 * MenuScale - ImageHeight(MenuText))
 	EndIf
@@ -109,7 +109,7 @@ Function UpdateMainMenu()
 		If MenuBlinkTimer(1) < 0 Then
 			MenuBlinkTimer(1) = Rand(350, 400)
 			MenuBlinkDuration(1) = Rand(10, 35)
-			MenuStrX = GraphicWidth/2 + Rand(700, 1000) * MenuScale
+			MenuStrX = Rand(700, 1000) * MenuScale
 			MenuStrY = Rand(100, 600) * MenuScale
 			
 			Select Rand(0, 22)
@@ -156,7 +156,7 @@ Function UpdateMainMenu()
 		EndIf
 	EndIf
 	
-	DrawImage(MenuLogo, GraphicWidth / 2 - ImageWidth(MenuLogo) / 2, 0)
+	DrawImage(MenuLogo, 0, 0)
 	
 	SetFont Font2
 	
@@ -169,7 +169,7 @@ Function UpdateMainMenu()
 	EndIf
 	
 	If MainMenuTab = 0 Then
-		x = (GraphicWidth/2 - 200*MenuScale)
+		x = 159 * MenuScale
 		y = 286 * MenuScale
 
 		width = 400 * MenuScale
@@ -253,7 +253,7 @@ Function UpdateMainMenu()
 		
 	Else
 		
-		x = (GraphicWidth/2 - 290*MenuScale)
+		x = 159 * MenuScale
 		y = 286 * MenuScale
 		
 		width = 400 * MenuScale
@@ -290,7 +290,7 @@ Function UpdateMainMenu()
 			Case 1 ; New game
 				;[Block]
 				
-				x = (GraphicWidth/2 - 290*MenuScale)
+				x = 159 * MenuScale
 				y = 286 * MenuScale
 				
 				width = 400 * MenuScale
@@ -474,7 +474,7 @@ Function UpdateMainMenu()
 				
 				DrawFrame(x, y, width, height)
 				
-				x = (GraphicWidth/2 - 290*MenuScale)
+				x = 159 * MenuScale
 				y = 286 * MenuScale
 				
 				width = 400 * MenuScale
@@ -608,7 +608,7 @@ Function UpdateMainMenu()
 			Case 3,5,6,7 ;options
 				;[Block]
 				
-				x = (GraphicWidth/2 - 290*MenuScale)
+				x = 159 * MenuScale
 				y = 286 * MenuScale
 				
 				width = 400 * MenuScale
