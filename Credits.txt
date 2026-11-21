@@ -4,13 +4,21 @@
 	meowlnir.mkv
 	Omnisix
 
-*Containment Breach: Inclemency - Audio/Visual Art
+*Containment Breach: Inclemency - Sound Design
 
 	meowlnir.mkv
+	
+*Containment Breach: Inclemency - Models
+
+	SpaceCat
+	
+*Containment Breach: Inclemency - Contributors
+
+	iiAngel
 
 *Containment Breach: Inclemency - Original Music Tracks
 
-	anonymous
+	Anonymous
 
 *Containment Breach: Inclemency - Third Party Music Tracks
 
