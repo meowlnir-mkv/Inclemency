@@ -4777,10 +4777,12 @@ Function MovePlayer()
 			EndIf
 			
 			temp# = (Shake Mod 360)
-			Local tempchn%
-			Local tempchn2%
-			Local tempchn3%
-			Local tempchn4%
+			Local stepchn%
+			Local foleychn%
+			Local scrapechn%
+			Local gearchn%
+			Local crouchchn%
+			
 			If (Not UnableToMove%) Then Shake# = (Shake + FPSfactor * Min(Sprint, 1.5) * BobSpeed) Mod 720
 			If temp < 180 And (Shake Mod 360) >= 180 And KillTimer>=0 Then
 				If CurrStepSFX=0 Then
@@ -4788,39 +4790,39 @@ Function MovePlayer()
 					
 					If Sprint = 1.0 Then
 						PlayerSoundVolume = Max(2.5-(Crouch*0.6),PlayerSoundVolume)
-						tempchn% = PlaySound_Strict(StepSFX(temp, 0, Rand(0, 11)))
-						tempchn2% = PlaySound_Strict(FoleySFX(0, Rand(0, 8)))
-						If Rand(1,5)=5 Then tempchn3% = PlaySound_Strict(ScrapeSFX(temp, Rand(0, 4)))
-						If WearingVest>0 Then tempchn4% = PlaySound_Strict(GearSFX(Rand(0, 19)))
+						stepchn% = PlaySound_Strict(StepSFX(temp, 0, Rand(0, 11)))
+						foleychn% = PlaySound_Strict(FoleySFX(0, Rand(0, 8)))
+						If Rand(1,5)=5 Then scrapechn% = PlaySound_Strict(ScrapeSFX(temp, Rand(0, 4)))
+						If WearingVest>0 Then gearchn% = PlaySound_Strict(GearSFX(Rand(0, 19)))
 					Else
 						PlayerSoundVolume = Max(4.0,PlayerSoundVolume)
-						tempchn% = PlaySound_Strict(StepSFX(temp, 1, Rand(0, 11)))
-						tempchn2% = PlaySound_Strict(FoleySFX(1, Rand(0, 8)))
-						If Rand(1,5)=5 Then tempchn3% = PlaySound_Strict(ScrapeSFX(temp, Rand(0, 4)))
-						If WearingVest>0 Then tempchn4% = PlaySound_Strict(GearSFX(Rand(0, 19)))
+						stepchn% = PlaySound_Strict(StepSFX(temp, 1, Rand(0, 11)))
+						foleychn% = PlaySound_Strict(FoleySFX(1, Rand(0, 8)))
+						If Rand(5)=5 Then scrapechn% = PlaySound_Strict(ScrapeSFX(temp, Rand(0, 4)))
+						If WearingVest>0 Then gearchn% = PlaySound_Strict(GearSFX(Rand(0, 19)))
 					End If
 				ElseIf CurrStepSFX=1
-					tempchn% = PlaySound_Strict(Step2SFX(Rand(0, 2)))
+					stepchn% = PlaySound_Strict(Step2SFX(Rand(0, 2)))
 				ElseIf CurrStepSFX=2
-					tempchn% = PlaySound_Strict(Step2SFX(Rand(3,5)))
+					stepchn% = PlaySound_Strict(Step2SFX(Rand(3,5)))
 				ElseIf CurrStepSFX=3
 					If Sprint = 1.0 Then
 						PlayerSoundVolume = Max(2.5-(Crouch*0.6),PlayerSoundVolume)
-						tempchn% = PlaySound_Strict(StepSFX(0, 0, Rand(0, 11)))
-						tempchn2% = PlaySound_Strict(FoleySFX(0, Rand(0, 8)))
-						If Rand(1,5)=5 Then tempchn3% = PlaySound_Strict(ScrapeSFX(temp, Rand(0, 4)))
-						If WearingVest>0 Then tempchn4% = PlaySound_Strict(GearSFX(Rand(0, 19)))
+						stepchn% = PlaySound_Strict(StepSFX(0, 0, Rand(0, 11)))
+						foleychn% = PlaySound_Strict(FoleySFX(0, Rand(0, 8)))
+						If Rand(5)=5 Then scrapechn% = PlaySound_Strict(ScrapeSFX(0, Rand(0, 4)))
+						If WearingVest>0 Then gearchn% = PlaySound_Strict(GearSFX(Rand(0, 19)))
 					Else
 						PlayerSoundVolume = Max(4.0,PlayerSoundVolume)
-						tempchn% = PlaySound_Strict(StepSFX(0, 1, Rand(0, 11)))
-						tempchn2% = PlaySound_Strict(FoleySFX(1, Rand(0, 8)))
-						If Rand(1,5)=5 Then tempchn3% = PlaySound_Strict(ScrapeSFX(temp, Rand(0, 4)))
-						If WearingVest>0 Then tempchn4% = PlaySound_Strict(GearSFX(Rand(0, 19)))
+						stepchn% = PlaySound_Strict(StepSFX(0, 1, Rand(0, 11)))
+						foleychn% = PlaySound_Strict(FoleySFX(1, Rand(0, 8)))
+						If Rand(1,5)=5 Then scrapechn% = PlaySound_Strict(ScrapeSFX(0, Rand(0, 4)))
+						If WearingVest>0 Then gearchn% = PlaySound_Strict(GearSFX(Rand(0, 19)))
 					End If
 				EndIf
-				If tempchn <> 0 Then ChannelVolume tempchn, (1.0-(Crouch*0.6))*SFXVolume#
-				If tempchn3 <> 0 Then ChannelVolume tempchn3, (1.0-(Crouch*0.6))*SFXVolume#
-				If tempchn4 <> 0 Then ChannelVolume tempchn4, (1.0-(Crouch*0.6))*SFXVolume#
+				If stepchn <> 0 Then ChannelVolume stepchn, (1.0-(Crouch*0.6))*SFXVolume#
+				If scrapechn <> 0 Then ChannelVolume scrapechn, (1.0-(Crouch*0.6))*SFXVolume#
+				If gearchn <> 0 Then ChannelVolume gearchn, (1.0-(Crouch*0.6))*SFXVolume#
 			EndIf	
 		EndIf
 	Else ;noclip on
@@ -4832,7 +4834,7 @@ Function MovePlayer()
 	EndIf
 	
 	If KeyHit(KEY_CROUCH) And Playable Then
-		tempchn% = PlaySound_Strict(CrouchSFX(Rand(0, 2)))
+		If (Not Noclip) Then crouchchn% = PlaySound_Strict(CrouchSFX(Rand(0, 2)))
 		Crouch = (Not Crouch)
 	EndIf
 	
