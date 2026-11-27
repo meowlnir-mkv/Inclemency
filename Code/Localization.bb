@@ -55,8 +55,12 @@ Type LocalizationTable
     Field Menu_EndDocs$
     Field Menu_End914$
     Field Menu_End$
-    Field Menu_Loading$
+	Field Menu_LoadingRandom$[10]
     Field Menu_LoadingCwm$[13]
+	Field Menu_IntroTitle$
+	Field Menu_IntroWarning$
+	Field Menu_IntroIndev$
+	Field Menu_IntroProceed$
     Field Option_Graphics$
     Field Option_Audio$
     Field Option_Controls$
@@ -106,6 +110,7 @@ Type LocalizationTable
     Field OptionName_Consoleerror$
     Field OptionName_Speedrunmode$
     Field OptionName_Numericseeds$
+	Field OptionName_ModernHUD$
     Field OptionName_Achpopup$
     Field OptionName_Launcher$
     Field OptionName_Showfps$
@@ -138,6 +143,7 @@ Type LocalizationTable
     Field OptionTooltip_ConsoleNote$
     Field OptionTooltip_Speedrunmode$
     Field OptionTooltip_Numericseeds$
+	Field OptionTooltip_ModernHUD$
     Field OptionTooltip_Achpopup$
     Field OptionTooltip_Launcher$
     Field OptionTooltip_Showfps$
@@ -169,13 +175,13 @@ Type LocalizationTable
     Field NewGame_LoadmapUpper$
     Field NewGame_Deselect$
     Field NewGame_Untitled$
-    Field Difficulty_Safe$
-    Field Difficulty_SafeDesc$
-    Field Difficulty_Euclid$
-    Field Difficulty_EuclidDesc$
-    Field Difficulty_Keter$
-    Field Difficulty_KeterDesc$
-    Field Difficulty_Esoteric$
+    Field Difficulty_Keneq$
+    Field Difficulty_KeneqDesc$
+    Field Difficulty_Ekhi$
+    Field Difficulty_EkhiDesc$
+    Field Difficulty_Amida$
+    Field Difficulty_AmidaDesc$
+    Field Difficulty_Custom$
     Field Difficulty_Permadeath$
     Field Difficulty_Saveanywhere$
     Field Difficulty_Aggressivenpcs$
@@ -366,6 +372,7 @@ Type LocalizationTable
     Field MessageHelp_Blink$
     Field MessageHelp_Run$
     Field MessageHelp_Remove$
+	Field MessageHelp_AmidaIntro$
     Field MessageSave_Anywhere$
     Field MessageSave_Screens$
     Field MessageSave_Disabled$
@@ -375,6 +382,8 @@ Type LocalizationTable
     Field MessageSave_Saved$
 	Field MessageSave_DisabledScreens$
 	Field MessageSave_ClickedScreen$
+	Field MessageSave_DisabledAmida$
+	Field MessageSave_DisabledCustom$
     Field MessageShot_Neck$
     Field MessageShot_Chest$
     Field MessageShot_ChestVest$
@@ -431,11 +440,20 @@ Type LocalizationTable
     Field DeathMessage_Killbat$
     Field DeathMessage_Suicide$[4]
     Field DeathMessage_Gassed$
+	Field DeathMessage_SelfHarm$
+	Field DeathMessage_InsSuic$
     Field Cup_Of$
     Field Cup_OfPrefix$[2]
     Field Cup_Coffee$
     Field Cup_Oj$
     Field Loading_Random$[20]
+	Field Insanity_Random$[15]
+	Field Insanity_Extreme$[15]
+	Field Insanity_SelfHarm$[10]
+	Field Insanity_Suicide$
+	Field Insanity_Bloodloss$
+	Field Insanity_FirstAid$
+	Field Insanity_Cigarette$
 End Type
 
 Function LoadLocalization(loc.LocalizationTable, file$)
@@ -524,7 +542,16 @@ Function LoadLocalization(loc.LocalizationTable, file$)
                             Case "end.docs" If loc\Menu_EndDocs = "" Then loc\Menu_EndDocs = value
                             Case "end.914" If loc\Menu_End914 = "" Then loc\Menu_End914 = value
                             Case "end" If loc\Menu_End = "" Then loc\Menu_End = value
-                            Case "loading" If loc\Menu_Loading = "" Then loc\Menu_Loading = value
+							Case "loading.random_1" If loc\Menu_LoadingRandom[1] = "" Then loc\Menu_LoadingRandom[1] = value
+							Case "loading.random_2" If loc\Menu_LoadingRandom[2] = "" Then loc\Menu_LoadingRandom[2] = value
+							Case "loading.random_3" If loc\Menu_LoadingRandom[3] = "" Then loc\Menu_LoadingRandom[3] = value
+							Case "loading.random_4" If loc\Menu_LoadingRandom[4] = "" Then loc\Menu_LoadingRandom[4] = value
+							Case "loading.random_5" If loc\Menu_LoadingRandom[5] = "" Then loc\Menu_LoadingRandom[5] = value
+							Case "loading.random_6" If loc\Menu_LoadingRandom[6] = "" Then loc\Menu_LoadingRandom[6] = value
+							Case "loading.random_7" If loc\Menu_LoadingRandom[7] = "" Then loc\Menu_LoadingRandom[7] = value
+							Case "loading.random_8" If loc\Menu_LoadingRandom[8] = "" Then loc\Menu_LoadingRandom[8] = value
+							Case "loading.random_9" If loc\Menu_LoadingRandom[9] = "" Then loc\Menu_LoadingRandom[9] = value
+							Case "loading.random_10" If loc\Menu_LoadingRandom[10] = "" Then loc\Menu_LoadingRandom[10] = value
                             Case "loading.cwm_1" If loc\Menu_LoadingCwm[1] = "" Then loc\Menu_LoadingCwm[1] = value
                             Case "loading.cwm_2" If loc\Menu_LoadingCwm[2] = "" Then loc\Menu_LoadingCwm[2] = value
                             Case "loading.cwm_3" If loc\Menu_LoadingCwm[3] = "" Then loc\Menu_LoadingCwm[3] = value
@@ -538,6 +565,10 @@ Function LoadLocalization(loc.LocalizationTable, file$)
                             Case "loading.cwm_11" If loc\Menu_LoadingCwm[11] = "" Then loc\Menu_LoadingCwm[11] = value
                             Case "loading.cwm_12" If loc\Menu_LoadingCwm[12] = "" Then loc\Menu_LoadingCwm[12] = value
                             Case "loading.cwm_13" If loc\Menu_LoadingCwm[13] = "" Then loc\Menu_LoadingCwm[13] = value
+							Case "intro.title" If loc\Menu_IntroTitle$ = "" Then loc\Menu_IntroTitle$ = value
+							Case "intro.warning" If loc\Menu_IntroWarning$ = "" Then loc\Menu_IntroWarning$ = value
+							Case "intro.indev" If loc\Menu_IntroIndev$ = "" Then loc\Menu_IntroIndev$ = value
+							Case "intro.proceed" If loc\Menu_IntroProceed$ = "" Then loc\Menu_IntroProceed$ = value
                         End Select
                     Case "Option"
                         Select key
@@ -593,6 +624,7 @@ Function LoadLocalization(loc.LocalizationTable, file$)
                             Case "consoleerror" If loc\OptionName_Consoleerror = "" Then loc\OptionName_Consoleerror = value
                             Case "speedrunmode" If loc\OptionName_Speedrunmode = "" Then loc\OptionName_Speedrunmode = value
                             Case "numericseeds" If loc\OptionName_Numericseeds = "" Then loc\OptionName_Numericseeds = value
+							Case "modernhud" If loc\OptionName_ModernHUD = "" Then loc\OptionName_ModernHUD = value
                             Case "achpopup" If loc\OptionName_Achpopup = "" Then loc\OptionName_Achpopup = value
                             Case "launcher" If loc\OptionName_Launcher = "" Then loc\OptionName_Launcher = value
                             Case "showfps" If loc\OptionName_Showfps = "" Then loc\OptionName_Showfps = value
@@ -628,6 +660,7 @@ Function LoadLocalization(loc.LocalizationTable, file$)
                             Case "console.note" If loc\OptionTooltip_ConsoleNote = "" Then loc\OptionTooltip_ConsoleNote = value
                             Case "speedrunmode" If loc\OptionTooltip_Speedrunmode = "" Then loc\OptionTooltip_Speedrunmode = value
                             Case "numericseeds" If loc\OptionTooltip_Numericseeds = "" Then loc\OptionTooltip_Numericseeds = value
+							Case "modernhud" If loc\OptionTooltip_ModernHUD = "" Then loc\OptionTooltip_ModernHUD = value
                             Case "achpopup" If loc\OptionTooltip_Achpopup = "" Then loc\OptionTooltip_Achpopup = value
                             Case "launcher" If loc\OptionTooltip_Launcher = "" Then loc\OptionTooltip_Launcher = value
                             Case "showfps" If loc\OptionTooltip_Showfps = "" Then loc\OptionTooltip_Showfps = value
@@ -679,13 +712,13 @@ Function LoadLocalization(loc.LocalizationTable, file$)
                         End Select
                     Case "Difficulty"
                         Select key
-                            Case "safe" If loc\Difficulty_Safe = "" Then loc\Difficulty_Safe = value
-                            Case "safe.desc" If loc\Difficulty_SafeDesc = "" Then loc\Difficulty_SafeDesc = value
-                            Case "euclid" If loc\Difficulty_Euclid = "" Then loc\Difficulty_Euclid = value
-                            Case "euclid.desc" If loc\Difficulty_EuclidDesc = "" Then loc\Difficulty_EuclidDesc = value
-                            Case "keter" If loc\Difficulty_Keter = "" Then loc\Difficulty_Keter = value
-                            Case "keter.desc" If loc\Difficulty_KeterDesc = "" Then loc\Difficulty_KeterDesc = value
-                            Case "esoteric" If loc\Difficulty_Esoteric = "" Then loc\Difficulty_Esoteric = value
+                            Case "keneq" If loc\Difficulty_Keneq = "" Then loc\Difficulty_Keneq = value
+                            Case "keneq.desc" If loc\Difficulty_KeneqDesc = "" Then loc\Difficulty_KeneqDesc = value
+                            Case "ekhi" If loc\Difficulty_Ekhi = "" Then loc\Difficulty_Ekhi = value
+                            Case "ekhi.desc" If loc\Difficulty_EkhiDesc = "" Then loc\Difficulty_EkhiDesc = value
+                            Case "amida" If loc\Difficulty_Amida = "" Then loc\Difficulty_Amida = value
+                            Case "amida.desc" If loc\Difficulty_AmidaDesc = "" Then loc\Difficulty_AmidaDesc = value
+                            Case "custom" If loc\Difficulty_Custom = "" Then loc\Difficulty_Custom = value
                             Case "permadeath" If loc\Difficulty_Permadeath = "" Then loc\Difficulty_Permadeath = value
                             Case "saveanywhere" If loc\Difficulty_Saveanywhere = "" Then loc\Difficulty_Saveanywhere = value
                             Case "aggressivenpcs" If loc\Difficulty_Aggressivenpcs = "" Then loc\Difficulty_Aggressivenpcs = value
@@ -918,6 +951,7 @@ Function LoadLocalization(loc.LocalizationTable, file$)
                             Case "blink" If loc\MessageHelp_Blink = "" Then loc\MessageHelp_Blink = value
                             Case "run" If loc\MessageHelp_Run = "" Then loc\MessageHelp_Run = value
                             Case "remove" If loc\MessageHelp_Remove = "" Then loc\MessageHelp_Remove = value
+							Case "amidaintro" If loc\MessageHelp_AmidaIntro = "" Then loc\MessageHelp_AmidaIntro = value
                         End Select
                     Case "Message Save"
                         Select key
@@ -930,6 +964,8 @@ Function LoadLocalization(loc.LocalizationTable, file$)
                             Case "saved" If loc\MessageSave_Saved = "" Then loc\MessageSave_Saved = value
 							Case "disabled.screens" If loc\MessageSave_DisabledScreens = "" Then loc\MessageSave_DisabledScreens = value
 							Case "clickedscreen" If loc\MessageSave_ClickedScreen = "" Then loc\MessageSave_ClickedScreen = value
+							Case "disabled.amida" If loc\MessageSave_DisabledAmida = "" Then loc\MessageSave_DisabledAmida = value
+							Case "disabled.custom" If loc\MessageSave_DisabledCustom = "" Then loc\MessageSave_DisabledCustom = value
                         End Select
                     Case "Message Shot"
                         Select key
@@ -995,6 +1031,8 @@ Function LoadLocalization(loc.LocalizationTable, file$)
                             Case "suicide_3" If loc\DeathMessage_Suicide[3] = "" Then loc\DeathMessage_Suicide[3] = value
                             Case "suicide_4" If loc\DeathMessage_Suicide[4] = "" Then loc\DeathMessage_Suicide[4] = value
                             Case "gassed" If loc\DeathMessage_Gassed = "" Then loc\DeathMessage_Gassed = value
+							Case "selfharm" If loc\DeathMessage_SelfHarm = "" Then loc\DeathMessage_SelfHarm = value
+							Case "inssuic" If loc\DeathMessage_InsSuic = "" Then loc\DeathMessage_InsSuic = value
                         End Select
                     Case "Cup"
                         Select key
@@ -1026,6 +1064,53 @@ Function LoadLocalization(loc.LocalizationTable, file$)
 							Case "loadingrandom_18" If loc\Loading_Random[18] = "" Then loc\Loading_Random[18] = value
 							Case "loadingrandom_19" If loc\Loading_Random[19] = "" Then loc\Loading_Random[19] = value
 							Case "loadingrandom_20" If loc\Loading_Random[20] = "" Then loc\Loading_Random[20] = value
+						End Select
+					Case "Message Insanity"
+						Select key
+							Case "insanity.random_1" If loc\Insanity_Random[1] = "" Then loc\Insanity_Random[1] = value
+							Case "insanity.random_2" If loc\Insanity_Random[2] = "" Then loc\Insanity_Random[2] = value
+							Case "insanity.random_3" If loc\Insanity_Random[3] = "" Then loc\Insanity_Random[3] = value
+							Case "insanity.random_4" If loc\Insanity_Random[4] = "" Then loc\Insanity_Random[4] = value
+							Case "insanity.random_5" If loc\Insanity_Random[5] = "" Then loc\Insanity_Random[5] = value
+							Case "insanity.random_6" If loc\Insanity_Random[6] = "" Then loc\Insanity_Random[6] = value
+							Case "insanity.random_7" If loc\Insanity_Random[7] = "" Then loc\Insanity_Random[7] = value
+							Case "insanity.random_8" If loc\Insanity_Random[8] = "" Then loc\Insanity_Random[8] = value
+							Case "insanity.random_9" If loc\Insanity_Random[9] = "" Then loc\Insanity_Random[9] = value
+							Case "insanity.random_10" If loc\Insanity_Random[10] = "" Then loc\Insanity_Random[10] = value
+							Case "insanity.random_11" If loc\Insanity_Random[11] = "" Then loc\Insanity_Random[11] = value
+							Case "insanity.random_12" If loc\Insanity_Random[12] = "" Then loc\Insanity_Random[12] = value
+							Case "insanity.random_13" If loc\Insanity_Random[13] = "" Then loc\Insanity_Random[13] = value
+							Case "insanity.random_14" If loc\Insanity_Random[14] = "" Then loc\Insanity_Random[14] = value
+							Case "insanity.random_15" If loc\Insanity_Random[15] = "" Then loc\Insanity_Random[15] = value
+							Case "insanity.extreme_1" If loc\Insanity_Extreme[1] = "" Then loc\Insanity_Extreme[1] = value
+							Case "insanity.extreme_2" If loc\Insanity_Extreme[2] = "" Then loc\Insanity_Extreme[2] = value
+							Case "insanity.extreme_3" If loc\Insanity_Extreme[3] = "" Then loc\Insanity_Extreme[3] = value
+							Case "insanity.extreme_4" If loc\Insanity_Extreme[4] = "" Then loc\Insanity_Extreme[4] = value
+							Case "insanity.extreme_5" If loc\Insanity_Extreme[5] = "" Then loc\Insanity_Extreme[5] = value
+							Case "insanity.extreme_6" If loc\Insanity_Extreme[6] = "" Then loc\Insanity_Extreme[6] = value
+							Case "insanity.extreme_7" If loc\Insanity_Extreme[7] = "" Then loc\Insanity_Extreme[7] = value
+							Case "insanity.extreme_8" If loc\Insanity_Extreme[8] = "" Then loc\Insanity_Extreme[8] = value
+							Case "insanity.extreme_9" If loc\Insanity_Extreme[9] = "" Then loc\Insanity_Extreme[9] = value
+							Case "insanity.extreme_10" If loc\Insanity_Extreme[10] = "" Then loc\Insanity_Extreme[10] = value
+							Case "insanity.extreme_11" If loc\Insanity_Extreme[11] = "" Then loc\Insanity_Extreme[11] = value
+							Case "insanity.extreme_12" If loc\Insanity_Extreme[12] = "" Then loc\Insanity_Extreme[12] = value
+							Case "insanity.extreme_13" If loc\Insanity_Extreme[13] = "" Then loc\Insanity_Extreme[13] = value
+							Case "insanity.extreme_14" If loc\Insanity_Extreme[14] = "" Then loc\Insanity_Extreme[14] = value
+							Case "insanity.extreme_15" If loc\Insanity_Extreme[15] = "" Then loc\Insanity_Extreme[15] = value
+							Case "insanity.selfharm_1" If loc\Insanity_SelfHarm[1] = "" Then loc\Insanity_SelfHarm[1] = value
+							Case "insanity.selfharm_2" If loc\Insanity_SelfHarm[2] = "" Then loc\Insanity_SelfHarm[2] = value
+							Case "insanity.selfharm_3" If loc\Insanity_SelfHarm[3] = "" Then loc\Insanity_SelfHarm[3] = value
+							Case "insanity.selfharm_4" If loc\Insanity_SelfHarm[4] = "" Then loc\Insanity_SelfHarm[4] = value
+							Case "insanity.selfharm_5" If loc\Insanity_SelfHarm[5] = "" Then loc\Insanity_SelfHarm[5] = value
+							Case "insanity.selfharm_6" If loc\Insanity_SelfHarm[6] = "" Then loc\Insanity_SelfHarm[6] = value
+							Case "insanity.selfharm_7" If loc\Insanity_SelfHarm[7] = "" Then loc\Insanity_SelfHarm[7] = value
+							Case "insanity.selfharm_8" If loc\Insanity_SelfHarm[8] = "" Then loc\Insanity_SelfHarm[8] = value
+							Case "insanity.selfharm_9" If loc\Insanity_SelfHarm[9] = "" Then loc\Insanity_SelfHarm[9] = value
+							Case "insanity.selfharm_10" If loc\Insanity_SelfHarm[10] = "" Then loc\Insanity_SelfHarm[10] = value
+							Case "insanity.suicide" If loc\Insanity_Suicide = "" Then loc\Insanity_Suicide = value
+							Case "insanity.bloodloss" If loc\Insanity_Bloodloss = "" Then loc\Insanity_Bloodloss = value
+							Case "insanity.firstaid" If loc\Insanity_FirstAid = "" Then loc\Insanity_FirstAid = value
+							Case "insanity.cigarette" If loc\Insanity_Cigarette = "" Then loc\Insanity_Cigarette = value
 						End Select
                 End Select
             EndIf

@@ -18,9 +18,9 @@ Global Difficulties.Difficulty[4]
 Global SelectedDifficulty.Difficulty
 
 Enum DifficultyID
-	SAFE
-	EUCLID
-	KETER
+	KENEQ
+	EKHI
+	AMIDA
 	CUSTOM
 End Enum
 
@@ -37,45 +37,45 @@ Enum DifficultyFactorID
 	HARD
 End Enum
 
-Difficulties[SAFE] = New Difficulty
-Difficulties[SAFE]\name = "Safe"
-Difficulties[SAFE]\localName = I_Loc\Difficulty_Safe
-Difficulties[SAFE]\description = I_Loc\Difficulty_SafeDesc
-Difficulties[SAFE]\permaDeath = False
-Difficulties[SAFE]\aggressiveNPCs = False
-Difficulties[SAFE]\saveType = SAVEANYWHERE
-Difficulties[SAFE]\otherFactors = EASY
-Difficulties[SAFE]\r = 120
-Difficulties[SAFE]\g = 150
-Difficulties[SAFE]\b = 50
+Difficulties[KENEQ] = New Difficulty
+Difficulties[KENEQ]\name = "Keneq"
+Difficulties[KENEQ]\localName = I_Loc\Difficulty_Keneq
+Difficulties[KENEQ]\description = I_Loc\Difficulty_KeneqDesc
+Difficulties[KENEQ]\permaDeath = False
+Difficulties[KENEQ]\aggressiveNPCs = False
+Difficulties[KENEQ]\saveType = SAVEANYWHERE
+Difficulties[KENEQ]\otherFactors = EASY
+Difficulties[KENEQ]\r = 255
+Difficulties[KENEQ]\g = 211
+Difficulties[KENEQ]\b = 0
 
-Difficulties[EUCLID] = New Difficulty
-Difficulties[EUCLID]\name = "Euclid"
-Difficulties[EUCLID]\localName = I_Loc\Difficulty_Euclid
-Difficulties[EUCLID]\description = I_Loc\Difficulty_EuclidDesc
-Difficulties[EUCLID]\permaDeath = False
-Difficulties[EUCLID]\aggressiveNPCs = False
-Difficulties[EUCLID]\saveType = SAVEONSCREENS
-Difficulties[EUCLID]\otherFactors = NORMAL
-Difficulties[EUCLID]\r = 200
-Difficulties[EUCLID]\g = 200
-Difficulties[EUCLID]\b = 0
+Difficulties[EKHI] = New Difficulty
+Difficulties[EKHI]\name = "Ekhi"
+Difficulties[EKHI]\localName = I_Loc\Difficulty_Ekhi
+Difficulties[EKHI]\description = I_Loc\Difficulty_EkhiDesc
+Difficulties[EKHI]\permaDeath = False
+Difficulties[EKHI]\aggressiveNPCs = False
+Difficulties[EKHI]\saveType = SAVEONSCREENS
+Difficulties[EKHI]\otherFactors = NORMAL
+Difficulties[EKHI]\r = 255
+Difficulties[EKHI]\g = 109
+Difficulties[EKHI]\b = 0
 
-Difficulties[KETER] = New Difficulty
-Difficulties[KETER]\name = "Keter"
-Difficulties[KETER]\localName = I_Loc\Difficulty_Keter
-Difficulties[KETER]\description = I_Loc\Difficulty_KeterDesc
-Difficulties[KETER]\permaDeath = True
-Difficulties[KETER]\aggressiveNPCs = True
-Difficulties[KETER]\saveType = NOSAVES
-Difficulties[KETER]\otherFactors = HARD
-Difficulties[KETER]\r = 200
-Difficulties[KETER]\g = 0
-Difficulties[KETER]\b = 0
+Difficulties[AMIDA] = New Difficulty
+Difficulties[AMIDA]\name = "Amida"
+Difficulties[AMIDA]\localName = I_Loc\Difficulty_Amida
+Difficulties[AMIDA]\description = I_Loc\Difficulty_AmidaDesc
+Difficulties[AMIDA]\permaDeath = True
+Difficulties[AMIDA]\aggressiveNPCs = True
+Difficulties[AMIDA]\saveType = NOSAVES
+Difficulties[AMIDA]\otherFactors = HARD
+Difficulties[AMIDA]\r = 196
+Difficulties[AMIDA]\g = 2
+Difficulties[AMIDA]\b = 51
 
 Difficulties[CUSTOM] = New Difficulty
-Difficulties[CUSTOM]\name = "Esoteric"
-Difficulties[CUSTOM]\localName = I_Loc\Difficulty_Esoteric
+Difficulties[CUSTOM]\name = "Custom"
+Difficulties[CUSTOM]\localName = I_Loc\Difficulty_Custom
 Difficulties[CUSTOM]\permaDeath = False
 Difficulties[CUSTOM]\aggressiveNPCs = True
 Difficulties[CUSTOM]\saveType = SAVEANYWHERE
@@ -85,4 +85,4 @@ Difficulties[CUSTOM]\r = 255
 Difficulties[CUSTOM]\g = 255
 Difficulties[CUSTOM]\b = 255
 
-SelectedDifficulty = Difficulties[SAFE]
+SelectedDifficulty = Difficulties[KENEQ]

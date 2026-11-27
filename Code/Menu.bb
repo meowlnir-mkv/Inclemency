@@ -18,6 +18,7 @@ For i = 0 To 3
 	HandleImage(ArrowIMG(i), 0, 0)
 Next
 
+Global RandomLoadingIndex%, RandomLoadingTime%
 Global RandomTipIndex%, RandomTipTime%
 Global RandomSeed$, RandomSeedNumeric%, HasNumericSeed%
 
@@ -362,7 +363,7 @@ Function UpdateMainMenu()
 				
 				;Local modeName$, modeDescription$, selectedDescription$
 				Text (x + 20 * MenuScale, y + 150 * MenuScale, I_Loc\Menu_Difficulty)				
-				For i = SAFE To CUSTOM
+				For i = KENEQ To CUSTOM
 					Local dif.Difficulty = Difficulties[i]
 					If DrawTick(x + 20 * MenuScale, y + (180+30*i) * MenuScale, (SelectedDifficulty = dif)) Then SelectedDifficulty = dif
 					Color(dif\r,dif\g,dif\b)
@@ -548,11 +549,11 @@ Function UpdateMainMenu()
 									Text(x + 350 * MenuScale, y + 35 * MenuScale, I_Loc\LoadGame_Load, True, True)
 								Else
 									If DrawButton(x + 300 * MenuScale, y + 20 * MenuScale, 100 * MenuScale, 30 * MenuScale, I_Loc\LoadGame_Load, False) Then
+										CurrSave = SaveGames(i - 1)
 										LoadEntities()
 										LoadAllSounds()
 										InitRoomTemplates()
-										LoadGame(SaveGames(i - 1))
-										CurrSave = SaveGames(i - 1)
+										LoadGame(CurrSave)
 										InitLoadGame()
 										MainMenuOpen = False
 										Return
@@ -980,7 +981,7 @@ Function UpdateMainMenu()
 					;[End Block]
 				ElseIf MainMenuTab = 7 ;Advanced
 					;[Block]
-					height = (325 + (CurrFrameLimit > 0.0) * 30) * MenuScale
+					height = (355 + (CurrFrameLimit > 0.0) * 30) * MenuScale
 					DrawFrame(x, y, width, height)	
 					
 					y = y + 20*MenuScale
@@ -1009,7 +1010,7 @@ Function UpdateMainMenu()
 					If MouseOn(x+310*MenuScale,y+MenuScale,20*MenuScale,20*MenuScale) And OnSliderID=0
 						DrawOptionsTooltip(tx,ty,tw,th,"speedrunmode")
 					EndIf
-
+					
 					y = y + 30*MenuScale
 
 					Color 255,255,255
@@ -1017,6 +1018,15 @@ Function UpdateMainMenu()
 					UseNumericSeeds = DrawTick(x + 310 * MenuScale, y + MenuScale, UseNumericSeeds)
 					If MouseOn(x+310*MenuScale,y+MenuScale,20*MenuScale,20*MenuScale) And OnSliderID=0
 						DrawOptionsTooltip(tx,ty,tw,th,"numericseeds")
+					EndIf
+					
+					y = y + 30*MenuScale
+
+					Color 255,255,255
+					Text(x + 20 * MenuScale, y, I_Loc\OptionName_ModernHUD)
+					UseModernHUD = DrawTick(x + 310 * MenuScale, y + MenuScale, UseModernHUD)
+					If MouseOn(x+310*MenuScale,y+MenuScale,20*MenuScale,20*MenuScale) And OnSliderID=0
+						DrawOptionsTooltip(tx,ty,tw,th,"modernhud")
 					EndIf
 					
 					y = y + 50*MenuScale
@@ -1078,7 +1088,7 @@ Function UpdateMainMenu()
 				
 				DrawFrame(x, y, width, PagingFrameHeight)
 				
-				x = (GraphicWidth/2 - 290*MenuScale)
+				x = 159 * MenuScale
 				y = 286 * MenuScale
 				
 				width = 400 * MenuScale
@@ -1219,7 +1229,7 @@ Function UpdateLauncher()
 	Dim GfxModeCountPerAspectRatio%(TotalGfxModes)
 	Dim GfxModeWidthsByAspectRatio%(TotalGfxModes, TotalGfxModes), GfxModeHeightsByAspectRatio%(TotalGfxModes, TotalGfxModes)
 
-	Font1 = LoadFont_Strict("GFX\font\Courier New.ttf", 18)
+	Font1 = LoadFont_Strict("GFX\font\IBMPlexMono-Light.ttf", 18)
 	SetFont Font1
 	MenuWhite = LoadImage_Strict("GFX\menu\menuwhite.jpg")
 	MenuBlack = LoadImage_Strict("GFX\menu\menublack.jpg")	
@@ -1416,16 +1426,43 @@ Function GreatestCommonDivisor(u%, v%)
 	Return u Shl k
 End Function
 
-Function DrawBar(img%, x%, y%, width%, filled#, centerX% = False)
-	Local spacing = ImageWidth(img) + 2
-	width = Int(width / spacing) * spacing + 3
-	Local height = ImageHeight(img) + 6
-	If centerX Then x = x - width / 2
-	Color 255, 255, 255
-	Rect (x, y, width, height, False)
-	For i = 1 To Int(((width - 6) * filled) / spacing)
-		DrawImage(img, x + 3 + spacing * (i - 1), y + 3)
-	Next
+Function DrawBar(img%,x#,y#,width#,height#,filled#,centerX% = False,centerY% = False, changeColor% = False)
+	If centerX then x = x - width / 2
+	
+	If UseModernHUD Then
+		If filled# > 1.0 Then filled# = 1.0
+		If filled# < 0.0 Then filled# = 0.0
+		
+		If centerY Then y = y - height / 2
+		
+		Color 10, 10, 10
+		Rect (x#,y#,width#,height#,True)
+		
+		If changeColor Then
+			Local tempcolor#
+			If filled# <= 0.5 Then tempcolor# = (filled*2) * 255 Else tempcolor# = 255
+			
+			Color 255, tempcolor#, tempcolor#
+			Rect (x#,y#,Float(filled#*width#),height#,True)
+		Else
+			Color 255,255,255
+			Rect (x#,y#,Float(filled#*width#),height#,True)
+		EndIf
+	Else
+		Local spacing = ImageWidth(img) + 2
+		width = Int(width / spacing) * spacing + 3
+		Local imgheight = ImageHeight(img) + 6
+		If centerY Then y = y - imgheight / 2
+		Color 255, 255, 255
+		Rect (x, y, width, imgheight, False)
+		For i = 1 To Int(((width - 6) * filled) / spacing)
+			DrawImage(img, x + 3 + spacing * (i - 1), y + 3)
+		Next
+	EndIf
+End Function
+
+Function RightAlignBar(img%, x#, y%, width%, height#, filled#, centerY% = False, changeColor% = False)
+	DrawBar(img, Float(x - width), y, width, height, filled, False, centerY, changeColor)
 End Function
 
 Function DrawTiledImageRect(img%, srcX%, srcY%, srcwidth#, srcheight#, x%, y%, width%, height%)
@@ -1443,14 +1480,22 @@ Function DrawTiledImageRect(img%, srcX%, srcY%, srcwidth#, srcheight#, x%, y%, w
 	
 End Function
 
+Function DrawHUDIcon(img%,modImg%,x,y)
+	If UseModernHUD Then
+		DrawImage modImg%,x,y
+	Else
+		DrawImage img,x,y
+	EndIf
+End Function
+
 Type LoadingScreens
 	Field imgpath$
 	Field img%
 	Field ID%
 	Field title$
 	Field alignx%, aligny%
-	Field disablebackground%
 	Field txt$[5], txtamount%
+	Field isfullscreen%
 	; Inclusive prefix sum
 	Field txtDelay%[5], totalTxtDelay%
 End Type
@@ -1490,8 +1535,6 @@ Function LoadLoadingScreens(file$)
 				If ls\txt[i]<> "" Then ls\txtamount=ls\txtamount+1
 			Next
 			
-			ls\disablebackground = GetINIInt(file, TemporaryString, "disablebackground")
-			
 			Select Lower(GetINIString(file, TemporaryString, "align x"))
 				Case "left"
 					ls\alignx = -1
@@ -1510,6 +1553,8 @@ Function LoadLoadingScreens(file$)
 					ls\aligny = 1
 			End Select 			
 			
+			ls\isfullscreen = GetINIInt(file, TemporaryString, "fullscreen")
+			
 		EndIf
 	Wend
 	
@@ -1519,25 +1564,29 @@ End Function
 Global LoadingScreenCHN% = 0
 Global LoadingScreenCWM% = 0
 
-Function DrawLoading(percent%, shortloading=False)
+Function DrawLoading(percent%, shortloading=False, togame=True)
 	
 	Local x%, y%
 	
-	If percent = 0 Then
-		LoadingScreenStartTime = MilliSecs()
-		
-		Local temp = Rand(1,LoadingScreenAmount)
-		For ls.loadingscreens = Each LoadingScreens
-			If ls\id = temp Then
-				If ls\img=0 Then
-					ls\img = LoadImage_Strict("GFX\loadingscreens\"+ls\imgpath, MenuScale)
-					MaskImage(ls\img, 0, 0, 0)
+	If togame = True Then
+		If percent = 0 Then
+			LoadingScreenStartTime = MilliSecs()
+			
+			Local temp = Rand(1,LoadingScreenAmount)
+			For ls.loadingscreens = Each LoadingScreens
+				If ls\id = temp Then
+					If ls\img=0 Then
+						ls\img = LoadImage_Strict("GFX\loadingscreens\"+ls\imgpath, MenuScale)
+						; Remove when rest of the loading screens are made fullscreen as well.
+						If ls\isfullscreen = True Then ResizeImageFast ls\img, ImageWidth(ls\img) * Float(GraphicHeight) / Float(ImageHeight(ls\img)), GraphicHeight
+						MaskImage(ls\img, 0, 0, 0)
+					EndIf
+					SelectedLoadingScreen = ls 
+					Exit
 				EndIf
-				SelectedLoadingScreen = ls 
-				Exit
-			EndIf
-		Next
-	EndIf	
+			Next
+		EndIf	
+	EndIf
 	
 	Local firstloop = True
 	Repeat 
@@ -1554,149 +1603,194 @@ Function DrawLoading(percent%, shortloading=False)
 			UpdateMusic()
 		EndIf
 
-		Local LoadingScreenText = 0
-		If SelectedLoadingScreen\totalTxtDelay <> 0 Then
-			Local elapsedTime = (MilliSecs() - LoadingScreenStartTime) Mod SelectedLoadingScreen\totalTxtDelay
-			While elapsedTime >= SelectedLoadingScreen\txtDelay[LoadingScreenText]
-				LoadingScreenText = LoadingScreenText + 1
-			Wend
-		EndIf
-		
-		If (Not SelectedLoadingScreen\disablebackground) Then
-			DrawImage LoadingBack, GraphicWidth/2 - ImageWidth(LoadingBack)/2, GraphicHeight/2 - ImageHeight(LoadingBack)/2
-		EndIf	
-		
-		If SelectedLoadingScreen\alignx = 0 Then
-			x = GraphicWidth/2 - ImageWidth(SelectedLoadingScreen\img)/2 
-		ElseIf  SelectedLoadingScreen\alignx = 1
-			x = GraphicWidth - ImageWidth(SelectedLoadingScreen\img)
-		Else
-			x = 0
-		EndIf
-		
-		If SelectedLoadingScreen\aligny = 0 Then
-			y = GraphicHeight/2 - ImageHeight(SelectedLoadingScreen\img)/2 
-		ElseIf  SelectedLoadingScreen\aligny = 1
-			y = GraphicHeight - ImageHeight(SelectedLoadingScreen\img)
-		Else
-			y = 0
-		EndIf	
-		
-		DrawImage SelectedLoadingScreen\img, x, y
-		
-		DrawBar(MenuMeterIMG, GraphicWidth / 2, GraphicHeight / 2 - 70 * MenuScale, 300 * MenuScale, percent / 100.0, True)
-		
-		If SelectedLoadingScreen\title = "CWM" Then
+		If togame = True Then
+			Local LoadingScreenText = 0
+			If SelectedLoadingScreen\totalTxtDelay <> 0 Then
+				Local elapsedTime = (MilliSecs() - LoadingScreenStartTime) Mod SelectedLoadingScreen\totalTxtDelay
+				While elapsedTime >= SelectedLoadingScreen\txtDelay[LoadingScreenText]
+					LoadingScreenText = LoadingScreenText + 1
+				Wend
+			EndIf
 			
-			If Not shortloading Then 
-				If firstloop Then 
-					If percent = 0 Then
-						LoadingScreenCHN = PlaySound_Strict(LoadTempSound("SFX\SCP\990\cwm1.cwm"))
-						LoadingScreenCWM = 0
+			If SelectedLoadingScreen\alignx = 0 Then
+				x = GraphicWidth/2 - ImageWidth(SelectedLoadingScreen\img)/2 
+			ElseIf  SelectedLoadingScreen\alignx = 1
+				x = GraphicWidth - ImageWidth(SelectedLoadingScreen\img)
+			Else
+				x = 0
+			EndIf
+			
+			If SelectedLoadingScreen\aligny = 0 Then
+				y = GraphicHeight/2 - ImageHeight(SelectedLoadingScreen\img)/2 
+			ElseIf  SelectedLoadingScreen\aligny = 1
+				y = GraphicHeight - ImageHeight(SelectedLoadingScreen\img)
+			Else
+				y = 0
+			EndIf	
+		
+			DrawImage SelectedLoadingScreen\img, x, y
+		EndIf
+		
+		If togame = True Then
+			RightAlignBar(MenuMeterIMG, GraphicWidth - 50 * MenuScale, GraphicHeight - 50 * MenuScale, 408 * HUDScale, 20 * MenuScale, percent / 100.0, True)
+		Else
+			DrawBar(MenuMeterIMG, GraphicWidth / 2, GraphicHeight - 50 * MenuScale, 408 * HUDScale, 20 * MenuScale, percent / 100.0, True, True)
+		EndIf
+		
+		If togame = True Then
+			If SelectedLoadingScreen\title = "CWM" Then
+				
+				If Not shortloading Then 
+					If firstloop Then 
+						If percent = 0 Then
+							LoadingScreenCHN = PlaySound_Strict(LoadTempSound("SFX\SCP\990\cwm1.cwm"))
+							LoadingScreenCWM = 0
+						EndIf
 					EndIf
 				EndIf
-			EndIf
-
-			If (Not shortloading) And percent = 100 And (Not ChannelPlaying(LoadingScreenCHN)) And LoadingScreenCWM = 0
-				LoadingScreenCHN = PlaySound_Strict(LoadTempSound("SFX\SCP\990\cwm2.cwm"))
-				LoadingScreenCWM = 1
-			EndIf
-			
-			SetFont Font2
-			Local strtemp$ = ""
-			temp = Rand(2,9)
-			For i = 0 To temp
-				strtemp$ = strtemp + RandomDefaultWidthChar(48,122,"?")
-			Next
-			Text(GraphicWidth / 2, GraphicHeight / 2 + 80*MenuScale, strtemp, True, True)
-			
-			If percent = 0 Then 
-				If Rand(5)=1 Then
-					Select Rand(2)
-						Case 1
-							SelectedLoadingScreen\txt[0] = Format(I_Loc\Menu_LoadingCwm[1], CurrentDate())
-						Case 2
-							SelectedLoadingScreen\txt[0] = CurrentTime()
-					End Select
-				Else
-					Select Rand(13)
-						Case 1
-							SelectedLoadingScreen\txt[0] = I_Loc\Menu_LoadingCwm[2]
-						Case 2
-							SelectedLoadingScreen\txt[0] = I_Loc\Menu_LoadingCwm[3]
-						Case 3
-							SelectedLoadingScreen\txt[0] = I_Loc\Menu_LoadingCwm[4]
-						Case 4
-							SelectedLoadingScreen\txt[0] = I_Loc\Menu_LoadingCwm[5]
-						Case 5
-							SelectedLoadingScreen\txt[0] = I_Loc\Menu_LoadingCwm[6]
-						Case 6 
-							SelectedLoadingScreen\txt[0] = I_Loc\Menu_LoadingCwm[7]
-						Case 7
-							SelectedLoadingScreen\txt[0] = I_Loc\Menu_LoadingCwm[8]
-						Case 8, 9
-							SelectedLoadingScreen\txt[0] = I_Loc\Menu_LoadingCwm[9]
-						Case 10
-							SelectedLoadingScreen\txt[0] = I_Loc\Menu_LoadingCwm[10]
-						Case 11
-							SelectedLoadingScreen\txt[0] = I_Loc\Menu_LoadingCwm[11]
-						Case 12
-							SelectedLoadingScreen\txt[0] = I_Loc\Menu_LoadingCwm[12]
-						Case 13
-							SelectedLoadingScreen\txt[0] = I_Loc\Menu_LoadingCwm[13]
-					End Select
+	
+				If (Not shortloading) And percent = 100 And (Not ChannelPlaying(LoadingScreenCHN)) And LoadingScreenCWM = 0
+					LoadingScreenCHN = PlaySound_Strict(LoadTempSound("SFX\SCP\990\cwm2.cwm"))
+					LoadingScreenCWM = 1
 				EndIf
+				
+				SetFont Font2
+				Local strtemp$ = ""
+				temp = Rand(2,9)
+				For i = 0 To temp
+					strtemp$ = strtemp + RandomDefaultWidthChar(48,122,"?")
+				Next
+				Text(GraphicWidth / 2, GraphicHeight / 2 + 80*MenuScale, strtemp, True, True)
+				
+				If percent = 0 Then 
+					If Rand(5)=1 Then
+						Select Rand(2)
+							Case 1
+								SelectedLoadingScreen\txt[0] = Format(I_Loc\Menu_LoadingCwm[1], CurrentDate())
+							Case 2
+								SelectedLoadingScreen\txt[0] = CurrentTime()
+						End Select
+					Else
+						Select Rand(13)
+							Case 1
+								SelectedLoadingScreen\txt[0] = I_Loc\Menu_LoadingCwm[2]
+							Case 2
+								SelectedLoadingScreen\txt[0] = I_Loc\Menu_LoadingCwm[3]
+							Case 3
+								SelectedLoadingScreen\txt[0] = I_Loc\Menu_LoadingCwm[4]
+							Case 4
+								SelectedLoadingScreen\txt[0] = I_Loc\Menu_LoadingCwm[5]
+							Case 5
+								SelectedLoadingScreen\txt[0] = I_Loc\Menu_LoadingCwm[6]
+							Case 6 
+								SelectedLoadingScreen\txt[0] = I_Loc\Menu_LoadingCwm[7]
+							Case 7
+								SelectedLoadingScreen\txt[0] = I_Loc\Menu_LoadingCwm[8]
+							Case 8, 9
+								SelectedLoadingScreen\txt[0] = I_Loc\Menu_LoadingCwm[9]
+							Case 10
+								SelectedLoadingScreen\txt[0] = I_Loc\Menu_LoadingCwm[10]
+							Case 11
+								SelectedLoadingScreen\txt[0] = I_Loc\Menu_LoadingCwm[11]
+							Case 12
+								SelectedLoadingScreen\txt[0] = I_Loc\Menu_LoadingCwm[12]
+							Case 13
+								SelectedLoadingScreen\txt[0] = I_Loc\Menu_LoadingCwm[13]
+						End Select
+					EndIf
+				EndIf
+				
+				strtemp$ = SelectedLoadingScreen\txt[0]
+				temp = Int(Len(SelectedLoadingScreen\txt[0])-Rand(5))
+				For i = 0 To Rand(10,15);temp
+					strtemp$ = Replace(SelectedLoadingScreen\txt[0],Mid(SelectedLoadingScreen\txt[0],Rand(1,Len(strtemp)-1),1),RandomDefaultWidthChar(130,250,"?"))
+				Next		
+				SetFont Font1
+				RowText(strtemp, GraphicWidth / 2-200*MenuScale, GraphicHeight / 2 +120*MenuScale,400*MenuScale,300*MenuScale,True)		
+			Else
+				
+				Color 0,0,0
+				SetFont Font2
+				Text(GraphicWidth / 2 + Max(1, MenuScale), GraphicHeight / 2 - 20*MenuScale+Max(1, MenuScale), SelectedLoadingScreen\title, True, True)
+				SetFont Font1
+				RowText(SelectedLoadingScreen\txt[LoadingScreenText], GraphicWidth / 2-350*MenuScale+Max(1, MenuScale), GraphicHeight / 2 +20*MenuScale+Max(1, MenuScale),700*MenuScale,300*MenuScale,True)
+				
+				Color 255,255,255
+				SetFont Font2
+				Text(GraphicWidth / 2, GraphicHeight / 2 -20*MenuScale, SelectedLoadingScreen\title, True, True)
+				SetFont Font1
+				RowText(SelectedLoadingScreen\txt[LoadingScreenText], GraphicWidth / 2-350*MenuScale, GraphicHeight / 2 +20*MenuScale,700*MenuScale,300*MenuScale,True)
 			EndIf
-			
-			strtemp$ = SelectedLoadingScreen\txt[0]
-			temp = Int(Len(SelectedLoadingScreen\txt[0])-Rand(5))
-			For i = 0 To Rand(10,15);temp
-				strtemp$ = Replace(SelectedLoadingScreen\txt[0],Mid(SelectedLoadingScreen\txt[0],Rand(1,Len(strtemp)-1),1),RandomDefaultWidthChar(130,250,"?"))
-			Next		
-			SetFont Font1
-			RowText(strtemp, GraphicWidth / 2-200*MenuScale, GraphicHeight / 2 +120*MenuScale,400*MenuScale,300*MenuScale,True)		
 		Else
-			
-			Color 0,0,0
+			Color 255,0,0
 			SetFont Font2
-			Text(GraphicWidth / 2 + Max(1, MenuScale), GraphicHeight / 2 + 80*MenuScale+Max(1, MenuScale), SelectedLoadingScreen\title, True, True)
-			SetFont Font1
-			RowText(SelectedLoadingScreen\txt[LoadingScreenText], GraphicWidth / 2-200*MenuScale+Max(1, MenuScale), GraphicHeight / 2 +120*MenuScale+Max(1, MenuScale),400*MenuScale,300*MenuScale,True)
-			
+			Text(GraphicWidth / 2, GraphicHeight / 2 -90*MenuScale, I_Loc\Menu_IntroTitle, True, True)
 			Color 255,255,255
-			SetFont Font2
-			Text(GraphicWidth / 2, GraphicHeight / 2 +80*MenuScale, SelectedLoadingScreen\title, True, True)
 			SetFont Font1
-			RowText(SelectedLoadingScreen\txt[LoadingScreenText], GraphicWidth / 2-200*MenuScale, GraphicHeight / 2 +120*MenuScale,400*MenuScale,300*MenuScale,True)
-			
+			RowText(I_Loc\Menu_IntroWarning, GraphicWidth / 2-350*MenuScale, GraphicHeight / 2 -50*MenuScale,700*MenuScale,300*MenuScale,True)
+			RowText(I_Loc\Menu_IntroIndev, GraphicWidth / 2-350*MenuScale, GraphicHeight / 2 + 40 *MenuScale,700*MenuScale,300*MenuScale,True)
 		EndIf
-
+		
 		If SpeedRunMode And (Not TimerStopped) And PlayTime > 0 And (Not PreMadeSaveLoaded) Then
 			DrawTimer()
 		EndIf
 		
-		Color 0,0,0
-		Text(GraphicWidth / 2 + Max(1, MenuScale), GraphicHeight / 2 - 100 * MenuScale + Max(1, MenuScale), Format(I_Loc\Menu_Loading, percent), True, True)
-		Color 255,255,255
-		Text(GraphicWidth / 2, GraphicHeight / 2 - 100 * MenuScale, Format(I_Loc\Menu_Loading, percent), True, True)
+		If togame = True and percent < 100 Then
+			If RandomLoadingTime < MilliSecs() Then
+				RandomLoadingIndex = Rand(10)
+				RandomLoadingTime = MilliSecs() + 5000
+			EndIf
+			Color 0,0,0
+			RightAlignText(GraphicWidth - 49 * MenuScale, GraphicHeight - 88 * MenuScale, I_Loc\Menu_LoadingRandom[RandomLoadingIndex] + " " + percent + "%", True)
+			Color 255,255,255
+			RightAlignText(GraphicWidth - 50 * MenuScale, GraphicHeight - 89 * MenuScale, I_Loc\Menu_LoadingRandom[RandomLoadingIndex] + " " + percent + "%", True)
+		ElseIf percent < 100 Then
+			Color 0,0,0
+			Text(GraphicWidth / 2, GraphicHeight - 88 * MenuScale, I_Loc\Menu_LoadingRandom[1] + " " + percent + "%", True, True)
+			Color 255,255,255
+			Text(GraphicWidth / 2, GraphicHeight - 89 * MenuScale, I_Loc\Menu_LoadingRandom[1] + " " + percent + "%", True, True)
+		EndIf
 		
-		
-		; Once whoever gets around to implemeneting the tips does so,
-		; here's exactly where I want the text to be. Thanks! <3
-		
-		; sure.
-		If percent < 100 Then
+		If togame Then
+			Color 0,0,0
+			Text(50 + Max(1, MenuScale) + Max(1, MenuScale), 50 + Max(1, MenuScale), "SAVE:", False, True)
+			Text(50 + Max(1, MenuScale), 70 + Max(1, MenuScale), CurrSave, False, True)
+			Text(50 + Max(1, MenuScale), 100 + Max(1, MenuScale), "MAP SEED:", False, True)
+			Text(50 + Max(1, MenuScale), 120 + Max(1, MenuScale), GetSeedSimple(), False, True)
+			Text(50 + Max(1, MenuScale), 150 + Max(1, MenuScale), "DIFFICULTY:", False, True)
+			Text(50 + Max(1, MenuScale), 170 + Max(1, MenuScale), SelectedDifficulty\localName, False, True)
+			
+			Color 255, 255, 255
+			Text(50 * MenuScale, 50 * MenuScale, "SAVE:", False, True)
+			Text(50 * MenuScale, 70 * MenuScale, CurrSave, False, True)
+			Text(50 * MenuScale, 100 * MenuScale, "MAP SEED:", False, True)
+			Text(50 * MenuScale, 120 * MenuScale, GetSeedSimple(), False, True)
+			Text(50 * MenuScale, 150 * MenuScale, "DIFFICULTY:", False, True)
+			
+			Color(SelectedDifficulty\r,SelectedDifficulty\g,SelectedDifficulty\b)
+			Text(50 * MenuScale, 170 * MenuScale, SelectedDifficulty\localName, False, True)
+			
 			Color 255,255,255
 			If RandomTipTime < MilliSecs() Then
-				RandomTipIndex = Rand(20); can you actually get the size of an array??
-				RandomTipTime = MilliSecs() + 5000; 5 seconds
+				RandomTipIndex = Rand(20) ;can you actually get the size of an array?? ;idk, probably would have to make a global variable and have both the dim and the index use it
+				RandomTipTime = MilliSecs() + 10000
 			EndIf
-			Text(GraphicWidth / 2, GraphicHeight - 50 * MenuScale, I_Loc\Loading_Random[RandomTipIndex], True, True)
+			Text(50 * MenuScale, GraphicHeight - 50 * MenuScale, I_Loc\Loading_Random[RandomTipIndex], False, True)
 		EndIf
 		
 		If percent = 100 Then 
 			If firstloop And SelectedLoadingScreen\title <> "CWM" Then PlaySound_Strict LoadTempSound(("SFX\Menu\FinishLoading.ogg"))
-			Text(GraphicWidth / 2, GraphicHeight - 50 * MenuScale, I_Loc\Menu_Pressany, True, True)
+			If togame = True Then
+				Color 0,0,0
+				RightAlignText(GraphicWidth - 49 * MenuScale, GraphicHeight - 88 * MenuScale, I_Loc\Menu_Pressany, True)
+				Color 255,255,255
+				RightAlignText(GraphicWidth - 50 * MenuScale, GraphicHeight - 89 * MenuScale, I_Loc\Menu_Pressany, True)
+			Else
+				Color 0,0,0
+				Text((GraphicWidth / 2) - 1, GraphicHeight - 88 * MenuScale, I_Loc\Menu_IntroProceed, True, True)
+				Color 255,255,255
+				Text(GraphicWidth / 2, GraphicHeight - 89 * MenuScale, I_Loc\Menu_IntroProceed, True, True)
+			EndIf
 		Else
 			FlushKeys()
 			FlushMouse()
@@ -1723,7 +1817,7 @@ Function InputBox$(x%, y%, width%, height%, Txt$, ID% = 0, virtualKeyboardMode=0
 	Color (255, 255, 255)
 	DrawTiledImageRect(MenuWhite, (x Mod 256), (y Mod 256), 512, 512, x, y, width, height)
 	;Rect(x, y, width, height)
-	Color (0, 0, 0)
+	Color (5, 5, 5)
 	
 	Local MouseOnBox% = False
 	If MouseOn(x, y, width, height) Then
@@ -1967,6 +2061,14 @@ Function GetLineAmount(A$, W, H, Leading#=1)
 	
 End Function
 
+Function RightAlignText(x#,y#,string$,center_y=False)
+	If center_y Then
+		Text(Float(x# - (StringWidth(string$)/2)), y#, string$,True,True)
+	Else
+		Text(Float(x# - (StringWidth(string$)/2)), y#, string$,True)
+	EndIf
+End Function
+
 Function DrawTooltip(message$)
 	Local scale# = GraphicHeight/768.0
 	
@@ -2118,6 +2220,8 @@ Function DrawOptionsTooltip(x%,y%,width%,height%,option$,value#=0,ingame%=False)
 			txt = I_Loc\OptionTooltip_Speedrunmode
 		Case "numericseeds"
 			txt = I_Loc\OptionTooltip_Numericseeds
+		Case "modernhud"
+			txt = I_Loc\OptionTooltip_ModernHUD
 		Case "achpopup"
 			txt = I_Loc\OptionTooltip_Achpopup
 		Case "launcher"

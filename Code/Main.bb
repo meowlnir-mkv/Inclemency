@@ -25,26 +25,8 @@ End Function
 
 Include "Code\StrictLoads.bb"
 
-Global DataDir$ = InitDataDir()
-Global OptionFile$ = InitOptionsFile()
+Global OptionFile$ = "options.ini"
 Const OptionDefaultFile$ = "defaults.ini"
-
-Function InitDataDir$()
-	Local dir$ = GetEnv("AppData") + "\Undertow Games"
-	If FileType(dir) <> 2 Then CreateDir(dir)
-	dir = dir + "\SCP - Containment Breach"
-	If FileType(dir) <> 2 Then CreateDir(dir)
-	Return dir
-End Function
-
-Function InitOptionsFile$()
-	Local file$ = DataDir + "\options.ini"
-	If FileType(file) <> 1 Lor HasCLIFlag("defaults") Lor HasCLIFlag("default") Then
-		Local f% = WriteFile(file)
-		CloseFile(f)
-	EndIf
-	Return file
-End Function
 
 Function GetOptionString$(section$, key$)
 	Local opt$ = GetINIString(OptionFile, section, key)
@@ -105,7 +87,7 @@ Global ShouldRestart% = False
 
 Global HasDubbedAudio%
 
-Global Font1%, Font2%, Font3%, Font4%, Font5%, Font6%
+Global Font1%, Font2%, Font3%, Font4%, Font5%, Font6%, Font7%
 Global ConsoleFont%
 
 Global MenuWhite%, MenuBlack%
@@ -147,6 +129,8 @@ Global ClosedCaptionsEnabled% = GetOptionInt("audio", "closed captions")
 Global CanOpenConsole% = GetOptionInt("console", "enabled")
 
 Global UseNumericSeeds% = GetOptionInt("general", "numeric seeds")
+
+Global UseModernHUD% = GetOptionInt("general", "modern hud")
 
 Dim ArrowIMG(4)
 
@@ -386,15 +370,15 @@ If Fullscreen Then CursorIMG = LoadImage_Strict("GFX\menu\cursor.png", 1.0)
 Global viewport_center_x% = RealGraphicWidth / 2, viewport_center_y% = RealGraphicHeight / 2
 
 Global SelectedLoadingScreen.LoadingScreens, LoadingScreenAmount% = 0, LoadingScreenText%
-Global LoadingBack% = LoadImage_Strict("GFX\loadingscreens\loadingback.jpg", MenuScale)
 InitLoadingScreens()
 
-Font1% = LoadFont_Strict("GFX\font\Courier New.ttf", Int(19 * MenuScale))
-Font2% = LoadFont_Strict("GFX\font\Courier New.ttf", Int(52 * MenuScale))
+Font1% = LoadFont_Strict("GFX\font\IBMPlexMono-Light.ttf", Int(19 * MenuScale))
+Font2% = LoadFont_Strict("GFX\font\IBMPlexMono-Light.ttf", Int(52 * MenuScale))
 Font3% = LoadFont_Strict("GFX\font\DS-Digital.ttf", Int(15 * HUDScale))
 Font4% = LoadFont_Strict("GFX\font\DS-Digital.ttf", Int(42 * HUDScale))
 Font5% = LoadFont_Strict("GFX\font\Journal.ttf", Int(58 * MenuScale))
 Font6% = LoadFont_Strict("GFX\font\DS-Digital.ttf", Int(25 * MenuScale))
+Font7% = LoadFont_Strict("GFX\font\Courier New.ttf", Int(19 * MenuScale))
 
 Global CreditsFont%,CreditsFont2%
 
@@ -408,7 +392,7 @@ SetFont Font2
 Global BlinkMeterIMG% = LoadImageHUDScaled("GFX\HUD\blinkmeter.png")
 Global MenuMeterIMG% = LoadImage_Strict("GFX\HUD\blinkmeter.png", MenuScale)
 
-DrawLoading(0, True)
+DrawLoading(0, True, False)
 
 ; -- Mouselook.
 Global mouselook_x_inc# = 0.3 ; This sets both the sensitivity and direction (+/-) of the mouse on the X axis.
@@ -439,7 +423,7 @@ Global Mesh_MagX#, Mesh_MagY#, Mesh_MagZ#
 Global KillTimer#, KillAnim%, FallTimer#, DeathTimer#
 Global Sanity#, ForceMove#, ForceAngle#
 Global RestoreSanity%, DrainSanity%
-Global SanityDrainRate%
+Global SanityDrainRate#
 Global Scared%
 Global ScareTimer#
 Global ScareMusic%
@@ -1632,7 +1616,7 @@ Function UpdateConsole()
 					;[End Block]
 				Case "kill","suicide"
 					;[Block]
-					Kill(False)
+					Kill()
 					DeathMSG = I_Loc\DeathMessage_Suicide[Rand(4)]
 					;[End Block]
 				Case "playmusic"
@@ -1877,15 +1861,27 @@ Function UpdateConsole()
 					Grunt()
 					CreateConsoleMsg("owww")
 				Case "sight"
-					SightScare(True, True)
+					SightScare()
 					CreateConsoleMsg("oh shit")
 				Case "jumpscare"
-					Jumpscare(True)
+					Jumpscare()
 					CreateConsoleMsg("aaah")
 				Case "drainsanity"
 					DrainSanity = (Not DrainSanity)
 					If DrainSanity = True Then CreateConsoleMsg("Draining Sanity") Else CreateConsoleMsg("Restoring Sanity")
-					SanityDrainRate% = 16
+					SanityDrainRate# = 16
+				Case "sanity", "setsanity", "san"
+					;[Block]
+					StrTemp$ = Lower(Right(ConsoleInput, Len(ConsoleInput) - Instr(ConsoleInput, " ")))
+					Sanity = Float(StrTemp$)
+					UpdateSanity()
+					;[End Block]
+				Case "insanity", "setinsanity"
+					;[Block]
+					StrTemp$ = Lower(Right(ConsoleInput, Len(ConsoleInput) - Instr(ConsoleInput, " ")))
+					Sanity = -Abs(Float(StrTemp$))
+					UpdateSanity()
+					;[End Block]
 				Case Chr($6A)+Chr($6F)+Chr($72)+Chr($67)+Chr($65)
 					;[Block]
 					ConsoleFlush = True 
@@ -2030,12 +2026,12 @@ Global MusicVolume# = GetOptionFloat("audio", "music volume")
 ;Global MusicCHN% = StreamSound_Strict("SFX\Music\"+Music(2)+".ogg", MusicVolume, CurrMusicStream)
 
 Global CurrMusicStream, MusicCHN, PausedCHN
-MusicCHN = StreamSound_Strict("SFX\Music\"+Music(26)+".ogg",MusicVolume)
+;MusicCHN = StreamSound_Strict("SFX\Music\"+Music(26)+".ogg",MusicVolume)
 
 Global CurrMusicVolume# = 1.0, NowPlaying%=26, ShouldPlay%=11
 Global CurrMusic% = 1
 
-DrawLoading(10, True)
+DrawLoading(10, True, False)
 
 Dim OpenDoorSFX%(3,3), CloseDoorSFX%(3,3)
 
@@ -2072,7 +2068,7 @@ Dim DecaySFX%(5)
 
 Global BurstSFX 
 
-DrawLoading(20, True)
+DrawLoading(20, True, False)
 
 Dim RustleSFX%(3)
 
@@ -2119,7 +2115,7 @@ Dim Scp173SFX%(3)
 
 Dim HorrorSFX%(20)
 
-DrawLoading(25, True)
+DrawLoading(25, True, False)
 
 Dim IntroSFX%(20)
 
@@ -2164,7 +2160,7 @@ Dim Step2SFX(6)
 
 Dim InsaneLightSFX(3)
 
-DrawLoading(30, True)
+DrawLoading(30, True, False)
 
 ;[End block]
 
@@ -2259,6 +2255,8 @@ Global Active5131%
 
 Global PauseMenuIMG% = 0
 
+Global PauseMenuIMGmod% = 0
+
 Global SprintIcon% = 0
 Global WalkIcon% = 0
 Global StandIcon% = 0
@@ -2266,17 +2264,32 @@ Global BlinkIcon% = 0
 Global BlinkIcon2% = 0
 Global CrouchIcon% = 0
 Global CrouchStillIcon% = 0
-;Global InsIcon% = 0
 Global HandIcon% = 0
 Global HandIcon2% = 0
 Global HandIcon3% = 0
 Global HandIcon4% = 0
+Global HandIcon5% = 0
+
+Global SprintIconMOD% = 0
+Global WalkIconMOD% = 0
+Global StandIconMOD% = 0
+Global BlinkIconMOD% = 0
+Global BlinkIcon2MOD% = 0
+Global CrouchIconMOD% = 0
+Global CrouchStillIconMOD% = 0
+Global HandIconMOD% = 0
+Global HandIcon2MOD% = 0
+Global HandIcon3MOD% = 0
+Global HandIcon4MOD% = 0
+Global HandIcon5MOD% = 0
+
+Global HUDFrameImg% = 0
 
 Global StaminaMeterIMG% = 0
 
 Global Panel294 = 0, Using294%, Input294$
 
-DrawLoading(35, True)
+DrawLoading(35, True, False)
 
 ;----------------------------------------------  Items  -----------------------------------------------------
 
@@ -2915,14 +2928,14 @@ Function RemoveDoor(d.Doors)
 	Delete d
 End Function
 
-DrawLoading(40,True)
+DrawLoading(40,True, False)
 
 Global DebugMapGen% = GetOptionInt("debug", "show map gen")
 Global DebugForestGen% = GetOptionInt("debug", "show forest gen")
 
 Include "Code\MapSystem.bb"
 
-DrawLoading(80,True)
+DrawLoading(80,True, False)
 
 Include "Code\NPCs.bb"
 
@@ -3191,7 +3204,7 @@ Collisions HIT_ITEM, HIT_MAP, 2, 2
 Collisions HIT_APACHE, HIT_APACHE, 1, 2
 Collisions HIT_DEAD, HIT_MAP, 2, 2
 
-DrawLoading(90, True)
+DrawLoading(90, True, False)
 
 ;----------------------------------- meshes and textures ----------------------------------------------------------------
 Include "Code\Effects.bb"
@@ -3251,7 +3264,7 @@ MainMenuOpen = True
 FlushKeys()
 FlushMouse()
 
-DrawLoading(100, True)
+DrawLoading(100, True, False)
 
 LoopDelay = MilliSecs()
 AccumulatedLoopDelay = 0.0
@@ -3567,12 +3580,12 @@ While IsRunning
 					;Randomizes the frequency of blinking. Scales with difficulty.
 					Select SelectedDifficulty\otherFactors
 						Case EASY
-							BLINKFREQ = Rnd(490,700)
+							BLINKFREQ = Rnd(455,665) - (Abs(Sanity)/20)
 						Case NORMAL
-							BLINKFREQ = Rnd(455,665)
+							BLINKFREQ = Rnd(420,630) - (Abs(Sanity)/10)
 						Case HARD
-							BLINKFREQ = Rnd(420,630)
-					End Select 
+							BLINKFREQ = Rnd(385,595) - (Abs(Sanity)/5)
+					End Select
 					BlinkTimer = BLINKFREQ
 				EndIf
 				
@@ -3785,11 +3798,19 @@ While IsRunning
 				If (Not temp%)
 					; Push text up if subtitles box has lots of text.
 					Local h# = (GraphicHeight / 2) + 200
+					Local x# = (GraphicWidth / 2)+1
+					
 					If SubtitlesEnabled Then h = Min(h, SubBox\curTop-SubtitleTextHeight*2)
+					
+					If Sanity < (-500) Then
+						x# = x + (Rand(-5, 5) * (Abs(Sanity)/1000))
+						h# = h + (Rand(-5, 5) * (Abs(Sanity)/1000))
+					EndIf
+					
 					Color 0,0,0
-					Text((GraphicWidth / 2)+1, h+1, Msg, True, False)
+					Text(x+1, h+1, Msg, True, False)
 					Color messageOpacity, messageOpacity, messageOpacity
-					Text((GraphicWidth / 2), h, Msg, True, False)
+					Text(x, h, Msg, True, False)
 				Else
 					Color 0,0,0
 					Text((GraphicWidth / 2)+1, (GraphicHeight * 0.94) + 1, Msg, True, False)
@@ -4139,7 +4160,7 @@ Function QuickLoadEvents()
 	
 End Function
 
-Function Kill(Scream%)
+Function Kill(Scream% = False)
 	If GodMode Then Return
 	
 	If BreathCHN <> 0 Then
@@ -4165,9 +4186,9 @@ Function Kill(Scream%)
 	EndIf
 End Function
 
-Function SightScare(shouldsound%, affectsanity%)
+Function SightScare(shouldsound% = True, affectsanity% = True)
 	If affectsanity% Then
-		If Sanity > (-500) Then
+		If Sanity < (-500) Then
 			Sanity = Max(Sanity-Rand(50,100), -500)
 		ElseIf Sanity > (-1000) Then
 			Sanity = Max(Sanity-Rand(25,50), -1000)
@@ -4190,7 +4211,7 @@ Function SightScare(shouldsound%, affectsanity%)
 	EndIf
 End Function
 
-Function Jumpscare(affectsanity%)
+Function Jumpscare(affectsanity% = True)
 	If affectsanity% Then Sanity = Max(Sanity-Rand(125,250), -1000)
 	CurrCameraZoom = 40.0
 	CameraShake = 5
@@ -4233,8 +4254,11 @@ Function UpdateSanity()
 	EndIf
 	RestoreSanity = tempsan%
 	
-	If DrainSanity Then Sanity = Max(Sanity - FPSfactor / SanityDrainRate%, -1000)
-	If Injuries > 1.0 Then Sanity = Max(Sanity - Bloodloss*4, -1000)
+	If DrainSanity Then Sanity = Max(Sanity - FPSfactor / SanityDrainRate#, -1000)
+	If Injuries > 1.0 Then
+		DrainSanity = True
+		SanityDrainRate# = 32 * (Abs(Sanity)/1000)
+	EndIf
 	
 	If Sanity < 0 Then
 		If RestoreSanity and Scared = True Then
@@ -4242,13 +4266,11 @@ Function UpdateSanity()
 		ElseIf RestoreSanity Then
 			Sanity = Min(Sanity + FPSfactor / 16, 0.0)
 		EndIf
-		BlurTimer = Abs(Sanity/2)
+		BlurTimer# = Abs(Sanity/2)
+		Stamina = Min(Stamina, 100 - (Abs(Sanity) / 20))
 		
 		If Sanity < (-250) Then
-			CameraShake = (Abs(Sanity+250))/500			
-			AmbChance = 375
-			PlayerZone = 6
-			If Scared = False Then ShouldPlay = 27
+			CameraShake = (Abs(Sanity+250))/500
 			
 			If Rand((1000000/Abs(Sanity))/FPSfactor) = 1 Then
 				LightBlink = (Rand(3,5))
@@ -4266,7 +4288,14 @@ Function UpdateSanity()
 				ElseIf RestoreSanity Then
 					Sanity = Min(Sanity + FPSfactor / 32, 0.0)
 				EndIf
-				PlayerZone = 7
+				If Scared = False Then ShouldPlay = 27
+				AmbChance = 375
+				PlayerZone = 6
+				
+				If Sanity > (-750) And Rand(2500)=1 Then
+					Msg = I_Loc\Insanity_Random[Rand(1,15)]
+					MsgTimer = 70*4
+				EndIf
 				
 				If Faked106% <> True Then
 					If Rand(10000)=1 And (Not PlayerRoom\RoomTemplate\DisableDecals) Then
@@ -4279,9 +4308,46 @@ Function UpdateSanity()
 				EndIf
 				
 				If Sanity < (-750) Then
-					RestoreSanity = False
+					Local selfharm%
+					Select SelectedDifficulty\otherFactors
+						Case EASY
+							selfharm = Rand(2)
+						Case NORMAL
+							selfharm = Rand(3)
+						Case HARD
+							selfharm = Rand(4)
+					End Select
+					
+					PlayerZone = 7
+					SanityDrainRate# = 32
+					DrainSanity = True
 					If Rand(10000)=1 Then SightScare(True,False)
 					If Rand(5000000)=1 Then Jumpscare(False)
+					
+					If Rand(5000)=1 Then
+						Msg = I_Loc\Insanity_Extreme[Rand(1,15)]
+						MsgTimer = 70*4
+					EndIf
+						
+					If Rand(7500/Max((Abs(Sanity) - 100)/900, 1))=1 Then
+						Msg = I_Loc\Insanity_SelfHarm[Rand(1,10)]
+						MsgTimer = 70*6
+						DeathMSG = I_Loc\DeathMessage_SelfHarm
+						Injuries = Injuries + selfharm
+						PlaySound_Strict LoadTempSound("SFX\General\Damage\Slash" + Rand(2) + ".ogg")
+						Grunt()
+						CurrCameraZoom = 40.0
+						CameraShake = 5
+						BlurTimer# = BlurTimer + selfharm*5
+					EndIf
+					
+					If Rand(5000000/Max((Abs(Sanity) - 100)/900, 1))=1 Then
+						Msg = I_Loc\Insanity_Suicide
+						MsgTimer = 70*6
+						DeathMSG = I_Loc\DeathMessage_InsSuic
+						PlaySound_Strict NeckSnapSFX(Rand(2))
+						Kill()
+					EndIf
 				EndIf
 				If Sanity = (-1000) Then GiveAchievement(AchvInsane)
 			EndIf
@@ -4306,10 +4372,10 @@ Function DrawEnding()
 	GiveAchievement(AchvEscape)
 	If (Not UsedConsole) Then GiveAchievement(AchvConsole)
 	If PlayTime < 1200000 Then GiveAchievement(AchvSpeedrun)
-	If SelectedDifficulty = Difficulties[EUCLID] Then GiveAchievement(AchvEuclid)
-	If SelectedDifficulty = Difficulties[KETER] Then
-		GiveAchievement(AchvKeter)
-		GiveAchievement(AchvEuclid)
+	If SelectedDifficulty = Difficulties[EKHI] Then GiveAchievement(AchvEkhi)
+	If SelectedDifficulty = Difficulties[AMIDA] Then
+		GiveAchievement(AchvAmida)
+		GiveAchievement(AchvEkhi)
 	EndIf
 	Local x,y,width,height, temp
 	Local itt.ItemTemplates, r.Rooms
@@ -4386,7 +4452,7 @@ Function DrawEnding()
 				x = GraphicWidth / 2 - width / 2
 				y = GraphicHeight / 2 - height / 2
 				
-				DrawImage PauseMenuIMG, x, y
+				DrawHUDIcon PauseMenuIMG, PauseMenuIMGmod, x, y
 				
 				Color(255, 255, 255)
 				SetFont Font2
@@ -4454,7 +4520,7 @@ Function DrawEnding()
 ;					EndIf
 					
 					If DrawButton(x-145*MenuScale,y-100*MenuScale,390*MenuScale,60*MenuScale,I_Loc\Menu_MainmenuUpper, True)
-						If SelectedDifficulty = Difficulties[KETER] Then ShouldPlay = 11 Else ShouldPlay = 24
+						If SelectedDifficulty = Difficulties[AMIDA] Then ShouldPlay = 11 Else ShouldPlay = 24
 						NowPlaying = ShouldPlay
 						For i=0 To 9
 							If TempSounds[i]<>0 Then FreeSound_Strict TempSounds[i] : TempSounds[i]=0
@@ -4473,7 +4539,7 @@ Function DrawEnding()
 				EndIf
 			;Credits
 			ElseIf EndingTimer<=-2000
-				If SelectedDifficulty = Difficulties[KETER] Then ShouldPlay = 11 Else ShouldPlay = 24
+				If SelectedDifficulty = Difficulties[AMIDA] Then ShouldPlay = 11 Else ShouldPlay = 24
 				DrawCredits()
 			EndIf
 		EndIf
@@ -4664,7 +4730,7 @@ Function MovePlayer()
 		
 		If SuperManTimer > 70 * 50 Then
 			DeathMSG = I_Loc\DeathMessage_914Superman
-			Kill(False)
+			Kill()
 			ShowEntity Fog
 		Else
 			BlurTimer = 500		
@@ -4676,7 +4742,7 @@ Function MovePlayer()
 		DeathTimer=DeathTimer-FPSfactor
 		If DeathTimer < 1 Then DeathTimer = -1.0
 	ElseIf DeathTimer < 0 
-		Kill(False)
+		Kill()
 	EndIf
 	
 	If CurrSpeed > 0 Then
@@ -4732,7 +4798,6 @@ Function MovePlayer()
 	
 	If Wearing714 Then
 		Stamina = Min(Stamina, 10)
-		Sanity = Max(-850, Sanity)
 	EndIf
 	
 	If IsZombie Then Crouch = False
@@ -4858,8 +4923,8 @@ Function MovePlayer()
 		
 		ResetEntity Collider
 	Else
-		temp2# = temp2 / Max((Injuries+3.0)/3.0,1.0)
-		If Injuries > 0.5 Then 
+		temp2# = temp2 / Max(((Injuries+3.0)+(Abs(Sanity)/500))/3.0,1.0)
+		If Injuries > 0.5 Or Sanity < -500 Then 
 			temp2 = temp2*Min((Sin(Shake/2)+1.2),1.0)
 		EndIf
 		
@@ -4969,7 +5034,7 @@ Function MovePlayer()
 		EndIf
 		
 		If temp2 <= 60 And Bloodloss > 60 Then
-			Msg = I_Loc\Message_BloodlossFaint
+			If Sanity < (-750) Then Msg = I_Loc\Insanity_Bloodloss Else Msg = I_Loc\Message_BloodlossFaint
 			MsgTimer = 70*4
 		EndIf
 	EndIf
@@ -4995,7 +5060,7 @@ Function MovePlayer()
 		
 		If Bloodloss > 60 Then Crouch = True
 		If Bloodloss => 100 Then 
-			Kill(False)
+			Kill()
 			HeartBeatVolume = 0.0
 		ElseIf Bloodloss > 80.0
 			HeartBeatRate = Max(150-(Bloodloss-80)*5,HeartBeatRate)
@@ -5061,7 +5126,7 @@ Function MouseLook()
 
 		Local up# = (Sin(Shake) / (20.0+CrouchState*20.0))*0.4*ViewBobScale
 		;Local side# = Max(Min(Cos(Shake/2)/17.5*Min(Injuries+0.25,3.0),8.0),-8.0)*ViewBobScale		
-		Local roll# = Max(Min(Sin(Shake/2)*2*Min(Injuries+0.25,3.0),8.0),-8.0)*ViewBobScale
+		Local roll# = Max(Min(Sin(Shake / 2) * 2 * Min(Injuries + 0.25, 3.0), 8.0), -8.0) * ViewBobScale
 		
 		;käännetään kameraa sivulle jos pelaaja on vammautunut
 		;RotateEntity Collider, EntityPitch(Collider), EntityYaw(Collider), Max(Min(up*30*Injuries,50),-50)
@@ -5262,7 +5327,7 @@ Function MouseLook()
 						BlurTimer = Max(BlurTimer, 500)
 						If SCP1025state[i]>140 Then 
 							DeathMSG = I_Loc\DeathMessage_1025Cardiacarrest
-							Kill(False)
+							Kill()
 						EndIf
 					Else
 						HeartBeatRate=Max(HeartBeatRate, 70+SCP1025state[i])
@@ -5361,7 +5426,32 @@ Function DrawGUI()
 			
 			FreeEntity (temp)
 			
-			DrawImage(HandIcon, GraphicWidth / 2 + Sin(yawvalue) * (GraphicWidth / 3) - 32 * HUDScale, GraphicHeight / 2 - Sin(pitchvalue) * (GraphicHeight / 3) - 32 * HUDScale)
+			Local currIntIcon% = HandIcon
+			Local currIntIconMOD% = HandIconMOD
+			
+			If ClosestDoor <> Null Then
+				If ClosestDoor\KeyCard > 0 Then
+					If SelectedItem <> Null Then
+						Select SelectedItem\itemtemplate\name
+							Case "key1","key2","key3","key4","key5","key6"
+								currIntIcon = HandIcon3
+								currIntIconMOD = HandIcon3MOD
+						End Select
+					EndIf
+				ElseIf ClosestDoor\KeyCard < 0 Then
+					currIntIcon = HandIcon4
+					currIntIconMOD = HandIcon4MOD
+					If SelectedItem <> Null Then
+						Select SelectedItem\itemtemplate\name
+							Case "hand","hand2"
+								currIntIcon = HandIcon5
+								currIntIconMOD = HandIcon5MOD
+						End Select
+					EndIf
+				EndIf
+			EndIf
+			
+			DrawHUDIcon(currIntIcon, currIntIconMOD, GraphicWidth / 2 + Sin(yawvalue) * (GraphicWidth / 3) - 32 * HUDScale, GraphicHeight / 2 - Sin(pitchvalue) * (GraphicHeight / 3) - 32 * HUDScale)
 		EndIf
 
 		If MouseUp1 Then
@@ -5403,9 +5493,7 @@ Function DrawGUI()
 					Case 3
 						x = x - 5 - 64 * HUDScale
 				End Select
-				DrawImage(HandIcon, x, y)
-				Color 0, 0, 0
-				Rect(x + 4, y + 4, 64 * HUDScale - 8, 64 * HUDScale - 8)
+				DrawImage(HUDFrameImg, x, y)
 				DrawImage(ArrowIMG(i), x + 21 * HUDScale, y + 21 * HUDScale)
 				DrawArrowIcon(i) = False
 			End If
@@ -6232,7 +6320,7 @@ Function DrawGUI()
 							LightFlash = 7
 							PlaySound_Strict(LoadTempSound("SFX\SCP\1123\Touch.ogg"))		
 							DeathMSG = I_Loc\DeathMessage_1123
-							Kill(False)
+							Kill()
 							Return
 						EndIf
 						For e.Events = Each Events
@@ -6374,7 +6462,21 @@ Function DrawGUI()
 					;[End Block]
 				Case "firstaid", "finefirstaid", "firstaid2"
 					;[Block]
-					If Bloodloss = 0 And Injuries = 0 Then
+					Local tempdecline%
+					Select SelectedDifficulty\otherFactors
+						Case EASY
+							tempdecline = 3
+						Case NORMAL
+							tempdecline = 2
+						Case HARD
+							tempdecline = 1
+					End Select
+					
+					If Sanity < (-750) and Rand(tempdecline)=1 Then
+						Msg = I_Loc\Insanity_FirstAid
+						MsgTimer = 70*5
+						If SelectedDifficulty\otherFactors = HARD Then RemoveItem(SelectedItem) Else SelectedItem = Null
+					ElseIf Bloodloss = 0 And Injuries = 0 Then
 						Msg = I_Loc\MessageItem_FirstaidUseFull
 						MsgTimer = 70*5
 						SelectedItem = Null
@@ -6527,7 +6629,7 @@ Function DrawGUI()
 						strtemp = GetINIString2(iniStr, loc, "deathmessage")
 						If strtemp <> "" Then DeathMSG = strtemp
 
-						If GetINIInt2(iniStr, loc, "lethal") Then Kill(False)
+						If GetINIInt2(iniStr, loc, "lethal") Then Kill()
 						
 						BlurTimer = Max(BlurTimer + GetINIInt2(iniStr, loc, "blur")*70, 0);*temp
 						CameraShakeTimer = Max(CameraShakeTimer + GetINIString2(iniStr, loc, "camerashake"), 0)
@@ -7542,7 +7644,7 @@ Function DrawGUI()
 									SetBuffer(TextureBuffer(ResizeTexture))
 									DrawImage(SelectedItem\itemtemplate\img, 0, 0)
 									Color(0, 0, 0)
-									SetFont Font1
+									SetFont Font7
 									Text 277 * MenuScale, 469 * MenuScale, AccessCode, True, True
 									SetBuffer BackBuffer()
 									buf = ImageBuffer(SelectedItem\itemtemplate\img)
@@ -7676,19 +7778,19 @@ Function DrawItemImg(i.Items)
 	DrawImage(i\itemtemplate\invimg, x + width / 2 - 32 * HUDScale, y + height / 2 - 32 * HUDScale)
 	
 	If DrawItemUseProgress Then y1 = HUDEndY - 85.5 * HUDScale Else y1 = y + height / 2 - 32 * HUDScale
-	x2 = (HUDEndX - 115 * HUDScale) - StringWidth(i\itemtemplate\displayname$)
+	x2 = HUDEndX - 115 * HUDScale
 	Color 255,255,255
 	SetFont ConsoleFont
-	Text x2, y1, i\itemtemplate\displayname
+	RightAlignText(x2, y1, i\itemtemplate\displayname)
 End Function
 
 Function DrawItemUseProgress(i.Items)
 	If Not HUDenabled Then Return
-	x = HUDEndX - 319 * HUDScale
+	x = HUDEndX - 115 * HUDScale
 	y = HUDEndY - 55 * HUDScale
 	
 	DrawItemImg(i)
-	DrawBar(BlinkMeterIMG, x, y, 204 * HUDScale, i\state / 100.0)
+	RightAlignBar(BlinkMeterIMG, x, y, 204 * HUDScale, 10 * HUDScale, i\state / 100.0)
 End Function
 
 Function ResetDiseases()
@@ -7712,62 +7814,63 @@ Function DrawHUD()
 	If ShowMap Then DrawMap()
 
 	Local width% = 204 * HUDScale
+	Local height% = 10 * HUDScale
 	Local x% = HUDStartX + 80 * HUDScale
 	Local y% = HUDEndY - 95 * HUDScale
+	Local y2%
 
-	DrawBar(BlinkMeterIMG, x, y, width, BlinkTimer / BLINKFREQ)
-	Color 0, 0, 0
-	Rect(x - 50 * HUDScale, y, 30 * HUDScale, 30 * HUDScale)
-	
-	If EyeIrritation > 0 Then
-		Color 200, 0, 0
-		Rect(x - 50 * HUDScale - 3, y - 3, 30 * HUDScale + 6, 30 * HUDScale + 6)
-	End If
-	
-	Color 255, 255, 255
-	Rect(x - 50 * HUDScale - 1, y - 1, 30 * HUDScale + 2, 30 * HUDScale + 2, False)
-	
-	If BlinkTimer <= -5 Then
-		DrawImage BlinkIcon2, x - 50 * HUDScale, y
-	Else
-		DrawImage BlinkIcon, x - 50 * HUDScale, y
-	EndIf
-	
-	y = HUDEndY - 55 * HUDScale
-	DrawBar(StaminaMeterIMG, x, y, width, Stamina / 100.0)
-	
-	Color 0, 0, 0
-	Rect(x - 50 * HUDScale, y, 30 * HUDScale, 30 * HUDScale)
-	
-	Color 255, 255, 255
-	Rect(x - 50 * HUDScale - 1, y - 1, 30 * HUDScale + 2, 30 * HUDScale + 2, False)
-	If Crouch And (MoveX = 0 And MoveZ = 0) Then
-		DrawImage CrouchStillIcon, x - 50 * HUDScale, y
-	Else
-		If MoveX = 0 And MoveZ = 0 Then
-			DrawImage StandIcon, x - 50 * HUDScale, y
+	If SelectedDifficulty\otherFactors <> HARD Then
+		If UseModernHUD Then y2 = y + 15 * HUDScale Else y2 = y + (ImageHeight(BlinkMeterIMG)/2) + 2
+		DrawBar(BlinkMeterIMG, x, y2, width, height, BlinkTimer / BLINKFREQ, False, True, True)
+		If Not UseModernHUD Then
+			Color 0, 0, 0
+			Rect(x - 50 * HUDScale, y, 30 * HUDScale, 30 * HUDScale)
+			
+			If EyeIrritation > 0 Then
+				Color 200, 0, 0
+				Rect(x - 50 * HUDScale - 3, y - 3, 30 * HUDScale + 6, 30 * HUDScale + 6)
+			End If
+			
+			Color 255, 255, 255
+			Rect(x - 50 * HUDScale - 1, y - 1, 30 * HUDScale + 2, 30 * HUDScale + 2, False)
+		EndIf
+		
+		If BlinkTimer <= -5 Then
+			DrawHUDIcon BlinkIcon2, BlinkIcon2MOD, x - 50 * HUDScale, y
 		Else
-			If Crouch Then
-				DrawImage CrouchIcon, x - 50 * HUDScale, y
+			DrawHUDIcon BlinkIcon, BlinkIconMOD, x - 50 * HUDScale, y
+		EndIf
+		
+		y = HUDEndY - 55 * HUDScale
+		If UseModernHUD Then y2 = y + 15 * HUDScale Else y2 = y + (ImageHeight(StaminaMeterIMG)/2) + 2
+		DrawBar(StaminaMeterIMG, x, y2, width, height, Stamina / 100.0, False, True, True)
+		
+		If Not UseModernHUD Then
+			Color 0, 0, 0
+			Rect(x - 50 * HUDScale, y, 30 * HUDScale, 30 * HUDScale)
+			
+			Color 255, 255, 255
+			Rect(x - 50 * HUDScale - 1, y - 1, 30 * HUDScale + 2, 30 * HUDScale + 2, False)
+		EndIf
+		If Crouch And (MoveX = 0 And MoveZ = 0) Then
+			DrawHUDIcon CrouchStillIcon, CrouchStillIconMOD, x - 50 * HUDScale, y
+		Else
+			If MoveX = 0 And MoveZ = 0 Then
+				DrawHUDIcon StandIcon, StandIconMOD, x - 50 * HUDScale, y
 			Else
-				If KeyDown(KEY_SPRINT) And Stamina > 0 Then
-					DrawImage SprintIcon, x - 50 * HUDScale, y
+				If Crouch Then
+					DrawHUDIcon CrouchIcon, CrouchIconMOD, x - 50 * HUDScale, y
 				Else
-					DrawImage WalkIcon, x - 50 * HUDScale, y
+					If KeyDown(KEY_SPRINT) And Stamina > 0 Then
+						DrawHUDIcon SprintIcon, SprintIconMOD, x - 50 * HUDScale, y
+					Else
+						DrawHUDIcon WalkIcon, WalkIconMOD, x - 50 * HUDScale, y
+					EndIf
 				EndIf
 			EndIf
 		EndIf
 	EndIf
 	
-	;y = HUDEndY - 135 * HUDScale
-	;DrawBar(StaminaMeterIMG, x, y, width, Abs(Sanity) / 1000.0)
-	
-	;Color 0, 0, 0
-	;Rect(x - 50 * HUDScale, y, 30 * HUDScale, 30 * HUDScale)
-	;Color 255, 255, 255
-	;Rect(x - 50 * HUDScale - 1, y - 1, 30 * HUDScale + 2, 30 * HUDScale + 2, False)
-	;DrawImage InsIcon, x - 50 * HUDScale, y
-
 	If DebugHUD Then
 		Color 255, 255, 255
 		SetFont ConsoleFont
@@ -7970,7 +8073,7 @@ Function DrawMenu()
 		SetFont ConsoleFont
 		Text(GraphicWidth / 2, GraphicHeight-54.5, "IN DEVELOPMENT, CONTENT SUBJECT TO CHANGE", True, False)
 		
-		DrawImage PauseMenuIMG, x, y
+		DrawHUDIcon PauseMenuIMG, PauseMenuIMGmod, x, y
 		
 		Color(255, 255, 255)
 		
@@ -8364,6 +8467,15 @@ Function DrawMenu()
 					If MouseOn(x+270*MenuScale,y+MenuScale,20*MenuScale,20*MenuScale) And OnSliderID=0
 						DrawOptionsTooltip(tx,ty,tw,th,"numericseeds")
 					EndIf
+					
+					y = y + 30*MenuScale
+
+					Color 255,255,255
+					Text(x, y, I_Loc\OptionName_ModernHUD)
+					UseModernHUD = DrawTick(x + 270 * MenuScale, y + MenuScale, UseModernHUD)
+					If MouseOn(x+270*MenuScale,y+MenuScale,20*MenuScale,20*MenuScale) And OnSliderID=0
+						DrawOptionsTooltip(tx,ty,tw,th,"modernhud")
+					EndIf
 
 					y = y + 50*MenuScale
 					
@@ -8531,6 +8643,7 @@ Function DrawMenu()
 							DrawLoading(0)
 							
 							MenuOpen = False
+							UpdatePausedMusic()
 							LoadGameQuick(SavePath + CurrSave)
 							
 							MoveMouse viewport_center_x,viewport_center_y
@@ -8566,6 +8679,7 @@ Function DrawMenu()
 							FPSfactor = 0
 							
 							ResetInput()
+							UpdateMusic()
 						EndIf
 					Else
 						DrawFrame(x,y,390*MenuScale, 60*MenuScale)
@@ -8587,6 +8701,7 @@ Function DrawMenu()
 						DrawLoading(0)
 						
 						MenuOpen = False
+						UpdatePausedMusic()
 						LoadGameQuick(SavePath + CurrSave)
 						
 						MoveMouse viewport_center_x,viewport_center_y
@@ -8622,6 +8737,7 @@ Function DrawMenu()
 						FPSfactor = 0
 						
 						ResetInput()
+						UpdateMusic()
 					EndIf
 				Else
 					DrawButton(x, y, 390*MenuScale, 60*MenuScale, "")
@@ -8684,6 +8800,14 @@ Function GetSeedString$(loc%=True)
 	EndIf
 End Function
 
+Function GetSeedSimple$()
+	If HasNumericSeed Then
+		Return Str(RandomSeedNumeric)
+	Else
+		Return RandomSeed
+	EndIf
+End Function
+
 Function MouseOn%(x%, y%, width%, height%)
 	If ScaledMouseX() > x And ScaledMouseX() < x + width Then
 		If ScaledMouseY() > y And ScaledMouseY() < y + height Then
@@ -8706,7 +8830,22 @@ Function LoadEntities()
 		TempSounds[i]=0
 	Next
 	
+	If PauseMenuIMGmod = 0 Then PauseMenuIMGmod% = LoadImage_Strict("GFX\Menu\Modern\pausemenu.png", MenuScale)
+	
 	If PauseMenuIMG = 0 Then PauseMenuIMG% = LoadImage_Strict("GFX\menu\pausemenu.png", MenuScale)
+	
+	If SprintIconMOD = 0 Then SprintIconMOD% = LoadImageHUDScaled("GFX\HUD\Modern\sprinticon.png")
+	If WalkIconMOD = 0 Then WalkIconMOD% = LoadImageHUDScaled("GFX\HUD\Modern\walkicon.png")
+	If StandIconMOD = 0 Then StandIconMOD% = LoadImageHUDScaled("GFX\HUD\Modern\standicon.png")
+	If BlinkIconMOD = 0 Then BlinkIconMOD% = LoadImageHUDScaled("GFX\HUD\Modern\blinkicon.png")
+	If BlinkIcon2MOD = 0 Then BlinkIcon2MOD% = LoadImageHUDScaled("GFX\HUD\Modern\blinkicon2.png")
+	If CrouchIconMOD = 0 Then CrouchIconMOD% = LoadImageHUDScaled("GFX\HUD\Modern\sneakicon.png")
+	If CrouchStillIconMOD = 0 Then CrouchStillIconMOD% = LoadImageHUDScaled("GFX\HUD\Modern\crouchstillicon.png")
+	If HandIconMOD = 0 Then HandIconMOD% = LoadImageHUDScaled("GFX\HUD\Modern\handsymbol.png")
+	If HandIcon2MOD = 0 Then HandIcon2MOD% = LoadImageHUDScaled("GFX\HUD\Modern\handsymbol2.png")
+	If HandIcon3MOD = 0 Then HandIcon3MOD% = LoadImageHUDScaled("GFX\HUD\Modern\handsymbol3.png")
+	If HandIcon4MOD = 0 Then HandIcon4MOD% = LoadImageHUDScaled("GFX\HUD\Modern\handsymbol4.png")
+	If HandIcon5MOD = 0 Then HandIcon5MOD% = LoadImageHUDScaled("GFX\HUD\Modern\handsymbol5.png")
 	
 	If SprintIcon = 0 Then SprintIcon% = LoadImageHUDScaled("GFX\HUD\sprinticon.png")
 	If WalkIcon = 0 Then WalkIcon% = LoadImageHUDScaled("GFX\HUD\walkicon.png")
@@ -8715,11 +8854,13 @@ Function LoadEntities()
 	If BlinkIcon2 = 0 Then BlinkIcon2% = LoadImageHUDScaled("GFX\HUD\blinkicon2.png")
 	If CrouchIcon = 0 Then CrouchIcon% = LoadImageHUDScaled("GFX\HUD\sneakicon.png")
 	If CrouchStillIcon = 0 Then CrouchStillIcon% = LoadImageHUDScaled("GFX\HUD\crouchstillicon.png")
-	;If InsIcon = 0 Then InsIcon% = LoadImageHUDScaled("GFX\HUD\isnan.png")
 	If HandIcon = 0 Then HandIcon% = LoadImageHUDScaled("GFX\HUD\handsymbol.png")
 	If HandIcon2 = 0 Then HandIcon2% = LoadImageHUDScaled("GFX\HUD\handsymbol2.png")
 	If HandIcon3 = 0 Then HandIcon3% = LoadImageHUDScaled("GFX\HUD\handsymbol3.png")
 	If HandIcon4 = 0 Then HandIcon4% = LoadImageHUDScaled("GFX\HUD\handsymbol4.png")
+	If HandIcon5 = 0 Then HandIcon5% = LoadImageHUDScaled("GFX\HUD\handsymbol5.png")
+	
+	If HUDFrameImg = 0 Then HUDFrameImg% = LoadImageHUDScaled("GFX\HUD\frame.png")
 
 	If StaminaMeterIMG = 0 Then StaminaMeterIMG% = LoadImageHUDScaled("GFX\HUD\staminameter.png")
 
@@ -10534,13 +10675,13 @@ Function Use914(item.Items, setting$, x#, y#, z#)
 								Case EASY
 									it2 = CreateItem("key2", x, y, z)
 								Case NORMAL
-									If Rand(5)=1 Then
+									If Rand(6)=1 Then
 										it2 = CreateItem("mastercard", x, y, z)
 									Else
 										it2 = CreateItem("key2", x, y, z)
 									EndIf
 								Case HARD
-									If Rand(4)=1 Then
+									If Rand(5)=1 Then
 										it2 = CreateItem("mastercard", x, y, z)
 									Else
 										it2 = CreateItem("key2", x, y, z)
@@ -10551,13 +10692,13 @@ Function Use914(item.Items, setting$, x#, y#, z#)
 								Case EASY
 									it2 = CreateItem("key3", x, y, z)
 								Case NORMAL
-									If Rand(4)=1 Then
+									If Rand(5)=1 Then
 										it2 = CreateItem("mastercard", x, y, z)
 									Else
 										it2 = CreateItem("key3", x, y, z)
 									EndIf
 								Case HARD
-									If Rand(3)=1 Then
+									If Rand(4)=1 Then
 										it2 = CreateItem("mastercard", x, y, z)
 									Else
 										it2 = CreateItem("key3", x, y, z)
@@ -10589,13 +10730,13 @@ Function Use914(item.Items, setting$, x#, y#, z#)
 								Case EASY
 									it2 = CreateItem("key5", x, y, z)
 								Case NORMAL
-									If Rand(4)=1 Then
+									If Rand(5)=1 Then
 										it2 = CreateItem("mastercard", x, y, z)
 									Else
 										it2 = CreateItem("key5", x, y, z)
 									EndIf
 								Case HARD
-									If Rand(3)=1 Then
+									If Rand(4)=1 Then
 										it2 = CreateItem("mastercard", x, y, z)
 									Else
 										it2 = CreateItem("key5", x, y, z)
@@ -10747,7 +10888,7 @@ Function Use914(item.Items, setting$, x#, y#, z#)
 					d.Decals = CreateDecal(0, x, 8*RoomScale+0.010, z, 90, Rand(360), 0)
 					d\Size = 0.2 : EntityAlpha(d\obj, 0.8) : ScaleSprite(d\obj, d\Size, d\Size)
 					If Active5131% <> False Then Active5131% = False
-					SanityDrainRate% = 32
+					SanityDrainRate# = 32
 				Case "1:1", "fine", "very fine"
 					it2 = CreateItem("scp513", x, y, z)
 					
@@ -11259,7 +11400,7 @@ Function Use427()
 			BlurTimer = 800
 		EndIf
 		If I_427\Timer >= 70*420 Then
-			Kill(False)
+			Kill()
 			DeathMSG = I_Loc\DeathMessage_427
 		ElseIf I_427\Timer >= 70*390 Then
 			Crouch = True
@@ -11471,7 +11612,7 @@ Function UpdateInfect()
 						
 						DeathMSG = I_Loc\DeathMessage_008
 						
-						Kill(False)
+						Kill()
 						Local de.Decals = CreateDecal(3, EntityX(PlayerRoom\NPC[0]\Collider), 544*RoomScale + 0.01, EntityZ(PlayerRoom\NPC[0]\Collider),90,Rnd(360),0)
 						de\Size = 0.8
 						ScaleSprite(de\obj, de\Size,de\Size)
@@ -11506,7 +11647,7 @@ Function UpdateInfect()
 					TurnEntity Head, 80+(Sin(MilliSecs()/5.0))*30,(Sin(MilliSecs()/5.0))*40,0
 				EndIf
 			Else
-				Kill(False)
+				Kill()
 				BlinkTimer = Max(Min(-10*(Infect-96),BlinkTimer),-10)
 				If PlayerRoom\RoomTemplate\Name = "dimension1499" Then
 					DeathMSG = I_Loc\DeathMessage_1499
@@ -12045,6 +12186,7 @@ Function SaveOptionsINI()
 	PutINIValue(OptionFile, "console", "auto opening", ConsoleOpening%)
 	PutINIValue(OptionFile, "general", "speed run mode", SpeedRunMode%)
 	PutINIValue(OptionFile, "general", "numeric seeds", UseNumericSeeds%)
+	PutINIValue(OptionFile, "general", "modern hud", UseModernHUD%)
 	PutINIValue(OptionFile, "controls", "mouse smoothing", MouseSmooth)
 	PutINIValue(OptionFile, "graphics", "hud scale factor", HUDScaleFactor)
 	PutINIValue(OptionFile, "graphics", "hud offset", HUDOffsetScale)

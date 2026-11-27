@@ -71,12 +71,21 @@ Function UpdateEvents()
 						AmbientLight Brightness, Brightness, Brightness
 						CameraFogRange(Camera, CameraFogNear, CameraFogFar)
 						CameraFogMode(Camera, 1)
-						If SelectedDifficulty\saveType = SAVEANYWHERE Then
-							Msg = Format(I_Loc\MessageSave_Anywhere, GetKeyName(KEY_SAVE))
-							MsgTimer = 70*4
-						ElseIf SelectedDifficulty\saveType = SAVEONSCREENS Then
-							Msg = I_Loc\MessageSave_Screens
+						If SelectedDifficulty = Difficulties[AMIDA] Then
+							Msg = I_Loc\MessageSave_DisabledAmida
 							MsgTimer = 70 * 8
+						Else
+							Select SelectedDifficulty\saveType
+								Case SAVEANYWHERE
+									Msg = Format(I_Loc\MessageSave_Anywhere, GetKeyName(KEY_SAVE))
+									MsgTimer = 70*4
+								Case SAVEONSCREENS
+									Msg = I_Loc\MessageSave_Screens
+									MsgTimer = 70 * 8
+								Case NOSAVES
+									Msg = I_Loc\MessageSave_DisabledCustom
+									Msgtimer = 70 * 8
+							End Select
 						EndIf
 						
 						Curr173\Idle=False
@@ -1696,7 +1705,7 @@ Function UpdateEvents()
 								EndIf
 								EntityTexture(NVOverlay, NVTexture)
 								If VomitTimer < -10 Then
-									Kill(False)
+									Kill()
 								EndIf
 							ElseIf Sanity < - 800 Then
 								If Rand(3) = 1 Then EntityTexture(NVOverlay, NVTexture)
@@ -2202,7 +2211,7 @@ Function UpdateEvents()
 									EndIf
 									
 									DrainSanity = True
-									SanityDrainRate% = (temp / 8)
+									SanityDrainRate# = (temp / 8)
 									
 									;e\SoundCHN = LoopSound2(OldManSFX(4), e\SoundCHN, Camera, e\room\Objects[17], 5.0, 0.6)
 									
@@ -2959,7 +2968,7 @@ Function UpdateEvents()
 											ShowEntity Light
 											LightFlash = 0.4
 											CameraShake = 1.0
-											Kill(False)
+											Kill()
 											DeathMSG = I_Loc\DeathMessage_Tesla
 										EndIf
 									Next
@@ -5058,7 +5067,7 @@ Function UpdateEvents()
 										de\Size = 0.1 : de\MaxSize = 0.45 : de\SizeChange = 0.0002 : UpdateDecals()
 									ElseIf e\EventState3>85*70 And e\EventState3-FPSfactor=<85*70	
 										DeathMSG = I_Loc\DeathMessage_012
-										Kill(False)
+										Kill()
 									EndIf
 									
 									RotateEntity(Collider, EntityPitch(Collider), CurveAngle(EntityYaw(Collider)+Sin(e\EventState3*(e\EventState3/2000))*(e\EventState3/300), EntityYaw(Collider), 80), 0)
@@ -6346,7 +6355,7 @@ Function UpdateEvents()
 						;the player fell
 						If (Not NoClip)
 							If EntityY(Collider)<=28.5 Then 
-								Kill(False) 
+								Kill() 
 								BlinkTimer=-2
 							ElseIf EntityY(Collider)>EntityY(fr\Forest_Pivot,True)+0.5
 								MoveEntity(Collider, 0, ((EntityY(fr\Forest_Pivot,True)+0.5) - EntityY(Collider))*FPSfactor, 0)
@@ -7724,7 +7733,7 @@ Function UpdateEvents()
 									PlaySound_Strict LoadTempSound("SFX\SCP\1162\BodyHorrorExchange"+Rand(1,4)+".ogg")
 									Scream()
 									LightFlash = 5.0
-									Kill(False)
+									Kill()
 								Else
 									PlaySound_Strict LoadTempSound("SFX\SCP\1162\BodyHorrorExchange"+Rand(1,4)+".ogg")
 									Scream()
@@ -7754,7 +7763,7 @@ Function UpdateEvents()
 								PlaySound_Strict LoadTempSound("SFX\SCP\1162\BodyHorrorExchange"+Rand(1,4)+".ogg")
 								Scream()
 								LightFlash = 5.0
-								Kill(False)
+								Kill()
 							Else
 								PlaySound_Strict LoadTempSound("SFX\SCP\1162\BodyHorrorExchange"+Rand(1,4)+".ogg")
 								Scream()
@@ -9270,7 +9279,7 @@ Function UpdateEndings()
 												NoClip = 0
 												KillTimer = -0.1
 												DeathMSG = ""
-												Kill(False)
+												Kill()
 												BlinkTimer = -10
 												
 												For n.NPCs = Each NPCs
@@ -9826,7 +9835,7 @@ Function UpdateEndings()
 											NoClip = 0
 											KillTimer = -0.1
 											DeathMSG = ""
-											Kill(False)
+											Kill()
 										EndIf
 										
 										If SelectedEnding <> "" Then
@@ -9901,7 +9910,7 @@ Function UpdateEndings()
 											NoClip = 0
 											KillTimer = -0.1
 											DeathMSG = ""
-											Kill(False)
+											Kill()
 											BlinkTimer = -10
 											RemoveEvent(e)
 											Exit

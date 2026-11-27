@@ -75,8 +75,8 @@ Global AchvOmni.Achievements = CreateAchievement("Omni")
 Global AchvChaos.Achievements = CreateAchievement("Chaos")
 Global AchvConsole.Achievements = CreateAchievement("Console")
 Global AchvEscape.Achievements = CreateAchievement("Escape")
-Global AchvEuclid.Achievements = CreateAchievement("Euclid")
-Global AchvKeter.Achievements = CreateAchievement("Keter")
+Global AchvEkhi.Achievements = CreateAchievement("Ekhi")
+Global AchvAmida.Achievements = CreateAchievement("Amida")
 Global AchvSpeedrun.Achievements = CreateAchievement("Speedrun")
 
 Global UsedConsole

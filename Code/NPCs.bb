@@ -732,16 +732,19 @@ Function UpdateNPCs()
 									EndIf
 								EndIf
 								
-								If dist <= 5 Then
+								If dist <= 5 and temp Then
 									RestoreSanity = False
-									Sanity = Max(Sanity - ((5-Dist)/100)/FPSfactor, -1000)
+									Sanity = Max(Sanity - ((5-Dist)/300)/FPSfactor, -1000)
+								ElseIf dist <= 5 Then
+									RestoreSanity = False
+									Sanity = Max(Sanity - ((5-Dist)/600)/FPSfactor, -1000)
 								EndIf
 								
 								Local SoundVol# = Max(Min((Distance(EntityX(n\Collider), EntityZ(n\Collider), n\PrevX, n\PrevZ) * 2.5), 1.0), 0.0)
 								n\SoundChn = LoopSound2(StoneDragSFX, n\SoundChn, Camera, n\Collider, 10.0, n\State)
 								
 								n\PrevX = EntityX(n\Collider)
-								n\PrevZ = EntityZ(n\Collider)				
+								n\PrevZ = EntityZ(n\Collider)
 								
 								If (BlinkTimer < - 16 Or BlinkTimer > - 6) And (IsNVGBlinking=False) Then
 									If EntityInView(n\obj, Camera) Then move = False
@@ -754,7 +757,7 @@ Function UpdateNPCs()
 							If move=False Then
 								If dist <= 3.5 And temp Then
 									If MilliSecs() - n\LastSeen > 60000 Then
-										SightScare(True, True)
+										SightScare()
 										Scared = True
 										If ScareTimer < 200 Then ScareTimer = 200
 										If ScareMusic = 66 Then ScareMusic = 28
@@ -766,10 +769,10 @@ Function UpdateNPCs()
 								
 								If dist <= 1.5 And n\LastDist > 2.0 And temp Then
 									GiveAchievement(AchvJumpscare)
-									Jumpscare(True)
+									Jumpscare()
 									Scared = True
 									ScareTimer = ScareTimer + 200
-									If ScareMusic = 66 Then ScareMusic = 29
+									If ScareMusic = 66 Or ScareMusic = 28 Then ScareMusic = 29
 								EndIf
 									
 								n\LastDist = dist
@@ -861,7 +864,7 @@ Function UpdateNPCs()
 												Else
 													TurnEntity(Camera, 0, Rand(-100,-80), 0)
 												EndIf
-												Kill(False)
+												Kill()
 												
 											EndIf
 										Else
@@ -1027,7 +1030,7 @@ Function UpdateNPCs()
 							Else
 								If PlayerRoom\RoomTemplate\Name <> "gatea" Then
 									Scared = True
-									If ScareMusic = 66 Then ScareMusic = 10
+									If ScareMusic = 66 Or ScareMusic = 32 Then ScareMusic = 10
 								EndIf
 								
 								Local Visible% = False
@@ -1047,7 +1050,7 @@ Function UpdateNPCs()
 										CurrCameraZoom = Max(CurrCameraZoom, (Sin(Float(MilliSecs())/20.0)+1.0) * 20.0 * Max((4.0-dist)/4.0,0))
 										
 										If MilliSecs() - n\LastSeen > 60000 Then 
-											SightScare(True, True)
+											SightScare()
 											n\LastSeen = MilliSecs()
 										EndIf
 									EndIf
@@ -1154,11 +1157,11 @@ Function UpdateNPCs()
 										If Ceil(n\Frame) = 110 And (Not GodMode) Then
 											PlaySound_Strict(DamageSFX(1))
 											PlaySound_Strict(HorrorSFX(5))
-											SightScare(True, True)
+											SightScare()
 											Scream()
 											If PlayerRoom\RoomTemplate\Name = "pocketdimension" Then
 												DeathMSG = I_Loc\DeathMessage_106Pd
-												Kill(False)
+												Kill()
 											Else
 												PlaySound_Strict(OldManSFX(3))
 												FallTimer = Min(-1, FallTimer)
@@ -1387,7 +1390,7 @@ Function UpdateNPCs()
 												CameraShake = 30
 												BlurTimer = 2000
 												DeathMSG = I_Loc\DeathMessage_096
-												Kill(False)
+												Kill()
 												KillAnim = 1
 												For i = 0 To 6
 													PositionEntity pvt, EntityX(Collider)+Rnd(-0.1,0.1),EntityY(Collider)-0.05,EntityZ(Collider)+Rnd(-0.1,0.1)
@@ -1789,7 +1792,7 @@ Function UpdateNPCs()
 													Next
 												Else
 													DeathMSG = I_Loc\DeathMessage_049
-													Kill(False) : KillAnim = 0
+													Kill() : KillAnim = 0
 												EndIf
 												PlaySound_Strict HorrorSFX(13)
 												If n\Sound2 <> 0 Then FreeSound_Strict(n\Sound2)
@@ -2005,7 +2008,7 @@ Function UpdateNPCs()
 									StopChannel(n\SoundChn)
 								EndIf
 								If PlayerInReachableRoom(True) And InFacility=1 Then ;Player is in a room where SCP-049 can teleport to
-									If Rand(1,3-SelectedDifficulty\otherFactors)=1 Then
+									If Rand(1,4-SelectedDifficulty\otherFactors)=1 Then
 										TeleportCloser(n)
 										DebugLog "SCP-049 teleported closer due to distance"
 									Else
@@ -3302,7 +3305,7 @@ Function UpdateNPCs()
 													Else
 														DeathMSG = I_Loc\DeathMessage_035Tentacle
 													EndIf
-													Kill(False)
+													Kill()
 												EndIf
 											EndIf
 											
@@ -3620,7 +3623,7 @@ Function UpdateNPCs()
 								
 								;Animate2(n\obj, AnimTime(n\obj), 451,493, 0.5, False)
 								If (prevFrame < 461 And n\Frame=>461) Then 
-									If KillTimer => 0 Then Kill(False) : KillAnim = 0
+									If KillTimer => 0 Then Kill() : KillAnim = 0
 									PlaySound_Strict(n\Sound)
 								EndIf
 								If (prevFrame < 476 And n\Frame=>476) Then PlaySound_Strict(n\Sound2)
@@ -3843,7 +3846,7 @@ Function UpdateNPCs()
 								If n\Sound <> 0 Then FreeSound_Strict n\Sound : n\Sound = 0
 								n\Sound = LoadSound_Strict("SFX\SCP\939\"+(n\ID Mod 3)+"Attack"+Rand(1,3)+".ogg")
 								n\SoundChn = PlaySound2(n\Sound, Camera, n\Collider)
-								Jumpscare(True)
+								Jumpscare()
 								Scared = True
 								ScareTimer = ScareTimer + 250
 								If ScareMusic = 66 Then ScareMusic = 31
@@ -3860,7 +3863,7 @@ Function UpdateNPCs()
 								n\Frame = 175
 								n\Reload = 70 * 3
 								;SetAnimTime(n\obj, 175)
-								SightScare(True, True)
+								SightScare()
 								GiveAchievement(Achv939)
 								ScaredBy939 = True
 							EndIf
@@ -4373,7 +4376,7 @@ Function UpdateNPCs()
 								;If n\Frame>2173.0 And prevFrame<=2173.0 Or n\Frame>2203.0 And prevFrame<=2203.0 Or n\Frame>2227.0 And prevFrame<=2227.0 Then
 								If (n\Frame>470.0 And prevFrame<=470.0) Or (n\Frame>500.0 And prevFrame<=500.0) Or (n\Frame>527.0 And prevFrame<=527.0)
 									PlaySound2(LoadTempSound("SFX\General\Damage\Slash"+Rand(1,2)+".ogg"), Camera, n\Collider)
-									If WearingNightVision = 0 Then Jumpscare(True)
+									If WearingNightVision = 0 Then Jumpscare()
 									Grunt()
 									Injuries = Injuries + Rnd(0.5,1.0)								
 								EndIf	
@@ -4454,7 +4457,7 @@ Function UpdateNPCs()
 						
 						If (n\State2>70*15) Then
 							DeathMSG = I_Loc\DeathMessage_1048a
-							Kill(False)
+							Kill()
 							n\State = 3
 						EndIf
 
@@ -4785,7 +4788,7 @@ Function UpdateNPCs()
 										PlaySound2(LoadTempSound("SFX\General\Damage\Slash"+Rand(1,2)+".ogg"), Camera, n\Collider)
 										If Injuries<=10.0 Then Grunt()
 										If Injuries > 10.0
-											Kill(False)
+											Kill()
 											If PlayerRoom\RoomTemplate\Name$ = "dimension1499"
 												DeathMSG = I_Loc\DeathMessage_14991Dimension
 											Else
@@ -6876,7 +6879,7 @@ Function Shoot(x#, y#, z#, hitProb# = 1.0, particles% = True, instaKill% = False
 	
 	If (Not GodMode) Then 
 		
-		If instaKill Then Kill(False) : PlaySound_Strict BullethitSFX : Return
+		If instaKill Then Kill() : PlaySound_Strict BullethitSFX : Return
 		
 		If Rnd(1.0) =< hitProb Then
 			TurnEntity Camera, Rnd(-3,3), Rnd(-3,3), 0
@@ -6917,12 +6920,12 @@ Function Shoot(x#, y#, z#, hitProb# = 1.0, particles% = True, instaKill% = False
 				EndIf
 				
 				If Injuries >= 5
-					If Rand(3) = 1 Then Kill(False)
+					If Rand(3) = 1 Then Kill()
 				EndIf
 			Else
 				Select Rand(6)
 					Case 1
-						Kill(False)
+						Kill()
 					Case 2
 						BlurTimer = 500
 						ShotMessageUpdate = I_Loc\MessageShot_Leftleg
@@ -6954,7 +6957,7 @@ Function Shoot(x#, y#, z#, hitProb# = 1.0, particles% = True, instaKill% = False
 
 			Injuries = Min(Injuries, 4.0)
 			
-			;Kill(False)
+			;Kill()
 			PlaySound_Strict BullethitSFX
 		ElseIf particles And ParticleAmount>0
 			Local pvt = CreatePivot()
@@ -7468,9 +7471,9 @@ Function NPCSpeedChange(n.NPCs)
 		Case NPCtype173,NPCtypeOldMan,NPCtype096,NPCtype049,NPCtype939,NPCtypeMTF
 			Select SelectedDifficulty\otherFactors
 				Case NORMAL
-					n\Speed = n\Speed * 1.1
-				Case HARD
 					n\Speed = n\Speed * 1.2
+				Case HARD
+					n\Speed = n\Speed * 1.3
 			End Select
 	End Select
 	
