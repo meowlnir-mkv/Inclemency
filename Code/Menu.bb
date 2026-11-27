@@ -1364,7 +1364,7 @@ Function UpdateLauncher()
 		
 		gfxWidth% = GfxModeWidthsByAspectRatio(SelectedAspectRatio, SelectedGfxMode) : gfxHeight% = GfxModeHeightsByAspectRatio(SelectedAspectRatio, SelectedGfxMode)
 
-		Text(260 + 50, 262 - 55 + 140, I_Loc\Launcher_ResolutionCurrent+" "+gfxWidth + "x" + gfxHeight)
+		Text(20, 262 - 55 + 140, I_Loc\Launcher_ResolutionCurrent+" "+gfxWidth + "x" + gfxHeight)
 
 		;If DrawButton(LauncherWidth - 30 - 90 - 130 - 15, LauncherHeight - 50 - 55, 130, 30, I_Loc\Launcher_Mapcreator, False, False) Then
 			;ExecFile(Chr(34)+"Map Creator\StartMapCreator.bat"+Chr(34))
@@ -1586,6 +1586,8 @@ Function DrawLoading(percent%, shortloading=False, togame=True)
 				EndIf
 			Next
 		EndIf	
+	ElseIf percent = 0 Then
+		PlaySound_Strict LoadTempSound(("SFX\Ambient\Entrance\Ambient2.ogg"))
 	EndIf
 	
 	Local firstloop = True
@@ -1627,7 +1629,7 @@ Function DrawLoading(percent%, shortloading=False, togame=True)
 			Else
 				y = 0
 			EndIf	
-		
+			
 			DrawImage SelectedLoadingScreen\img, x, y
 		EndIf
 		
@@ -1772,14 +1774,14 @@ Function DrawLoading(percent%, shortloading=False, togame=True)
 			
 			Color 255,255,255
 			If RandomTipTime < MilliSecs() Then
-				RandomTipIndex = Rand(20) ;can you actually get the size of an array?? ;idk, probably would have to make a global variable and have both the dim and the index use it
+				RandomTipIndex = Rand(22) ;can you actually get the size of an array?? ;idk, probably would have to make a global variable and have both the dim and the index use it
 				RandomTipTime = MilliSecs() + 10000
 			EndIf
 			Text(50 * MenuScale, GraphicHeight - 50 * MenuScale, I_Loc\Loading_Random[RandomTipIndex], False, True)
 		EndIf
 		
 		If percent = 100 Then 
-			If firstloop And SelectedLoadingScreen\title <> "CWM" Then PlaySound_Strict LoadTempSound(("SFX\Menu\FinishLoading.ogg"))
+			If firstloop And SelectedLoadingScreen\title <> "CWM" And togame Then PlaySound_Strict LoadTempSound(("SFX\Menu\FinishLoading.ogg"))
 			If togame = True Then
 				Color 0,0,0
 				RightAlignText(GraphicWidth - 49 * MenuScale, GraphicHeight - 88 * MenuScale, I_Loc\Menu_Pressany, True)

@@ -1017,7 +1017,9 @@ Function UpdateNPCs()
 							
 							If n\State > - 10 Then
 								Scared = True
-								If ScareMusic = 66 Then ScareMusic = 32
+								;ScareTimer = 10
+								;If ScareMusic = 66 Then ScareMusic = 32
+								ScareMusic = 66
 								If n\Frame<259 Then
 									PositionEntity n\Collider, EntityX(n\Collider), n\PrevY-0.15, EntityZ(n\Collider)
 									PointEntity n\obj, Collider
@@ -1030,6 +1032,7 @@ Function UpdateNPCs()
 							Else
 								If PlayerRoom\RoomTemplate\Name <> "gatea" Then
 									Scared = True
+									ScareTimer = 1
 									If ScareMusic = 66 Or ScareMusic = 32 Then ScareMusic = 10
 								EndIf
 								

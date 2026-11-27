@@ -5,43 +5,42 @@ Alpha v2 - IN DEVELOPMENT, ADDITIONS AND CHANGELOG NOT FINALIZED
 - Made a Discord server for Containment Breach: Inclemency and related news (https://discord.gg/AZCEJ8NFt7)
 - Changed version naming scheme from "Indev Update X" to Alpha vX.Y.Z
 - Changed credits to only include studio names/usernames for simplicity
+- Put options.ini in the game folder
 - Heavily re-organized the SFX folder and its subfolders
 - Re-organized the GFX folder
 
 Gameplay:
 - Added four new rooms to the Light Containment Zone
-- You can no longer save via quitting on the Keter difficulty
-- Heavily expanded insanity feature with new visual effects and sounds
+- Difficulties renamed to Keneq, Ekhi, and Amida
+- You can no longer save via quitting on the Amida difficulty
+- Overall difficulty rebalancing
+- Faster movement speeds for SCP-173, SCP-106, SCP-049, SCP-049-2, and SCP-939
+- Heavily expanded insanity feature
 - Agent Ulgrin no longer hands you SCP-173's document in the intro
 - You no longer recieve SCP-173's document when starting a new game with the intro disabled
 - Keycards and severed hands are no longer unequipped after using them
-- New "Lighter" and "Lit Cigarette" items: use the Lighter to light a cigarette which you can then smoke
+- New "Lighter" and "Lit Cigarette" items
 - Removed 'Mods' button from the main menu
 - Buffed SCP-1499-1 instances
 - New loading screen for SCP-008
-- Added 11 new achievements (Listed below)
-- Object of Attention - Saw The Sculpture breach containment.
-- Oh Shit! - Got up close and personal with The Sculpture.
-- Anklebreaker - Got dangerously close to the Plague Doctor.
-- To Hell... - Entered the Pocket Dimension.
-- ...And Back - Escaped the Pocket Dimension.
-- Sacrifice - Successfully contained The Old Man.
-- Mindfuck - Reached an insanely low point.
-- Absconded - Escaped the facility.
-- Iron Resolve - Escaped while playing on the Euclid difficulty or higher.
-- Go-Fer - Brought the Insurgency a gift.
-- Freedom In A Flash - Escaped the facility in under 30 minutes.
+- Some new feature-test console commands
+- Added 11 new achievements
 
 Visuals:
-- Added extra HUD icon states for blinking, standing still (+ crouched variant), and walking
+- Changed the default font from Courier New to IBM Plex Mono Light
+- Added a Modern HUD option (on by default) with smooth bars and transparent HUD icons
+- Changed menuwhite and menublack to be brighter and less grungy
+- Added extra HUD icon states for different interaction and player movement states
 - Added description text when hovering over items in the inventory
 - New HUD in the bottom right corner for held items
+- Complete overhaul of the loading screen with fullscreen renders and new UI
 - Completely removed all custom lightmaps due to various issues
 - Remastered whitewall and officewall to have a higher resolution
 - Changed the textures for smoke and smoke2
-- Changed the textures for metal3, metal, and metal_darker
+- Changed the textures for metal and metal_darker
 - Changed the D-Class Orientation Leaflet found in the intro
-- Tweaked viewbob intensity and speed to resemble a more normal walking gait and match the footstep speed
+- Tweaked viewbob intensity and speed to resemble a more normal walking gait
+- Changed how arrow icons work to look better
 
 Audio:
 - Dynamic music systems for certain SCP encounters
@@ -65,10 +64,9 @@ Audio:
 - Different body fall sound effect for the 895 suicide guard event
 
 Miscellaneous:
-- Various changes and tweaks to many text strings
-- Added a new intro video
+- Various changed, tweaked, and new text strings
 - Combined the Undertow Games and Third Subdivision Studios intro videos into one
-- Changed window names to use the Containment Breach: Inclemency name instead of SCP Containment Breach
+- Changed window names to use the Containment Breach: Inclemency name instead of SCP – Containment Breach
 
 -------------------------------------------------------------------------------------
 

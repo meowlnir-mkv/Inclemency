@@ -4188,13 +4188,22 @@ End Function
 
 Function SightScare(shouldsound% = True, affectsanity% = True)
 	If affectsanity% Then
-		If Sanity < (-500) Then
-			Sanity = Max(Sanity-Rand(50,100), -500)
-		ElseIf Sanity > (-1000) Then
-			Sanity = Max(Sanity-Rand(25,50), -1000)
-		EndIf
+		Local sightmult#
+		
+		Select SelectedDifficulty\otherFactors
+			Case EASY
+				sightmult# = 1.0
+			Case NORMAL
+				sightmult# = 1.1
+			Case HARD
+				sightmult# = 1.2
+		End Select
+		
+		Sanity = Max((Sanity-(Rand(25,50)*Abs(Sanity)/500)) * sightmult#, -1000)
 	EndIf
+	
 	CurrCameraZoom = 20.0
+	
 	If shouldsound% Then
 		Select Rand(5)
 			Case 1
@@ -4212,9 +4221,24 @@ Function SightScare(shouldsound% = True, affectsanity% = True)
 End Function
 
 Function Jumpscare(affectsanity% = True)
-	If affectsanity% Then Sanity = Max(Sanity-Rand(125,250), -1000)
+	If affectsanity% Then
+		Local jumpmult#
+		
+		Select SelectedDifficulty\otherFactors
+			Case EASY
+				jumpmult# = 1.0
+			Case NORMAL
+				jumpmult# = 1.1
+			Case HARD
+				jumpmult# = 1.2
+		End Select
+		
+		Sanity = Max((Sanity-(Rand(125,250)*Abs(Sanity)/500)) * jumpmult#, -1000)
+	EndIf
+	
 	CurrCameraZoom = 40.0
 	CameraShake = 5
+	
 	Select Rand(3)
 		Case 1
 			PlaySound_Strict(HorrorSFX(Rand(1, 2)))
@@ -4277,7 +4301,7 @@ Function UpdateSanity()
 				PlaySound_Strict(InsaneLightSFX(Rand(0,2)))
 			EndIf
 			
-			If KillTimer => 0 Then 
+			If KillTimer => 0 and Sanity > (-750) Then 
 				HeartBeatVolume = Min(Abs((Sanity+250)/2)/500.0,1.0)
 				HeartBeatRate = Max(70 + Abs((Sanity+250)/2)/6.0,HeartBeatRate)
 			EndIf
@@ -4292,7 +4316,7 @@ Function UpdateSanity()
 				AmbChance = 375
 				PlayerZone = 6
 				
-				If Sanity > (-750) And Rand(2500)=1 Then
+				If Sanity > (-750) And Rand(2500)=1 and KillTimer > 0 Then
 					Msg = I_Loc\Insanity_Random[Rand(1,15)]
 					MsgTimer = 70*4
 				EndIf
@@ -4324,12 +4348,12 @@ Function UpdateSanity()
 					If Rand(10000)=1 Then SightScare(True,False)
 					If Rand(5000000)=1 Then Jumpscare(False)
 					
-					If Rand(5000)=1 Then
+					If Rand(5000)=1 and KillTimer > 0 Then
 						Msg = I_Loc\Insanity_Extreme[Rand(1,15)]
 						MsgTimer = 70*4
 					EndIf
 						
-					If Rand(7500/Max((Abs(Sanity) - 100)/900, 1))=1 Then
+					If Rand(15000/Max((Abs(Sanity) - 100)/900, 1))=1 and KillTimer > 0 Then
 						Msg = I_Loc\Insanity_SelfHarm[Rand(1,10)]
 						MsgTimer = 70*6
 						DeathMSG = I_Loc\DeathMessage_SelfHarm
@@ -4341,7 +4365,7 @@ Function UpdateSanity()
 						BlurTimer# = BlurTimer + selfharm*5
 					EndIf
 					
-					If Rand(5000000/Max((Abs(Sanity) - 100)/900, 1))=1 Then
+					If Rand(5000000/Max((Abs(Sanity) - 100)/900, 1))=1  and KillTimer > 0 Then
 						Msg = I_Loc\Insanity_Suicide
 						MsgTimer = 70*6
 						DeathMSG = I_Loc\DeathMessage_InsSuic
@@ -5475,10 +5499,10 @@ Function DrawGUI()
 			If pitchvalue > 90 And pitchvalue <= 180 Then pitchvalue = 90
 			If pitchvalue > 180 And pitchvalue < 270 Then pitchvalue = 270
 			
-			DrawImage(HandIcon2, GraphicWidth / 2 + Sin(yawvalue) * (GraphicWidth / 3) - 32 * HUDScale, GraphicHeight / 2 - Sin(pitchvalue) * (GraphicHeight / 3) - 32 * HUDScale)
+			DrawHUDIcon(HandIcon2, HandIcon2MOD, GraphicWidth / 2 + Sin(yawvalue) * (GraphicWidth / 3) - 32 * HUDScale, GraphicHeight / 2 - Sin(pitchvalue) * (GraphicHeight / 3) - 32 * HUDScale)
 		EndIf
 	
-		If DrawHandIcon Then DrawImage(HandIcon, GraphicWidth / 2 - 32 * HUDScale, GraphicHeight / 2 - 32 * HUDScale)
+		If DrawHandIcon Then DrawHUDIcon(HandIcon, HandIconMOD, GraphicWidth / 2 - 32 * HUDScale, GraphicHeight / 2 - 32 * HUDScale)
 		For i = 0 To 3
 			If DrawArrowIcon(i) Then
 				x = GraphicWidth / 2 - 32 * HUDScale
@@ -5493,7 +5517,7 @@ Function DrawGUI()
 					Case 3
 						x = x - 5 - 64 * HUDScale
 				End Select
-				DrawImage(HUDFrameImg, x, y)
+				If Not UseModernHUD Then DrawImage(HUDFrameImg, x, y)
 				DrawImage(ArrowIMG(i), x + 21 * HUDScale, y + 21 * HUDScale)
 				DrawArrowIcon(i) = False
 			End If
@@ -12748,8 +12772,7 @@ End Function
 
 Function PlayStartupVideos()
 	If GetOptionInt("general","play startup video") = 0 Lor IsRestart Lor HasCLIFlag("novid") Then Return
-
-	PlayMovie("GFX\menu\startup_Notice")
+	
 	PlayMovie("GFX\menu\startup_UGTSS")
 End Function
 

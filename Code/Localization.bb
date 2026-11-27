@@ -446,7 +446,7 @@ Type LocalizationTable
     Field Cup_OfPrefix$[2]
     Field Cup_Coffee$
     Field Cup_Oj$
-    Field Loading_Random$[20]
+    Field Loading_Random$[22]
 	Field Insanity_Random$[15]
 	Field Insanity_Extreme$[15]
 	Field Insanity_SelfHarm$[10]
@@ -1064,6 +1064,8 @@ Function LoadLocalization(loc.LocalizationTable, file$)
 							Case "loadingrandom_18" If loc\Loading_Random[18] = "" Then loc\Loading_Random[18] = value
 							Case "loadingrandom_19" If loc\Loading_Random[19] = "" Then loc\Loading_Random[19] = value
 							Case "loadingrandom_20" If loc\Loading_Random[20] = "" Then loc\Loading_Random[20] = value
+							Case "loadingrandom_21" If loc\Loading_Random[22] = "" Then loc\Loading_Random[21] = value
+							Case "loadingrandom_22" If loc\Loading_Random[21] = "" Then loc\Loading_Random[22] = value
 						End Select
 					Case "Message Insanity"
 						Select key
