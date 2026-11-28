@@ -25,8 +25,17 @@ End Function
 
 Include "Code\StrictLoads.bb"
 
-Global OptionFile$ = "options.ini"
+Global OptionFile$ = InitOptionsFile()
 Const OptionDefaultFile$ = "defaults.ini"
+
+Function InitOptionsFile$()
+	Local file$ = "options.ini"
+	If FileType(file) <> 1 Lor HasCLIFlag("defaults") Lor HasCLIFlag("default") Then
+		Local f% = WriteFile(file)
+		CloseFile(f)
+	EndIf
+	Return file
+End Function
 
 Function GetOptionString$(section$, key$)
 	Local opt$ = GetINIString(OptionFile, section, key)
