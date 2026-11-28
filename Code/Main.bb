@@ -4325,7 +4325,7 @@ Function UpdateSanity()
 				AmbChance = 375
 				PlayerZone = 6
 				
-				If Sanity > (-750) And Rand(2500)=1 and KillTimer > 0 Then
+				If Sanity > (-750) And Rand(2500)=1 and KillTimer >= 0 Then
 					Msg = I_Loc\Insanity_Random[Rand(1,15)]
 					MsgTimer = 70*4
 				EndIf
@@ -4357,12 +4357,12 @@ Function UpdateSanity()
 					If Rand(10000)=1 Then SightScare(True,False)
 					If Rand(5000000)=1 Then Jumpscare(False)
 					
-					If Rand(5000)=1 and KillTimer > 0 Then
+					If Rand(5000)=1 and KillTimer >= 0 Then
 						Msg = I_Loc\Insanity_Extreme[Rand(1,15)]
 						MsgTimer = 70*4
 					EndIf
 						
-					If Rand(15000/Max((Abs(Sanity) - 100)/900, 1))=1 and KillTimer > 0 Then
+					If Rand(15000/Max((Abs(Sanity) - 100)/900, 1))=1 and KillTimer >= 0 Then
 						Msg = I_Loc\Insanity_SelfHarm[Rand(1,10)]
 						MsgTimer = 70*6
 						DeathMSG = I_Loc\DeathMessage_SelfHarm
@@ -4374,7 +4374,7 @@ Function UpdateSanity()
 						BlurTimer# = BlurTimer + selfharm*5
 					EndIf
 					
-					If Rand(5000000/Max((Abs(Sanity) - 100)/900, 1))=1  and KillTimer > 0 Then
+					If Rand(5000000/Max((Abs(Sanity) - 100)/900, 1))=1  and KillTimer >= 0 Then
 						Msg = I_Loc\Insanity_Suicide
 						MsgTimer = 70*6
 						DeathMSG = I_Loc\DeathMessage_InsSuic
